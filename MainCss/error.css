@@ -1,0 +1,18 @@
+body{
+    background-color: #4bb65d56;
+}
+
+.error{
+    display: flex;
+    margin: auto;
+    justify-content: center;
+}
+
+.arrow{
+    cursor: pointer;
+}
+
+.arrow:hover{
+    transform: scale(1.1);
+    transition: 0.8s;
+}

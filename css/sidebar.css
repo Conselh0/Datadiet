@@ -1,0 +1,127 @@
+/* ======= LAYOUT PRINCIPAL ======= */
+.container {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  height: calc(100vh - 60px);
+  background-color: #f4f5f4;
+}
+
+/* ======= SIDEBAR ======= */
+.sidebar {
+  background-color: #324630;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+  color: white;
+}
+
+.sidebar .perfil1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.sidebar .perfil1 img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #1c2e1e;
+  margin-bottom: 10px; 
+  margin-right: 150px;
+}
+
+.sidebar h3 {
+  font-size: large;
+  margin-left: 100px;
+  margin-top: -80px;
+}
+
+.sidebar p {
+  color: #b7c7b7;
+  font-size: 0.9rem;
+  margin-left: 100px;
+  
+}
+
+/* ======= MENU LATERAL ======= */
+.menu-lateral {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  background-color: #0d2c11;
+}
+
+.menu-lateral a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 40px;
+  flex-direction: column;
+  text-align: center;
+}
+
+.menu-lateral a:hover {
+  background-color: #155d2d;
+}
+
+.menu-lateral a.ativo {
+  background-color: #3ca55c;
+}
+
+/* ======= ÁREA PRINCIPAL ======= */
+/*  Conteúdo centralizado  */
+.main {
+  flex: 1;
+  background-color: white;
+  padding: 40px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.header img {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  border: 2px solid #1c2e1e;
+  margin-top: -30px;
+}
+
+.header h1 {
+font-size: 80px;
+color:#335c3b;
+margin-left: -6px;
+
+}
+.header p {
+  color:#335c3b;
+  font-weight: 700;
+}
+
+.info {
+  background-color: #1c2e1e;
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-top: -30px;
+}
+
+.info strong {
+  color: #d8f3dc;
+  font-size: x-large;
+}
+
+.info p {
+  font-size: x-large;
+}

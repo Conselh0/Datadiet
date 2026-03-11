@@ -1,0 +1,103 @@
+.containerPai{
+    background-color: #0d2c11;
+    width: 100%;
+    height: 100%;
+    border-radius: 25px;
+}
+.agendamento{
+    background-color: white;
+    border-radius: 13px;
+    width: 97%;
+    height: 15%;
+    text-align: center; 
+    align-content: center;
+    margin: auto;
+    margin-top: 20px;
+}
+
+.containerPai h2{
+    color: white;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.infos{
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    color: white;
+}
+
+.infos p, h3{
+    align-content: center;
+}
+
+.middle{
+    display: inline-block;
+    background-color: aliceblue;
+    width: 0.4%;
+    min-height: 45vh;
+    margin: auto;
+}
+
+.day{
+    font-size: 50px;
+    margin: auto;
+}
+
+.hour{
+    font-size: 50px;
+    margin: auto;
+}
+
+.leftArrow{
+    margin-left: 20px;
+}
+
+.rightArrow{
+    margin-right: 20px;
+}
+
+.align{
+    display: flex;
+    align-items: center;    
+    color: white;
+    justify-content: space-between;
+}
+
+.align p{
+    font-size: 25px;
+}
+
+.align p:hover{
+    color: #34683b;
+    cursor: pointer;
+}
+
+.align img:hover{
+    cursor: pointer;
+}
+
+.same{
+    display: flex;
+    align-items: center;
+}
+
+.same p{
+    margin-left: 5px;
+}
+
+.same1{
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.same1 img{
+    margin-top: 2px;
+}
+
+.same1 p{
+    margin-right: 5px;
+}

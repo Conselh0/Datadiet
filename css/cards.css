@@ -1,0 +1,53 @@
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 980px;
+    
+    margin: 0 auto;
+    grid-gap: 40px;
+    margin-top: 60px;
+}
+
+.cards :hover {
+    transform: scale(1.05);
+    transition: 0.6s;
+}
+
+.card {
+    background-color: lab(100% 0.01 -0.01 / 0.808);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 35px 40px;
+    border-radius: 5px;
+    box-shadow: 6px 6px 10px black;
+}
+
+
+.card .user {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-top:-4mm;
+}
+
+.card h3{
+    margin-bottom: 30px;
+}
+
+
+p{
+    margin-top: 1px;
+    text-align: center;
+    font-size: 18px;
+}
+
+@media screen and (max-width: 1001px) {
+    .card{
+        margin-bottom: 10px;
+    }
+    
+    .cards{
+        display: block;
+    }
+}

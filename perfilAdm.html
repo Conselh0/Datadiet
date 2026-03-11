@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Diet - Painel Profissional</title>
+  <link rel="stylesheet" href="css/adm.css">
+  <link rel="icon" href="img/DataDiet.png">
+  <link rel="stylesheet" href="MainCss/style.css">  
+  <link rel="stylesheet" href="MainCss/navAdm.css">
+</head>
+<body>
+
+  <!-- NAVBAR SUPERIOR -->
+  <header>
+      <nav> <!--Tag para criar e separar a navbar dos demais elementos da página-->
+        <div class="nav-left"><!--Tag para criar a separação entre elementos da esquerda e da direita na nav bar-->
+            <img src="img/logo 2.png" alt="LT" width="50px" height="50px">
+        </div>
+        <div class="nav-left"><!--Tag para criar a separação entre elementos da esquerda e da direita na nav bar-->
+            <div class="hamburger" onclick="document.querySelector('.nav-right').classList.toggle('active')"></div>
+            <span></span> <!-- Primeira barrinha -->
+            <span></span> <!-- Segunda barrinha -->
+            <span></span> <!-- Terceira barrinha -->
+        </div>
+    </nav><!--Fim da nav bar-->
+  </header>
+  <!-- CONTAINER GERAL -->
+  <div class="container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="perfil1">
+        <img src="img/file.png" alt="Avatar do usuário">
+        <h3>Luana Teixeira</h3>
+         <p>ID: 000001</p>
+      </div>
+      <div class="menu-lateral">
+        <a href="#" class="ativo">PERFIL</a>
+        <a href="histAdm.html">HISTÓRICO DE CONSULTAS</a>
+        <a href="pacientesAdm.html">PACIENTE</a>
+        <a href="agendAdm.html">AGENDAMENTOS</a> 
+        <a href="forms/CadNutri.html">CADASTRAR NUTRI</a>
+      </div>
+    </aside>
+   
+    <!-- CONTEÚDO PRINCIPAL -->
+  <main class="main" aria-label="Conteúdo principal">
+    <div class="header">
+      <img src="img/file.png"  alt="Foto Robson Vieira" />
+      <div>
+        <h1>Luana Teixeira</h1>
+         <p>ID: 000001</p>
+      </div>
+    </div>
+
+    <section class="info">
+      <p><strong>Nome:</strong> Luana Teixeira Guilherme</p>
+      <p><strong>Data de Nascimento:</strong> 20/04/1998</p>
+      <p><strong>Telefone:</strong> (+55) 11 97352-9673</p>
+      <p><strong>Email:</strong> luana_nutri01@gmail.com</p>
+      <p><strong>Endereço:</strong> Rua Cícero Pompeo de Toledo, 198, São Paulo, Brasil.</p>
+    </section>
+  </main>
+  </div>
+    <script>
+        function toggleDropdown() {
+        document.getElementById("dropdownMenu").classList.toggle("show");
+        }
+        // Fecha o menu se clicar fora
+        window.onclick = function(event) {
+        const dropdown = document.getElementById("dropdownMenu");
+        if (!event.target.closest('.avatar-container')) {
+        dropdown.classList.remove("show");
+        }
+        }
+    </script>
+
+</body>
+</html>
