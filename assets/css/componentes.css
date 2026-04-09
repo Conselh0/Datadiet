@@ -1,0 +1,180 @@
+/*--------------------------Início dos componentes do rodapé------------------------------*/
+iframe {
+    border-radius: 55px;
+    margin-right: 25px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+.elements {
+    display: block;
+    margin: auto;
+    justify-self: center;
+    text-align: center;
+    color: white;
+}
+
+.elements img { margin: 15px; }
+.elements p { font-weight: bold; }
+
+.lt { margin-left: 25px; }
+
+.login a { color: white; }
+.login a:hover { text-decoration: underline; }
+
+/* Media queries desses componentes */
+@media screen and (max-width: 750px) {
+    iframe {
+        display: flex;
+        margin: auto;
+        margin-top: 10px;
+    }
+    .lt {
+        display: flex;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+}
+/*------------------------Fim dos componentes do rodapé------------------------------------*/
+
+
+/*------------------------Início dos componentes da NavBar---------------------------------*/
+.perfil {
+    display: none;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.hamburger span {
+    height: 3px;
+    width: 4vh;
+    background: white;
+    margin: 4px 0;
+    border-radius: 2px;
+    margin-right: 10px;
+}
+
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.dropdown-menu {
+    display: none;
+    position: fixed;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    z-index: 100;
+    text-align: center;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+}
+
+.dropdown-menu a:hover {
+    background-color: #f0f0f0;
+}
+
+.show {
+    display: block;
+}
+
+/*Responsividade*/
+@media (max-width: 765px) {
+    .perfil {
+        display: block;
+        text-decoration: none;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+
+    .nav-right.active {
+        display: block;
+    }
+
+    .nav-right img {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 615px) {
+    .perfil {
+        display: block;
+        text-decoration: none;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+
+    .nav-right.active {
+        display: flex;
+    }
+
+    .nav-right img {
+        display: none;
+    }
+
+    .nav-left img {
+        display: none;
+    }
+
+    .nav-left {
+        display: flex;
+        flex-direction: column;
+    }
+}
+/*--------------------------fim dos componentes da NavBar------------------------------------*/
+
+
+/*--------------------início dos componentes botões da página Index----------------------*/
+.container button{
+    border: none;
+    border-radius: 10px;
+    height: 5vh;
+    width: 30vh;
+    color: white;
+    background-color: #4bb65d;
+    cursor: pointer;
+    box-shadow: 0px 2px 0px 1px green;
+    align-self: center;
+    margin-bottom: 20px;
+    margin-left: 50px;
+    font-size: 18px;
+}
+
+.ativo{
+    background-color: #4bb65d73;
+}
+
+.container button:active{
+    transform: translateY(1px);
+    box-shadow: 0px 0px 0px 0px;
+}
+/*--------------------fim dos componentes botões da página Index----------------------*/

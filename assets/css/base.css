@@ -19,4 +19,21 @@
 /* Aplica a fonte no site todo */
 body {
   font-family: 'Roboto', sans-serif;
+  background-color: aliceblue;
+}
+
+/*Definindo o site ocupar todo o espaço do munitor*/
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+}
+
+h1{
+    font-size: 55px;
+    color: #324630;
 }

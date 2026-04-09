@@ -1,4 +1,7 @@
+
 @import url(base.css);
 @import url(layout.css);
 @import url(componentes.css);
-@import url(paginas.css);
+
+/*Aqui estão os estilos específicos de cada página*/
+@import url(index.css);
