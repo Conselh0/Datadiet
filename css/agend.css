@@ -1,5 +1,5 @@
 /* ======= LAYOUT PRINCIPAL ======= */
-.container {
+.agend-container {
   display: grid;
   grid-template-columns: 270px 1fr;
   height: calc(100vh - 60px);
@@ -7,7 +7,7 @@
 }
 
 /* ======= SIDEBAR ======= */
-.sidebar {
+.agend-sidebar {
   background-color: #324630;
   display: flex;
   flex-direction: column;
@@ -16,12 +16,12 @@
   color: white;
 }
 
-.sidebar .perfil1 {
+.agend-sidebar .perfil1 {
   text-align: center;
   margin-bottom: 20px;
 }
 
-.sidebar .perfil1 img {
+.agend-sidebar .perfil1 img {
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -30,20 +30,20 @@
   margin-right: 150px;
 }
 
-.sidebar h3 {
+.agend-sidebar h3 {
   font-size: large;
   margin-left: 100px;
   margin-top: -80px;
 }
 
-.sidebar p {
+.agend-sidebar p {
   color: #b7c7b7;
   font-size: 0.9rem;
   margin-left: 100px;  
 }
 
 /* ======= MENU LATERAL ======= */
-.menu-lateral {
+.agend-menu {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -51,7 +51,7 @@
   background-color:  #0d2c11;
 }
 
-.menu-lateral a {
+.agend-menu a {
   text-decoration: none;
   color: white;
   font-weight: bold;
@@ -59,17 +59,17 @@
   text-align: center;
 }
 
-.menu-lateral a:hover {
+.agend-menu a:hover {
   background-color: #155d2d;
 }
 
-.menu-lateral a.ativo {
+.agend-menu a.ativo {
   background-color: #3ca55c;
 }
 
 /* ======= ÁREA PRINCIPAL ======= */
 /*  Conteúdo centralizado  */
-.main {
+.agend-main {
   flex: 1;
   background-color: white;
   padding: 40px 60px;

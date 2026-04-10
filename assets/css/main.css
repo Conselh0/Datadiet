@@ -4,4 +4,5 @@
 @import url(componentes.css);
 
 /*Aqui estão os estilos específicos de cada página*/
-@import url(index.css);
+@import url(pages/index.css);
+@import url(pages/agendamento.css);
