@@ -6,23 +6,23 @@
     margin-top: 90px;
     overflow-x: hidden;
     overflow-y: visible;
-    background-image: url(../img/bolas.png);
+    background-image: url(/img/bolas.png);
     background-position: center;
 }
 
-main p{
+.IndexMain p{
     font-size: 30px;
     color: #324630;
 }
 
-main h1{
+.IndexMain h1{
     margin-top: 6%;
     margin-left: 50px;
     margin-bottom: 20px;
     letter-spacing: 2px;
 }
 
-main p{
+.IndexMain p{
     margin-top: 6%;
     margin-left: 50px;
     margin-bottom: 20px;
@@ -76,7 +76,7 @@ main p{
 
 @media screen and (max-width: 1020px) {
     .container{
-        background-image: url(../img/bolas.png), url(../img/DataDiet2.png);
+        background-image: url(/img/bolas.png), url(/img/DataDiet2.png);
         background-position: center;
         background-repeat: no-repeat;
     }
@@ -103,7 +103,7 @@ main p{
     height: 100%;
     margin-top: 90px;
     margin-bottom: 90px;
-    background-image: url(../img/bolas.png);
+    background-image: url(/img/bolas.png);
     background-position: center;
 }
 
@@ -146,7 +146,7 @@ main p{
        }
 
     .container2{
-        background-image: url(../img/bolas.png), url(../img/testLT.png);
+        background-image: url(/img/bolas.png), url(/img/testLT.png);
         background-position: center;
         background-repeat: no-repeat;
        }
@@ -163,7 +163,7 @@ main p{
        }
 
     .container2{
-        background-image: url(../img/bolas.png), url(../img/testLT.png);
+        background-image: url(/img/bolas.png), url(/img/testLT.png);
         background-position: center;
         background-repeat: no-repeat;
        }
@@ -180,7 +180,7 @@ main p{
        }
 
     .container2{
-        background-image: url(../img/bolas.png), url(../img/testLT.png);
+        background-image: url(/img/bolas.png), url(/img/testLT.png);
         background-position: center;
         background-repeat: no-repeat;
        }
@@ -201,7 +201,7 @@ main p{
     text-align: center;
     padding: 50px 20px;
     background-color: #4bb65d56;
-    background-image: url(../img/bolas.png);
+    background-image: url(/img/bolas.png);
     background-image: center;
     height: 100%;
     margin-top: 90px;

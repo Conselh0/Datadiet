@@ -1,0 +1,35 @@
+.histTabela  {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #1c2e1e;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.histTabela thead{
+  background-color: #324630;
+  height: 50px;
+}
+
+.histTabela th{
+  color: #f4f5f4;
+  font-size: larger;
+}
+
+.histTabela td:hover{
+  background-color: #f0ebeb;
+}
+
+.histTabela td{
+  text-align: center;
+  font-weight: 800;
+}
+
+.histTabela button{
+  border: 0px;
+}
+
+.histTitulo {
+  display: flex;
+  gap: 15px;
+}

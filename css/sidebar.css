@@ -1,5 +1,5 @@
 /* ======= LAYOUT PRINCIPAL ======= */
-.container {
+.PacienteConteiner {
   display: grid;
   grid-template-columns: 270px 1fr;
   height: calc(100vh - 60px);
@@ -71,7 +71,7 @@
 
 /* ======= ÁREA PRINCIPAL ======= */
 /*  Conteúdo centralizado  */
-.main {
+.PacienteMain {
   flex: 1;
   background-color: white;
   padding: 40px 60px;
@@ -80,14 +80,14 @@
   align-items: flex-start;
 }
 
-.header {
+.PacienteHeader {
   display: flex;
   align-items: center;
   gap: 30px;
   margin-bottom: 40px;
 }
 
-.header img {
+.PacienteHeader img {
   width: 250px;
   height: 250px;
   border-radius: 50%;
@@ -95,18 +95,18 @@
   margin-top: -30px;
 }
 
-.header h1 {
+.PacienteHeader h1 {
 font-size: 80px;
 color:#335c3b;
 margin-left: -6px;
 
 }
-.header p {
+.PacienteHeader p {
   color:#335c3b;
   font-weight: 700;
 }
 
-.info {
+.PerfilInfo {
   background-color: #1c2e1e;
   color: white;
   padding: 30px;
@@ -117,11 +117,11 @@ margin-left: -6px;
   margin-top: -30px;
 }
 
-.info strong {
+.PerfilInfo strong {
   color: #d8f3dc;
   font-size: x-large;
 }
 
-.info p {
+.PerfilInfo p {
   font-size: x-large;
 }
