@@ -1,3 +1,4 @@
+/*--------------------------CSS Exclusivo da página agendar--------------------------*/
 :root {
   --bg: #f5f5f583;
   --card: #ffffff;
@@ -395,3 +396,4 @@
 .dia12:hover {
   background: #c0d9c0;
 }
+/*--------------------------CSS Exclusivo da página agendar--------------------------*/

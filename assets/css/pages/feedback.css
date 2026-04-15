@@ -1,3 +1,4 @@
+/*--------------------------CSS Exclusivo da página feedback--------------------------*/
 .feedback .container{
     display: flex;
     background: #324630;
@@ -6,7 +7,7 @@
     height: 110%;
     justify-content: center;
     background-position: center;
-    background-image: url(/img/testLT.png);
+    background-image: url(/assets/img/backgraud/LTbg.png);
     background-repeat: no-repeat;
 }
 
@@ -87,3 +88,4 @@
         display: block;
     }
 }
+/*--------------------------CSS Exclusivo da página feedback--------------------------*/

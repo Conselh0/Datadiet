@@ -3,27 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="../img/DataDiet.png">
-  <link rel="stylesheet" href="mainCss/style.css">
-  <link rel="stylesheet" href="../MainCss/style.css">
-  <title>Tela de Login</title>
+  <title>Formulário de Cadastro</title>
+  <link rel="icon" href="/assets/img/icons/DataDiet.png">
+
   <style>
-    /* Fundo geral com gradiente e borda roxa */
+    /* Fundo com gradiente e borda roxa */
     body {
       height: 100vh;
       display: block;
       justify-content: center;
       align-items: center;
-      background:#324630;
-      overflow: hidden;
-      background-image: url(../img/testLT.png);
+      background:  #999999;
+      background-image: url(/assets/img/backgraud/LTbg.png);
       background-position: center;
       background-repeat: no-repeat;
     }
 
-    /* Container branco do login */
-    .login-box {
-      background-color: rgba(255, 255, 255, 0.808);
+    /* Caixa branca central */
+    .cadastro-box {
+      background-color: rgba(255, 255, 255, 0.575);
       padding: 40px 50px;
       border-radius: 25px;
       box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
@@ -33,13 +31,13 @@
     }
 
     /* Título */
-    .login-box h2 {
+    .cadastro-box h2 {
       margin-bottom: 20px;
       color: #1C1C1C;
       font-size: 20px;
     }
 
-    /* Campos e rótulos */
+    /* Rótulos */
     label {
       display: block;
       text-align: left;
@@ -48,8 +46,11 @@
       color: #1C1C1C;
     }
 
-    input[type="number"],
-    input[type="password"] {
+    /* Campos de entrada */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"] {
       width: 100%;
       padding: 8px;
       border: 1px solid #999;
@@ -80,20 +81,30 @@
       transform: scale(1.1);
     }
 
+
   </style>
 </head>
 <body>
-  <a href="../index.html"><img src="../img/left-arrow.png" alt="seta de saída" width="3%" class="back"></a>
-  <div class="login-box">
-    <h2>INSIRA SEU LOGIN</h2>
+  <a href="/perfilAdm.html"><img src="/assets/img/icons/left-arrow.png" width="3%" class="back"></a>
+  <div class="cadastro-box">
+    <h2>CADASTRAR</h2>
     <form>
-      <label for="number">Digite seu CRN:</label>
-      <input type="number" id="CRN" name="CRN">
+      <label for="crm">CRN:</label>
+      <input type="text" id="crm" name="crm" placeholder="Ex: 123456-SP" required>
+
+      <label for="nome">Nome completo:</label>
+      <input type="text" id="nome" name="nome" required>
+
+      <label for="telefone">Telefone:</label>
+      <input type="tel" id="telefone" name="telefone" placeholder="(00) 00000-0000" required>
+
+      <label for="email">E-mail:</label>
+      <input type="email" id="email" name="email" required>
 
       <label for="senha">Senha:</label>
-      <input type="password" id="senha" name="senha">
+      <input type="password" id="senha" name="senha" required>
     </form>
-    <a href="../perfilAdm.html"><button class="btn">ENTRAR</button></a>
+    <a href="/perfilAdm.html"><button type="submit" class="btn">CADASTRAR</button></a>
   </div>
 </body>
 </html>

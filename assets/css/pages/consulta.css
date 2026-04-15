@@ -1,3 +1,4 @@
+/*--------------------------CSS Exclusivo da página consulta--------------------------*/
 .consultaContainer{
     display: block;
     background: #324630;
@@ -7,10 +8,9 @@
     justify-content: center;
     align-items: center;
     background-position: center;
-    background-image: url(/img/testLT.png);
+    background-image: url(/assets/img/backgraud/LTbg.png);
     background-repeat: no-repeat;
 }
-
 .pgConsulta form {
     margin-left: 26%;
     margin-right: 26%;
@@ -74,3 +74,4 @@
     transform: scale(1.1);
     transition: 0.8s;
 }
+/*--------------------------CSS Exclusivo da página consulta--------------------------*/
