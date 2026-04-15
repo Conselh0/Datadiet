@@ -1,18 +1,18 @@
-body{
+.pgErro {
     background-color: #4bb65d56;
 }
 
-.error{
+.pgErro .error{
     display: flex;
     margin: auto;
     justify-content: center;
 }
 
-.arrow{
+.pgErro .arrow{
     cursor: pointer;
 }
 
-.arrow:hover{
+.pgErro .arrow:hover{
     transform: scale(1.1);
     transition: 0.8s;
 }

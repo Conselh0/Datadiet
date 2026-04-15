@@ -1,0 +1,49 @@
+.agendTabela {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #1c2e1e;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.agendTabela thead{
+  background-color:  #646063;
+  height: 50px;
+}
+
+.agendTabela th{
+  color: #f4f5f4;
+  font-size: larger;
+}
+
+.agendTabela td:hover{
+  background-color: #f0ebeb;
+}
+
+.agendTabela td{
+  text-align: center;
+  font-weight: 800;
+}
+
+.agendTabela button{
+  border: 0px;
+}
+
+.agendAdmTitulo {
+  display: flex;
+  gap: 15px;
+}
+
+.agendAdmTitulo h1{
+  font-size: 35px;
+  color: #423f3f;
+}
+
+.agendAdmTitulo img {
+  width: 50px;
+  height: 50px;
+  margin-top: -5px;
+  border-radius: 20%;
+  border: 2px solid #1c2e1e;
+  box-shadow: 1px 1px#1c2e1e;
+}

@@ -38,3 +38,21 @@ a {
 .ativo{
     background-color: #4bb65d73;
 }
+
+/*-----------------------------Inicio da Base do Feedback-------------------------------------*/
+.feedback input, textarea {
+    font-size: 14px; 
+    transition: 0.3s;
+}
+
+.feedback label {
+    font-weight: bold; 
+}
+
+.feedback input:focus, textarea:focus {
+    background-color: #efffe9; 
+    border-color: #008011;    
+    outline: none;          
+}
+
+/*-------------------------------Fim da Base do Feedback-------------------------------------*/

@@ -169,15 +169,13 @@ iframe {
     font-size: 18px;
 }
 
-
-
 .container button:active{
     transform: translateY(1px);
     box-shadow: 0px 0px 0px 0px;
 }
 /*--------------------fim dos componentes botões da página Index----------------------*/
 
-/*---------------------Inicio dos componentes da SideBar-----------------------------*/
+/*---------------------Inicio dos componentes da SideBar Perfil Paciente-----------------------------*/
 .container button {
     border: none;
     border-radius: 10px;
@@ -227,4 +225,124 @@ iframe {
     background-color: #3ca55c;
 }
 
-/*---------------------Fim dos componentes da SideBar-----------------------------*/
+/*---------------------Fim dos componentes da SideBar Perfil Paciente-----------------------------*/
+
+/*---------------------Inicio dos componentes da SideBar Perfil Nutricionista-----------------------------*/
+.tag-data {
+  display: inline-block;
+  background-color: #8dddad;
+  color: #010b00;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: none;
+  cursor: default;
+}
+
+.tag-data2 {
+  display: inline-block;
+  background-color: #8dddad;
+  color: #010b00;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: none;
+  cursor: default;
+}
+
+.tag-data3 {
+  display: inline-block;
+  background-color: #dd998d;
+  color: #010b00;
+  font-size: 12px;
+  font-family: Arial, sans-serif;
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: none;
+  cursor: default;
+}
+
+.perfilAdm-sidebar .perfil1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.perfilAdm-sidebar .perfil1 img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 2px solid #1c2e1e;
+  margin-bottom: 10px; 
+  margin-right: 150px;
+}
+
+.perfilAdm-sidebar h3 {
+  font-size: large;
+  margin-left: 100px;
+  margin-top: -80px;
+}
+
+.perfilAdm-sidebar p {
+  color: #ffff;
+  font-size: 0.9rem;
+  margin-left: 100px;
+  
+}
+
+/* ======= MENU LATERAL ======= */
+.perfilAdm-Menu-lateral {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  background-color: #646063;
+}
+
+.perfilAdm-Menu-lateral a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  padding: 40px;
+  flex-direction: column;
+  text-align: center;
+}
+
+.perfilAdm-Menu-lateral a:hover {
+  background-color: #d9d9d9;
+}
+
+.perfilAdm-Menu-lateral a.ativo {
+  background-color: #d9d9d9;
+}
+
+/*---------------------Fim dos componentes da SideBar Perfil Nutricionista-----------------------------*/
+
+/*-----------------------------Inicio dos componentes do Feedback-------------------------------------*/
+.feedback form {
+    background-color: lab(100% 0.01 -0.01 / 0.808); 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+}
+
+.feedback input, textarea {
+    border: 1px solid #ccc; 
+    border-radius: 5px; 
+}
+
+/* Botão Submit como componente */
+.feedback input[type="submit"] {
+    background-color: #008000; 
+    color: white; 
+    border: none; 
+    cursor: pointer; 
+    font-size: 16px;
+}
+
+.feedback input[type="submit"]:hover {
+    background-color: #25a000; 
+}
+
+/*-----------------------------Fim dos componentes do Feedback-------------------------------------*/

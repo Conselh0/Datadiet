@@ -1,6 +1,19 @@
+.perfilAdm-tbody td button{
+    margin: 10px;
+    width: 120px;
+    height: 30px;
+    border-radius: 5px;
+    background-color: #8dddad;
+    cursor: pointer;
+}
+
+.perfilAdm-tbody .excluir{
+    background-color: #dd998d;
+}
+
 /* ======= ÁREA PRINCIPAL ======= */
 /*  Conteúdo centralizado  */
-.main {
+.perfilAdm .main {
   flex: 1;
   background-color: white;
   padding: 40px 60px;
@@ -9,19 +22,19 @@
   align-items: flex-start;
 }
 
-.header {
+.perfilAdm .header {
   display: flex;
   align-items: center;
   gap: 30px;
   margin-bottom: 40px;
 }
     
-.header h1 {
+.perfilAdm .header h1 {
   font-size: x-large;
   margin: 0;
 }
 
-.info {
+.perfilAdm .info {
   background-color: #1c2e1e;
   color: white;
   padding: 25px 30px;
@@ -33,11 +46,11 @@
   margin-top: 80;
 }
 
-.info strong {
+.perfilAdm .info strong {
   color: #d8f3dc;
 }
 
-table {
+.perfilAdm table {
   width: 100%;
   height: 100%;
   border: 2px solid #1c2e1e;
@@ -45,41 +58,41 @@ table {
   table-layout: fixed;
 }
 
-thead{
+.perfilAdm thead{
   background-color: #646063;
   height: 50px;
 }
 
-th{
+.perfilAdm th{
   color: #f4f5f4;
   font-size: larger;
 }
 
-td:hover{
+.perfilAdm td:hover{
   background-color: #f0ebeb;
 }
 
-td{
+.perfilAdm td{
   text-align: center;
   font-weight: 800;
 }
 
-button{
+.perfilAdm button{
   border: 0px;
 }
 
-.titulo {
+.perfilAdm .titulo {
   display: flex;
   gap: 15px;
 }
 
-.titulo img{
+.perfilAdm .titulo img{
   border-radius: 20%;
   border: 2px solid #1c2e1e;
   box-shadow: 1px 1px#1c2e1e;
 }
 
-.titulo h1{
+.perfilAdm .titulo h1{
   font-size: 36px;
   padding: 5px;
 }

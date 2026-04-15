@@ -1,11 +1,37 @@
 
+/*
+ * BASE.CSS
+ * Estilos globais, resets e padrões básicos.
+ * Aqui ficam as definições que se aplicam a todo o site, como fontes, 
+ * cores de links, estados genéricos e o comportamento padrão das tags HTML.
+ */
 @import url(base.css);
+/**
+ * LAYOUT.CSS
+ * Estrutura, posicionamento e esqueleto da página.
+ * Aqui fica a definição de grids, flexbox, margens externas, preenchimentos (padding) 
+ * e o alinhamento dos grandes blocos que organizam o conteúdo na tela.
+ */
 @import url(layout.css);
+/**
+ * COMPONENTES.CSS
+ * Blocos de construção reutilizáveis e independentes.
+ * Aqui ficam os estilos de botões, cards, menus e avatares de perfil.
+ * São elementos que possuem identidade visual própria e podem ser usados 
+ * em diferentes partes do layout.
+ */
 @import url(componentes.css);
 
 /*Aqui estão os estilos específicos de cada página*/
 @import url(pages/index.css);
+@import url(pages/feedback.css);
 @import url(pages/perfilPaciente.css);
 @import url(pages/hist.css);
 @import url(pages/agendar.css);
 @import url(pages/agend.css);
+@import url(pages/perfilAdm.css);
+@import url(pages/histAdm.css);
+@import url(pages/pacientesAdm.css);
+@import url(pages/agendAdm.css);
+@import url(pages/consulta.css);
+@import url(pages/error.css);

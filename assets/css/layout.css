@@ -148,7 +148,7 @@ footer {
 /*-----------------------------------Fim layout do rodapé-------------------------------------*/
 
 
-/*-----------------------------------Inicio layout da SideBar -------------------------------------*/
+/*-----------------------------------Inicio layout da SideBar Perfil Paciente-------------------------------------*/
 .sidebar {
   background-color: #324630;
   display: flex;
@@ -215,5 +215,77 @@ footer {
 .menu-lateral {
     margin-top: 20px;
 }
-/*------------------------------------Fim layout da SideBar-----------------------------------------*/
+/*------------------------------------Fim layout da SideBar Perfil Paciente-----------------------------------------*/
 
+/*-----------------------------------Inicio layout da SideBar Perfil Nutricionista-------------------------------------*/
+.nav-adm {
+    background-color: #423f3f;
+    min-height: 100%;
+}
+
+.perfilAdm-sidebar {
+  background-color: #807e7e;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+  color: white;
+}
+
+/* ======= ÁREA PRINCIPAL ======= */
+
+.perfilAdm-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.perfilAdm-header img {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  border: 2px solid #1c2e1e;
+  margin-top: -30px;
+}
+
+.perfilAdm-header h1 {
+font-size: 40px;
+color:#423f3f;
+margin-left: -6px;
+}
+
+.perfilAdm-header p {
+  color:#7f917d;
+  font-weight: 700;
+}
+
+.titulo img{
+  width: 50px;
+  height: 50px;
+  margin: auto;
+}
+
+/*------------------------------------Fim layout da SideBar Perfil Nutricionista-----------------------------------------*/
+
+/*-----------------------------Inicio do layout do Feedback-------------------------------------*/
+/* Posicionamento do formulário de feedback */
+.feedback form {
+    margin-top: 60px;
+    margin-left: 26%;
+    margin-right: 26%;
+    margin-bottom: 60px;
+    max-width: 400px; 
+}
+
+/* Dimensões dos campos */
+.feedback input, textarea {
+    width: 95%; 
+    min-width: 95%; 
+    max-width: 95%;
+    padding: 8px; 
+    margin-top: 5px; 
+    margin-bottom: 15px; 
+}
+
+/*-------------------------------Fim do layout do Feedback-------------------------------------*/

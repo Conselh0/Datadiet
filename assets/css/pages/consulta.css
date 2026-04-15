@@ -1,4 +1,4 @@
-.container{
+.consultaContainer{
     display: block;
     background: #324630;
     min-width: 100%;
@@ -7,11 +7,11 @@
     justify-content: center;
     align-items: center;
     background-position: center;
-    background-image: url(../img/testLT.png);
+    background-image: url(/img/testLT.png);
     background-repeat: no-repeat;
 }
 
-form {
+.pgConsulta form {
     margin-left: 26%;
     margin-right: 26%;
     margin: auto;
@@ -28,13 +28,13 @@ form {
 }
 
  
-label {
+.pgConsulta label {
     font-weight: bold; 
     font-family: Arial, Helvetica, sans-serif;
 }
  
 
-input, textarea {
+.pgConsulta input, textarea {
     width: 95%; 
     padding: 8px; 
     margin-top: 5px; 
@@ -46,14 +46,14 @@ input, textarea {
 }
 
 
-input:focus, textarea:focus {
+.pgConsulta input:focus, textarea:focus {
     background-color: #efffe9; 
     border-color: #008011;    
     outline: none;          
 }
 
  
-input[type="submit"] {
+.pgConsulta input[type="submit"] {
     background-color: #008000; 
     color: white; 
     border: none; 
@@ -62,15 +62,15 @@ input[type="submit"] {
 }
  
 
-input[type="submit"]:hover {
+.pgConsulta input[type="submit"]:hover {
     background-color: #25a000; 
 }
 
-.container a{
+.consultaContainer a{
     margin-left: 10px;
 }
 
-.arrow:hover{
+.pgConsulta .arrow:hover{
     transform: scale(1.1);
     transition: 0.8s;
 }

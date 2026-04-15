@@ -4,18 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Diet - Painel do Paciente</title>
-  <link rel="stylesheet" href="css/adm.css">
-  <link rel="stylesheet" href="css/histAdm.css">
   <link rel="icon" href="img/DataDiet.png">
-  <link rel="stylesheet" href="MainCss/navAdm.css">
-  <link rel="stylesheet" href="css/pacientes.css">
-
   <link rel="stylesheet" href="assets/css/main.css">
+
 </head>
-<body>
+<body class="perfilAdm">
+  
   <!-- Inicio da nave bar -->
   <header>
-    <nav> <!--Tag para criar e separar a navbar dos demais elementos da página-->
+    <nav class="nav-adm"> <!--Tag para criar e separar a navbar dos demais elementos da página-->
         <div class="nav-left"><!--Tag para criar a separação entre elementos da esquerda e da direita na nav bar-->
             <img src="img/logo 2.png" alt="LT" width="50px" height="50px">
         </div>
@@ -29,16 +26,16 @@
   <!-- Fim da nav bar -->
 
   <!-- CONTAINER GERAL -->
-  <div class="container">
+  <div class="sidebarConteiner">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="perfilAdm-sidebar">
       <div class="perfil1">
         <img src="img/file.png" alt="Avatar do usuário">
         <h3>Luana Teixeira</h3>
         <p>ID: 000001</p>
       </div>
-      <div class="menu-lateral">
+      <div class="perfilAdm-Menu-lateral">
         <a href="perfilAdm.html">PERFIL</a>
         <a href="histAdm.html">HISTÓRICO DE CONSULTAS</a>
         <a href="#" class="ativo">PACIENTE</a>
@@ -48,8 +45,8 @@
     </aside>
 
     <!-- CONTEÚDO PRINCIPAL -->
-  <main class="main" aria-label="Conteúdo principal">
-    <div class="header">
+  <main class="sidebarMain" aria-label="Conteúdo principal">
+    <div class="perfilAdm-header">
 
       <div class="titulo">
         <img src="img/avatar-url.png" width="30px" height="30px">
@@ -69,7 +66,7 @@
           </tr>
         </thead>
 
-        <tbody>
+        <tbody class="perfilAdm-tbody">
             <tr>
               <td>1329864853746</td>
               <a href="carlosAdm.html"><td>CARLOS EDUARDO</td></a>
