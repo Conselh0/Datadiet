@@ -5,4 +5,7 @@
 
 /*Aqui estão os estilos específicos de cada página*/
 @import url(pages/index.css);
+@import url(pages/perfilPaciente.css);
 @import url(pages/hist.css);
+@import url(pages/agendar.css);
+@import url(pages/agend.css);

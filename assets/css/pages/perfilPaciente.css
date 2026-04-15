@@ -1,0 +1,46 @@
+.PerfilHeader h1{
+    font-size: 50px;
+    color:#335c3b;
+    margin-left: -6px;
+}
+
+.PacienteHeader p {
+  color:#335c3b;
+  font-weight: 700;
+}
+
+.PerfilInfo {
+  background-color: #1c2e1e;
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  width: 100%;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-top: -30px;
+}
+
+.PerfilInfo strong {
+  color: #d8f3dc;
+  font-size: x-large;
+}
+
+.PerfilInfo p {
+  font-size: x-large;
+}
+
+.PerfilHeader {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.PerfilHeader img {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  border: 2px solid #1c2e1e;
+  margin-top: -30px;
+}
+

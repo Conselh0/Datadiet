@@ -139,6 +139,12 @@
     display: block;
 }
 
+.pgIndex h1{
+    font-size: 55px;
+    color: #324630;
+}
+
+
 /*Responsividade*/
 @media screen and (min-width: 728px) and (max-width: 1282px){
     .container2 img { 

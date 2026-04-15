@@ -29,11 +29,12 @@ body {
     box-sizing: border-box;
 }
 
+/*Todo link do site fica sem under-line*/
 a {
     text-decoration: none;
 }
 
-h1{
-    font-size: 55px;
-    color: #324630;
+/*Cor dos ativos padrão do Site*/
+.ativo{
+    background-color: #4bb65d73;
 }
