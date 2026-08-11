@@ -1,4 +1,6 @@
-{/*Chamando o home background para usa-lo como props. */}
+{
+  /*Chamando o home background para usa-lo como props. */
+}
 import HomeBackground from "../components/HomeBackground";
 
 function Home() {
@@ -6,7 +8,7 @@ function Home() {
     <main>
       {/*Estamos basicamete chamando a prop de fundo que já tem o estilo pré-definido*/}
       <HomeBackground>
-        <div className="w-[60%] my-auto">
+        <main className="w-[60%] my-auto">
           <h1 className="text-green-950 text-[3vw] ml-4 my-auto font-bold">
             Alcance o equilíbrio, bem-estar e <br />
             resultados duradouros com <br />
@@ -14,31 +16,41 @@ function Home() {
             personalizada <br />
           </h1>
           <p className="text-green-950 text-[2vw] ml-4 my-auto">
-            Protocolos personalizados para emagrecer com <br/>
+            Protocolos personalizados para emagrecer com <br />
             saúde, corrigir deficiências e aumentar sua energia
           </p>
-        </div>
-        <img src="/img/LTfixed.png" alt="" className="w-[50%] h-[50%] max-w-xl mb-50px" />
-        
+        </main>
+        <img
+          src="/img/LTfixed.png"
+          alt=""
+          className="w-[50%] h-[50%] max-w-xl mb-50px"
+        />
       </HomeBackground>
 
       <HomeBackground>
-        <div className="flex-col justify-center text-center">
-          <h1 className="text-green-950 text-[6vw] font-bold mb-10">CONHEÇA A NUTRICIONISTA</h1>
-          <p className="text-green-950 font-light leading-18 text-[3vw] mb-5">
-            Sou a  <b>Dra. Luana Teixeira, Nutricionista  </b>em São Paulo, atendendo 
-            presencialmente e online em todo o Brasil. Especializada em Nutrição  
-            Clínica, tenho experiência em ambientes hospitalares e no 
-            acompanhamento de doenças crônicas e condições de saúde  complexas. Dedico-me a oferecer um <b>atendimento individualizado, </b>
-            com foco em transformar vidas e promover saúde e bem-estar.
-          </p>
-        </div>
+        <section className="flex justify-center text-center">
+          <img
+            src="/img/lulu2.png"
+            alt=""
+            className="w-170 max-w-[680px] max-h-[680px]"
+          />
+          <div>
+            <h1 className="text-green-950 text-[3vw] font-bold mb-10">
+              CONHEÇA A NUTRICIONISTA
+            </h1>
+            <p className="text-green-950 font-light leading-18 text-[2vw] mb-5 text-justify mx-10">
+              Sou a <b>Dra. Luana Teixeira, Nutricionista </b>em São Paulo,
+              atendendo presencialmente e online em todo o Brasil. Especializada
+              em Nutrição Clínica, tenho experiência em ambientes hospitalares e
+              no acompanhamento de doenças crônicas e condições de saúde
+              complexas. Dedico-me a oferecer um{" "}
+              <b>atendimento individualizado, </b>
+              com foco em transformar vidas e promover saúde e bem-estar.
+            </p>
+          </div>
+        </section>
       </HomeBackground>
-
-      
     </main>
-
-    
   );
 }
 
