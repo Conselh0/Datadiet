@@ -15,7 +15,7 @@ function Home() {
             orientação nutricional <br />
             personalizada <br />
           </h1>
-          <p className="text-green-950 text-[2vw] ml-4 my-auto">
+          <p className="">
             Protocolos personalizados para emagrecer com <br />
             saúde, corrigir deficiências e aumentar sua energia
           </p>
