@@ -25,7 +25,9 @@ function Navbar() {
           <Link to="/">Contatos</Link>
         </button>
       </div>
-      <img src="/img/avatar.png" alt="" className="w-[50px] h-[50px]" />
+      <Link to="/Admin">
+        <img src="/img/avatar.png" alt="" className="w-[50px] h-[50px]" />
+      </Link>
     </div>
   );
 }

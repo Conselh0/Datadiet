@@ -1,5 +1,11 @@
+import Sidebar from "../components/Sidebar";
+
 function AdminDashboard() {
-  return <h1>Merda Admin</h1>;
+  return (
+    <div>
+      <Sidebar />
+    </div>
+  )
 }
 
 export default AdminDashboard;
