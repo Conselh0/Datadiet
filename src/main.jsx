@@ -2,13 +2,14 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import App from "./App.jsx";
+import App from "./layouts/App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 //Rotas que devem ser importadas
 import Home from "./pages/Home.jsx";
-import AdminDashboard from "./pages/AdminDashboard.jsx";
+import AdminDashboard from "./layouts/AdminDashboard.jsx";
 import Feedback from "./pages/Feedback.jsx";
+import AdminHome from "./pages/AdminHome.jsx";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,12 @@ const router = createBrowserRouter([
   {
     path: "/Admin",
     element: <AdminDashboard />,
+    children: [
+      {
+        path: "/Admin",
+        element: <AdminHome />,
+      },
+    ],
   },
 ]);
 

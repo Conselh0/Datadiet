@@ -9,16 +9,18 @@ function Home() {
       {/*Estamos basicamete chamando a prop de fundo que já tem o estilo pré-definido*/}
       <HomeBackground>
         <main className="w-[60%] my-auto">
-          <h1 className="text-green-950 text-[3vw] ml-4 my-auto font-bold">
-            Alcance o equilíbrio, bem-estar e <br />
-            resultados duradouros com <br />
-            orientação nutricional <br />
-            personalizada <br />
-          </h1>
-          <p className="">
-            Protocolos personalizados para emagrecer com <br />
-            saúde, corrigir deficiências e aumentar sua energia
-          </p>
+          <div className="ml-4 text-green-950">
+            <h1 className=" text-[3vw] my-auto font-bold">
+              Alcance o equilíbrio, bem-estar e <br />
+              resultados duradouros com <br />
+              orientação nutricional <br />
+              personalizada <br />
+            </h1>
+            <p className=" text-[1vw]">
+              Protocolos personalizados para emagrecer com <br />
+              saúde, corrigir deficiências e aumentar sua energia
+            </p>
+          </div>
         </main>
         <img
           src="/img/LTfixed.png"

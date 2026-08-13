@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function Sidebar() {
   return (
-    <div className="h-[100vh] w-70 bg-gray-500">
+    <div className="min-h-screen w-70 bg-gray-500">
       <img
         src="/img/luana.png"
         alt=""
@@ -18,41 +18,31 @@ function Sidebar() {
       <section className="flex flex-col text-center mt-10 text-white bg-gray-400 font-bold">
         <Link
           to="#"
-          className="p-10"
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "gray")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "")}
+          className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
           PERFIL
         </Link>
         <Link
           to="#"
-          className="p-10"
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "gray")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "")}
+          className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
           HISTÓRICO DE CONSULTAS
         </Link>
         <Link
           to="#"
-          className="p-10"
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "gray")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "")}
+          className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
           PACIENTE
         </Link>
         <Link
           to="#"
-          className="p-10"
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "gray")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "")}
+          className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
           AGENDAMENTOsS
         </Link>
         <Link
           to="#"
-          className="p-10"
-          onMouseEnter={(e) => (e.target.style.backgroundColor = "gray")}
-          onMouseLeave={(e) => (e.target.style.backgroundColor = "")}
+          className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
           CADASTRO NUTRI
         </Link>
