@@ -1,4 +1,4 @@
-import Agendamentos from "./Agendamentos";
+import Agendamentos from "../components/Agendamentos";
 
 function AdminHome() {
   return (
