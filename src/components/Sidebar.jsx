@@ -17,13 +17,13 @@ function Sidebar() {
 
       <section className="flex flex-col text-center mt-10 text-white bg-gray-400 font-bold">
         <Link
-          to="#"
+          to="/Admin"
           className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
           PERFIL
         </Link>
         <Link
-          to="#"
+          to="/Admin/Historico"
           className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
           HISTÓRICO DE CONSULTAS
@@ -32,13 +32,7 @@ function Sidebar() {
           to="#"
           className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
-          PACIENTE
-        </Link>
-        <Link
-          to="#"
-          className="p-10 hover:bg-gray-600 transition-colors duration-200"
-        >
-          AGENDAMENTOsS
+          AGENDAMENTOS
         </Link>
         <Link
           to="#"

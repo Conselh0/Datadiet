@@ -14,7 +14,7 @@ function Navbar() {
         </button>
 
         <button className="mx-3">
-          <Link to="/Admin">Sobre</Link>
+          <Link to="/">Sobre</Link>
         </button>
 
         <button className="mx-3">

@@ -8,7 +8,7 @@ function AdminHome() {
           <h1 className="text-6xl font-bold">Luana Teixeira</h1> <br />
           <p className="text-2xl font-bold">ID: 001</p> {/*Arrumar com props */}
         </div>
-        <main className=" flex flex-col bg-gray-600 rounded-xl p-3 w-[60vw] h-full mr-10 text-white text-3xl align-center justify-center text-justify">
+        <main className=" flex flex-col bg-gray-600 rounded-xl p-3 w-[60vw] h-full text-white text-3xl align-center justify-center text-justify">
           <div className="p-3">
             <p className="p-3">
               {" "}
