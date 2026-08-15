@@ -1,3 +1,4 @@
+import { CircleUserRoundIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function Navbar() {
@@ -6,27 +7,28 @@ function Navbar() {
       <img
         src="/img/logo 2.png"
         alt="logoLuana"
-        className="w-[50px] h-[50px]"
+        className="hidden sm:block w-[50px] h-[50px]"
       />
-      <div className="flex justify-center text-3xl text-white">
-        <button className="mx-3">
+      <div className="flex flex-col items-start sm:items-center sm:flex-row sm:justify-center text-[3vw] lg:text-3xl text-white">
+        <button className="mx-3 hover:underline decoration-2 decoration-green-400 underline-offset-4">
           <Link to="/">Home</Link>
         </button>
 
-        <button className="mx-3">
+        <button className="mx-3 hover:underline decoration-2 decoration-green-400 underline-offset-4">
           <Link to="/">Sobre</Link>
         </button>
 
-        <button className="mx-3">
+        <button className="mx-3 hover:underline decoration-2 decoration-green-400 underline-offset-4">
           <Link to="/Feedback">Feedback</Link>
         </button>
 
-        <button className="mx-3">
+        <button className="mx-3 hover:underline decoration-2 decoration-green-400 underline-offset-4">
           <Link to="/">Contatos</Link>
         </button>
       </div>
       <Link to="/Admin">
-        <img src="/img/avatar.png" alt="" className="w-[50px] h-[50px]" />
+        <CircleUserRoundIcon size={50} color="white" />
+        {/*<img src="/img/avatar.png" alt="" className="w-[50px] h-[50px]" /> */}
       </Link>
     </div>
   );
