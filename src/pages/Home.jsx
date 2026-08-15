@@ -34,7 +34,7 @@ function Home() {
           <img
             src="/img/lulu2.png"
             alt=""
-            className="w-170 max-w-[680px] max-h-[680px]"
+            className=" hidden xl:block w-170 max-w-[680px] h-auto"
           />
           <div>
             <h1 className="text-green-950 text-[3vw] font-bold mb-10">

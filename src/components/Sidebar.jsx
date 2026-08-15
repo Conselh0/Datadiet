@@ -29,7 +29,7 @@ function Sidebar() {
           HISTÓRICO DE CONSULTAS
         </Link>
         <Link
-          to="#"
+          to="/Admin/Agendamentos"
           className="p-10 hover:bg-gray-600 transition-colors duration-200"
         >
           AGENDAMENTOS

@@ -1,1 +1,11 @@
 @import "tailwindcss";
+
+/*
+Breakpoints para responsividade:
+sm - 640px - celularesw grandes(paisagem)
+md - 768 - Tablets
+lg - 1024 - Laptops, notebooks
+xl - 1280 - monitores comuns
+2xl - 1536 - monitores grandes/TVs
+
+*/

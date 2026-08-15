@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="w-full h-full bg-green-900 flex justify-between p-3 items-center ">
+    <footer className="w-full h-full bg-green-900 flex flex-col lg:flex-row justify-between p-3 items-center ">
       <img
         src="/img/logo 2.png"
         alt="Logo da luana"

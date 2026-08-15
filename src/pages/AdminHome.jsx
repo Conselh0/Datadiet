@@ -1,3 +1,4 @@
+import { UserRoundPen } from "lucide-react";
 import Agendamentos from "../components/Agendamentos";
 
 function AdminHome() {
@@ -38,11 +39,15 @@ function AdminHome() {
               27/05/2000
             </p>
 
-            <button className="bg-gray-400 flex w-[10vw] rounded-md text justify-center ml-3">
+            <button className="bg-gray-400 flex w-fit p-2 text-2xl rounded-md text justify-center ml-3">
               Editar Perfil
             </button>
           </div>
         </main>
+        <div className="flex items-center text-2xl font-bold mt-10">
+          <UserRoundPen size={40} />
+          <h2>PACIENTES</h2>
+        </div>
         <Agendamentos />
       </div>
     </div>

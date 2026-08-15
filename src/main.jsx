@@ -11,6 +11,7 @@ import AdminDashboard from "./layouts/AdminDashboard.jsx";
 import Feedback from "./pages/Feedback.jsx";
 import AdminHome from "./pages/AdminHome.jsx";
 import Historico from "./pages/Historico.jsx";
+import AgendamentosAdmin from "./pages/AgendamentosAdmin.jsx";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
       {
         path: "/Admin/Historico",
         element: <Historico />,
+      },
+      {
+        path: "/Admin/Agendamentos",
+        element: <AgendamentosAdmin />,
       },
     ],
   },
