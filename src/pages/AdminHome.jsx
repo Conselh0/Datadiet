@@ -6,8 +6,10 @@ function AdminHome() {
     <div className="flex">
       <div className="flex flex-col justify-center mb-90 ml-10 mt-10">
         <div className="ml-2 text-justify">
-          <h1 className="text-6xl font-bold">Luana Teixeira</h1> <br />
-          <p className="text-2xl font-bold">ID: 001</p> {/*Arrumar com props */}
+          <h1 className="text-3xl lg:text-6xl font-bold">Luana Teixeira</h1>{" "}
+          <br />
+          <p className="lg:text-2xl lg:font-bold">ID: 001</p>{" "}
+          {/*Arrumar com props */}
         </div>
         <main className=" flex flex-col bg-gray-600 rounded-xl p-3 w-[60vw] h-full text-white text-3xl align-center justify-center text-justify">
           <div className="p-3">
