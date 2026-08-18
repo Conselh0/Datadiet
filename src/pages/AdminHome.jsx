@@ -3,8 +3,8 @@ import Agendamentos from "../components/Agendamentos";
 
 function AdminHome() {
   return (
-    <div className="flex">
-      <div className="flex flex-col justify-center mb-90 ml-10 mt-10">
+    <div>
+      <div className="w-full p-4 lg:p-10 min-h-screen">
         <div className="ml-2 text-justify">
           <h1 className="text-3xl lg:text-6xl font-bold">Luana Teixeira</h1>{" "}
           <br />

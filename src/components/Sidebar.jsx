@@ -6,7 +6,7 @@ function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="w-screen flex flex-row lg:flex-col lg:w-fit lg:min-h-screen lg:w-70 bg-gray-500">
+    <div className="flex flex-row lg:flex-col lg:w-fit lg:min-h-screen lg:w-70 bg-gray-500">
       <img
         src="/img/luana.png"
         alt=""
@@ -19,15 +19,11 @@ function Sidebar() {
         ID: 001 {/*Colocar com props o id dinâmico aqui */}
       </p>
 
-      <button onClick={() => setIsOpen(!isOpen)}>
-        <List
-          className="hidden sm:block cursor-pointer"
-          color="white"
-          size={40}
-        />
+      <button className="block lg:hidden" onClick={() => setIsOpen(!isOpen)}>
+        <List className="cursor-pointer" color="white" size={40} />
       </button>
-
-      <section className="hidden lg:flex lg:flex-col lg:text-center lg:mt-10 text-white bg-gray-400 font-bold">
+      {/*
+      <section className="lg:hidden lg:flex lg:flex-col lg:text-center lg:mt-10 text-white bg-gray-400 font-bold">
         <Link
           to="/Admin"
           className="flex items-center w-full justify-center text-center md:text-[50%] lg:text-[1vw] p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
@@ -53,6 +49,7 @@ function Sidebar() {
           CADASTRO NUTRI
         </Link>
       </section>
+       */}
       {/*O que faz o interruptor do useState funcionar */}
 
       {/*O que vai linkar o button com os links*/}
