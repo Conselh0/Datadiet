@@ -12,6 +12,8 @@ import Feedback from "./pages/Feedback.jsx";
 import AdminHome from "./pages/AdminHome.jsx";
 import Historico from "./pages/Historico.jsx";
 import AgendamentosAdmin from "./pages/AgendamentosAdmin.jsx";
+import LoginPa from "./pages/LoginPa.jsx"
+import CadPa from "./pages/CadPa.jsx"
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,7 @@ const router = createBrowserRouter([
         path: "/feedback",
         element: <Feedback />,
       },
+      
     ],
   },
   //Fica de fora e é executado a parte.
@@ -48,6 +51,25 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/LoginPa",
+    element: <LoginPa/>,
+    children: [
+      {
+        
+      }
+    ]
+  },
+
+  {
+    path: "/CadPa",
+    element: <CadPa/>,
+    children: [
+      {
+        
+      }
+    ]
+  }
 ]);
 
 createRoot(document.getElementById("root")).render(
