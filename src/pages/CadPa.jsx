@@ -1,6 +1,6 @@
 function CadPa() {
   return (
-    <main className="bg-orange-50/50 bg-full bg-[url('./img/bolas.png')] ">
+    <main className="bg-orange-50/50 bg-full flex items-center bg-[url('./img/bolas.png')] h-[100vh] ">
       <section className="w-135 mx-auto p-4 rounded-2xl bg-taupe-50/70 shadow-2xl">
         <h2 className="text-3xl mb-4">Criar conta</h2>
         {/*Textos de Nome e sobrenome kk*/}
@@ -12,14 +12,14 @@ function CadPa() {
             Sobrenome:
           </label>
 
-        {/*Input de nome e sobrenome kk*/}
+          {/*Input de nome e sobrenome kk*/}
           <br />
           <input
             type="text"
             placeholder="   Digite o seu nome"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
           />
-          
+
           <input
             type="text"
             placeholder="   Digite o seu sobrenome"
@@ -28,7 +28,7 @@ function CadPa() {
           />
           <br />
 
-        {/*Input de Nascimento e email kk*/}
+          {/*Input de Nascimento e email kk*/}
           <label for="text" className="text-lg mt-5">
             Nascimento:
           </label>
@@ -36,14 +36,14 @@ function CadPa() {
             E-mail:
           </label>
 
-        {/*Input de Nascimento e email kk*/}
+          {/*Input de Nascimento e email kk*/}
           <br />
           <input
             type="text"
             placeholder="   DD/MM/AAAA"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
           />
-          
+
           <input
             type="email"
             placeholder="   seu@email.com"
@@ -59,14 +59,14 @@ function CadPa() {
             Confirmar senha:
           </label>
 
-        {/*Input de Nascimento e email kk*/}
+          {/*Input de Nascimento e email kk*/}
           <br />
           <input
             type="text"
             placeholder="   Digite sua senha"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
           />
-          
+
           <input
             type="text"
             placeholder="   Confirme sua senha"
@@ -82,14 +82,14 @@ function CadPa() {
             Telefone:
           </label>
 
-        {/*Input de Nascimento e email kk*/}
+          {/*Input de Nascimento e email kk*/}
           <br />
           <input
             type="text"
             placeholder="   Digite o seu CPF"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
           />
-          
+
           <input
             type="text"
             placeholder="   (00) 00000-0000"
@@ -99,10 +99,11 @@ function CadPa() {
           <br />
 
           <center>
-            <button className="bg-green-500 mx-auto shadow-md rounded-lg w-80 h-10 text-white"><b>Criar conta</b></button>
+            <button className="bg-green-500 mx-auto shadow-md rounded-lg w-80 h-10 text-white">
+              <b>Criar conta</b>
+            </button>
           </center>
           <br />
-
         </form>
       </section>
     </main>
