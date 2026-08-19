@@ -6,7 +6,7 @@ function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex flex-row justify-between lg:flex-col lg:w-fit lg:min-h-screen lg:w-70 bg-gray-500">
+    <div className="flex flex-row relative lg:flex-col lg:w-fit lg:min-h-screen lg:w-70 bg-gray-500">
       <img
         src="/img/luana.png"
         alt=""
@@ -19,13 +19,13 @@ function Sidebar() {
         ID: 001 {/*Colocar com props o id dinâmico aqui */}
       </p>
       {/*O que faz o interruptor do useState funcionar */}
-      <button className="block lg:hidden" onClick={() => setIsOpen(!isOpen)}>
+      <button className="lg:hidden" onClick={() => setIsOpen(!isOpen)}>
         <List className="cursor-pointer" color="white" size={40} />
       </button>
 
       {/*O que vai linkar o button com os links*/}
       <section
-        className={`${isOpen ? "block" : "hidden"} flex-col lg:flex lg:flex-col text-center mt-4 lg:mt-10 text-white bg-gray-400 font-bold w-full`}
+        className={`${isOpen ? "block" : "hidden"} flex-col lg:flex lg:flex-col text-center lg:mt-4 mt-20 absolute lg:relative lg:mt-5  text-white bg-gray-400 font-bold w-full`}
       >
         <Link
           to="/Admin"
