@@ -26,10 +26,12 @@ function Navbar() {
           <Link to="/">Contatos</Link>
         </button>
       </div>
-      <Link to="/Admin">
-        <CircleUserRoundIcon size={50} color="white" />
-        {/*<img src="/img/avatar.png" alt="" className="w-[50px] h-[50px]" /> */}
-      </Link>
+      <button>
+        <Link to="/Admin">
+          <CircleUserRoundIcon size={50} color="white" />
+          {/*<img src="/img/avatar.png" alt="" className="w-[50px] h-[50px]" /> */}
+        </Link>
+      </button>
     </div>
   );
 }
