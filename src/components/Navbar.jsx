@@ -34,7 +34,7 @@ function Navbar() {
             <CircleUserRoundIcon
               className="cursor-pointer"
               color="white"
-              size={40}
+              size={50}
             />
           }
         >

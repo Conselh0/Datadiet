@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Footer() {
   return (
     <footer className="w-full h-full bg-green-900 flex flex-col lg:flex-row justify-between p-3 items-center ">
@@ -17,6 +19,9 @@ function Footer() {
           <br />
           +55 11 97117-2735
         </p>
+        <Link to={"/Admin"} className="font-light hover:underline">
+          Entrar como nutricionista
+        </Link>
 
         {/*Div que separa os ícones dos textos */}
         <div className="flex p-5 justify-center items-center gap-5">
