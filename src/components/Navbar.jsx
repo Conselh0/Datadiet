@@ -37,8 +37,12 @@ function Navbar() {
               size={50}
             />
           }
-        >
+         >
+
           <Link to="#">PERFIL</Link>
+          <Link to="#">AGENDAMENTO</Link>
+          <Link to="#">SAIR</Link>
+
         </HamburguerMenu>
       </button>
     </div>

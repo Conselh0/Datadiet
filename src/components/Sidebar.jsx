@@ -4,11 +4,11 @@ import { List } from "lucide-react";
 
 function Sidebar() {
   return (
-    <div className="flex flex-row relative lg:flex-col lg:w-fit lg:min-h-screen lg:w-70 bg-gray-500">
+    <div className="flex flex-row relative justify-between lg:flex-col lg:w-fit lg:min-h-screen lg:w-70 bg-gray-500">
       <img
         src="/img/luana.png"
         alt=""
-        className="rounded-[300px] border-2 w-20 lg:w-50 m-auto"
+        className="rounded-[300px] border-2 w-20 lg:w-50 lg:m-auto"
       />
       <p className="hidden lg:block lg:text-white lg:text-center lg:text-4xl lg:font-bold">
         Luana Teixeira <br />

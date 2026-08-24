@@ -11,7 +11,7 @@ function HamburguerMenu({ children, icone }) {
 
       {/*O que vai linkar o button com os links*/}
       <section
-        className={`${isOpen ? "block" : "hidden"} flex-col lg:flex lg:flex-col text-center lg:mt-4 mt-20 absolute left-0 top-0 lg:relative lg:mt-5  text-white bg-gray-400 font-bold w-full`}
+        className={`${isOpen ? "block" : "hidden"}  max-w-[400px] lg:flex lg:flex-col text-center lg:mt-4 mt-20 absolute right-0 top-0 lg:relative lg:mt-5  text-white bg-gray-400 font-bold w-full`}
       >
         {children}
       </section>
