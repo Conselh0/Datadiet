@@ -5,10 +5,10 @@ function CadPa() {
         <h2 className="text-3xl mb-4">Criar conta</h2>
         {/*Textos de Nome e sobrenome kk*/}
         <form method="post" className="">
-          <label for="text" className="text-lg mt-5">
+          <label for="text" className="text-lg mt-5 font-medium ">
             Nome:
           </label>
-          <label for="text" className="ml-55">
+          <label for="text" className="ml-54 font-semibold">
             Sobrenome:
           </label>
 
@@ -29,10 +29,10 @@ function CadPa() {
           <br />
 
           {/*Input de Nascimento e email kk*/}
-          <label for="text" className="text-lg mt-5">
+          <label for="text" className="text-lg mt-5 font-me">
             Nascimento:
           </label>
-          <label for="email" className="ml-42">
+          <label for="email" className="ml-42 font-semibold">
             E-mail:
           </label>
 
@@ -52,10 +52,10 @@ function CadPa() {
           <br />
 
           {/*Input de Nascimento e email kk*/}
-          <label for="text" className="text-lg mt-5">
+          <label for="text" className="text-lg mt-5 font-me">
             Senha:
           </label>
-          <label for="text" className="ml-53">
+          <label for="text" className="ml-53 font-semibold">
             Confirmar senha:
           </label>
 
@@ -75,10 +75,10 @@ function CadPa() {
           <br />
 
           {/*Input de Nascimento e email kk*/}
-          <label for="text" className="text-lg mt-5">
+          <label for="text" className="text-lg mt-5 font-me">
             CPF:
           </label>
-          <label for="text" className="ml-57">
+          <label for="text" className="ml-57 font-semibold">
             Telefone:
           </label>
 

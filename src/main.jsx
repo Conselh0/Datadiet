@@ -14,6 +14,8 @@ import Historico from "./pages/Historico.jsx";
 import AgendamentosAdmin from "./pages/AgendamentosAdmin.jsx";
 import LoginPa from "./pages/LoginPa.jsx";
 import CadPa from "./pages/CadPa.jsx";
+import FichaAnam from "./pages/FichaAnam.jsx";
+import CadNu from "./pages/CadNu.jsx";
 import UserDashboard from "./layouts/UserDashboard.jsx";
 
 const router = createBrowserRouter([
@@ -63,6 +65,14 @@ const router = createBrowserRouter([
   {
     path: "/CadPa",
     element: <CadPa />,
+  },
+  {
+    path: "/FichaAnam",
+    element: <FichaAnam />,
+  },
+  {
+    path: "/CadNu",
+    element: <CadNu />,
   },
 ]);
 
