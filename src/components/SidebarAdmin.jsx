@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import HamburguerMenu from "./HambuerguerMenu";
+import HamburguerMenu from "./ADMH_Menu";
 import { List } from "lucide-react";
 
 function Sidebar() {

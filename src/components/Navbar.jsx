@@ -1,6 +1,5 @@
 import { CircleUserRoundIcon } from "lucide-react";
 import { Link } from "react-router-dom";
-import HamburguerMenu from "./HambuerguerMenu";
 
 function Navbar() {
   return (
@@ -29,21 +28,11 @@ function Navbar() {
         </button>
       </div>
       <button>
-        <HamburguerMenu
-          icone={
-            <CircleUserRoundIcon
-              className="cursor-pointer"
-              color="white"
-              size={50}
-            />
-          }
-         >
-
-          <Link to="#">PERFIL</Link>
-          <Link to="#">AGENDAMENTO</Link>
-          <Link to="#">SAIR</Link>
-
-        </HamburguerMenu>
+        <CircleUserRoundIcon
+          className="cursor-pointer"
+          color="white"
+          size={40}
+        />
       </button>
     </div>
   );
