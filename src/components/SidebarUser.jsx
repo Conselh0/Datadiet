@@ -22,7 +22,9 @@ function SidebarUser() {
         <Link className="hover:bg-green-700 p-7">AGENDAMENTOS</Link>
         <Link className="hover:bg-green-700 p-7">CONSULTAS</Link>
         <Link className="hover:bg-green-700 p-7">AGENDAR CONSULTA</Link>
-        <Link className="hover:bg-green-700 p-7">SAIR</Link>
+        <Link to="/" className="hover:bg-green-700 p-7">
+          SAIR
+        </Link>
       </section>
     </div>
   );
