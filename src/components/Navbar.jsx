@@ -11,7 +11,7 @@ function Navbar() {
         className="hidden sm:block w-[50px] h-[50px]"
       />
 
-      <div className="flex flex-col items-start sm:items-center sm:flex-row sm:justify-center text-[3vw] lg:text-3xl text-white">
+      <div className="flex flex-col items-start sm:items-center sm:flex-row sm:justify-center text-2xl text-white">
         <button className="mx-3 hover:underline decoration-2 decoration-green-400 underline-offset-4">
           <Link to="/">Home</Link>
         </button>
@@ -37,19 +37,19 @@ function Navbar() {
           />
         }
       >
-        <Link to="/User" className="p-5">
+        <Link to="/User" className="p-5 hover:bg-green-800">
           PERFIL
         </Link>
-        <Link to="/User" className="p-5">
+        <Link to="/User" className="p-5 hover:bg-green-800">
           AGENDAMENTO
         </Link>
-        <Link to="/User" className="p-5">
+        <Link to="/User" className="p-5 hover:bg-green-800">
           AGENDAR CONSULTA
         </Link>
-        <Link to="/User" className="p-5">
+        <Link to="/User" className="p-5 hover:bg-green-800">
           CONSULTA
         </Link>
-        <Link to="/User" className="p-5">
+        <Link to="/User" className="p-5 hover:bg-green-800">
           SAIR
         </Link>
       </USERH_Menu>
