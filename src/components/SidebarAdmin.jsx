@@ -25,32 +25,32 @@ function Sidebar() {
           <section>
             <Link
               to="/Admin"
-              className="flex items-center w-full justify-center text-center text-sm p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
+              className="flex items-center w-full justify-center text-center rounded-xl text-sm p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
             >
               PERFIL
             </Link>
             <Link
               to="/Admin/Historico"
-              className="flex items-center w-full justify-center text-center text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
+              className="flex items-center w-full justify-center text-center  rounded-xl text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
             >
               HISTÓRICO DE CONSULTAS
             </Link>
             <Link
               to="/Admin/Agendamentos"
-              className="flex items-center w-full justify-center text-center text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
+              className="flex items-center w-full justify-center text-center rounded-xl text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
             >
               AGENDAMENTOS
             </Link>
             <Link
               to="#"
-              className="flex items-center w-full justify-center text-center text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
+              className="flex items-center w-full justify-center text-center rounded-xl text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
             >
               CADASTRO NUTRI
             </Link>
 
             <Link
               to="/"
-              className="flex items-center w-full justify-center text-center text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
+              className="flex items-center w-full justify-center text-center rounded-xl text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
             >
               SAIR
             </Link>

@@ -48,7 +48,7 @@ function AdminHome() {
         </main>
         <div className="flex items-center text-2xl font-bold mt-10">
           <UserRoundPen size={40} />
-          <h2>PACIENTES</h2>
+          <h2>AGENDAMENTOS</h2>
         </div>
         <Agendamentos />
       </div>

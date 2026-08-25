@@ -37,19 +37,19 @@ function Navbar() {
           />
         }
       >
-        <Link to="/User" className="p-5 hover:bg-slate-200">
+        <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
           PERFIL
         </Link>
-        <Link to="/User" className="p-5 hover:bg-slate-200">
+        <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
           AGENDAMENTO
         </Link>
-        <Link to="/User" className="p-5 hover:bg-slate-200">
+        <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
           AGENDAR CONSULTA
         </Link>
-        <Link to="/User" className="p-5 hover:bg-slate-200">
+        <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
           CONSULTA
         </Link>
-        <Link to="/User" className="p-5 hover:bg-slate-200">
+        <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
           SAIR
         </Link>
       </USERH_Menu>
