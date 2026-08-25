@@ -7,7 +7,7 @@ function SidebarUser() {
         <img
           src="/img/mulher.jpg"
           alt=""
-          className="w-40 rounded-[300px] border-1"
+          className="rounded-[300px] border-2 w-20 lg:w-50 lg:m-auto"
         />
         <p className="block text-white text-center text-4xl font-bold">
           Ana Clara <br />
