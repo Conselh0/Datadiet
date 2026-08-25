@@ -1,7 +1,7 @@
 function FichaAnam() {
   return (
     <main className="bg-orange-50/50 bg-full flex items-center bg-[url('./img/bolas.png')]  ">
-      <section className="w-153 mx-auto p-4 rounded-2xl bg-taupe-50/70 shadow-2xl mt-10 mb-10">
+      <section className="w-160 mx-auto p-4 rounded-2xl bg-taupe-50/70 shadow-2xl mt-10 mb-10">
         <h2 className="text-3xl mb-4">Ficha de anamnese nutricional</h2>
 
         <form method="post" className="">
@@ -114,15 +114,15 @@ function FichaAnam() {
             Você consume bebida alcólica?
           </label>{" "}
           <br />
-          <input type="radio" />
+          <input type="radio" name="bebida" />
           <label> Sim</label>
-          <input type="radio" className="ml-5" />
+          <input type="radio" name="bebida" className="ml-5" />
           <label> Não</label>
           <br />
           <label className="font-semibold"> Você fuma?</label> <br />
-          <input type="radio" />
+          <input type="radio" name="fuma" />
           <label> Sim</label>
-          <input type="radio" className="ml-5" />
+          <input type="radio" name="fuma" className="ml-5 " />
           <label> Não</label>
           <br />
           <label className="font-semibold">
@@ -130,9 +130,9 @@ function FichaAnam() {
             Você pratica alguma atividade física?
           </label>{" "}
           <br />
-          <input type="radio" />
+          <input type="radio" name="atividadeFisica" />
           <label> Sim</label>
-          <input type="radio" className="ml-5" />
+          <input type="radio" name="atividadeFisica" className="ml-5" />
           <label> Não</label>
           <br />
           <label className="font-semibold">
@@ -140,9 +140,9 @@ function FichaAnam() {
             Como é seu funcionamento intestinal?
           </label>{" "}
           <br />
-          <input type="radio" />
+          <input type="radio" name="funcionamentoIntestinal" />
           <label> Regular</label>
-          <input type="radio" className="ml-5" />
+          <input type="radio" name="funcionamentoIntestinal" className="ml-5" />
           <label> Irregular</label>
           <br />
           <label className="font-semibold">
@@ -151,9 +151,9 @@ function FichaAnam() {
             banheiro?
           </label>{" "}
           <br />
-          <input type="radio" />
+          <input type="radio" name="desconfortoIntestinal" />
           <label> Sim</label>
-          <input type="radio" className="ml-5" />
+          <input type="radio" name="desconfortoIntestinal" className="ml-5" />
           <label> Não</label>
           <br />
           <label className="font-semibold">
@@ -161,9 +161,9 @@ function FichaAnam() {
             Você costuma se sentir cansado ou desanimado frequentemente?
           </label>{" "}
           <br />
-          <input type="radio" />
+          <input type="radio" name="casaço" />
           <label> Sim</label>
-          <input type="radio" className="ml-5" />
+          <input type="radio" name="casaço" className="ml-5" />
           <label> Não</label>
           <br />
           <br />
