@@ -17,12 +17,12 @@ function SidebarUser() {
         </p>
       </div>
 
-      <section className="flex flex-col text-center text-white bg-green-950 w-full font-bold">
-        <Link className="hover:bg-green-700 p-7">PERFIL</Link>
-        <Link className="hover:bg-green-700 p-7">AGENDAMENTOS</Link>
-        <Link className="hover:bg-green-700 p-7">CONSULTAS</Link>
-        <Link className="hover:bg-green-700 p-7">AGENDAR CONSULTA</Link>
-        <Link to="/" className="hover:bg-green-700 p-7">
+      <section className="flex flex-col text-center text-white bg-green-950 w-full h-fit font-bold">
+        <Link className="hover:bg-green-700 p-8">PERFIL</Link>
+        <Link className="hover:bg-green-700 p-8">AGENDAMENTOS</Link>
+        <Link className="hover:bg-green-700 p-8">CONSULTAS</Link>
+        <Link className="hover:bg-green-700 p-8">AGENDAR CONSULTA</Link>
+        <Link to="/" className="hover:bg-green-700 p-8">
           SAIR
         </Link>
       </section>

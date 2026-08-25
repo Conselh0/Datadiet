@@ -17,6 +17,7 @@ import CadPa from "./pages/CadPa.jsx";
 import FichaAnam from "./pages/FichaAnam.jsx";
 import CadNu from "./pages/CadNu.jsx";
 import UserDashboard from "./layouts/UserDashboard.jsx";
+import UserHome from "./pages/UserHome.jsx";
 
 const router = createBrowserRouter([
   {
@@ -56,7 +57,12 @@ const router = createBrowserRouter([
   {
     path: "/User",
     element: <UserDashboard />,
-    children: [{}],
+    children: [
+      {
+        path: "/User",
+        element: <UserHome />,
+      },
+    ],
   },
   {
     path: "/LoginPa",

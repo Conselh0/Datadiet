@@ -3,7 +3,7 @@ import SidebarUser from "../components/SidebarUser";
 
 function UserDashboard() {
   return (
-    <div>
+    <div className="flex">
       <SidebarUser />
       <Outlet />
     </div>

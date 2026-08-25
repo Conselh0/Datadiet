@@ -12,7 +12,7 @@ function USERH_Menu({ icone, children }) {
         {icone}
       </button>
       <section
-        className={`${IsOpen ? "block" : "hidden"} flex flex-col text-center absolute right-0 w-fit border-1 border-black bg-green-600 text-white font-bold`}
+        className={`${IsOpen ? "block" : "hidden"} flex flex-col text-center absolute right-0 w-fit border-1 border-black bg-white text-black font-bold`}
       >
         {children}
       </section>
