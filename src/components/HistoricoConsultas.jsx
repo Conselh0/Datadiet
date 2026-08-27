@@ -8,14 +8,14 @@ function HistoricoConsultas() {
             {/*divide-x-2 coloca a barra vertical na tabela */}
             {/*Onde fica os títulos */}
             <th className="border-1 border-black p-0 lg:p-2 w-1/4 text-xs md:text-base bg-green-900 text-white">
-              NÚMERO DO ATENDIMENTO
+              PROTOCOLO
             </th>
             {/*Onde escrever os textos dos títulos */}
             <th className="border-1 border-black p-0 lg:p-2 w-1/4 text-xs md:text-base bg-green-900 text-white">
-              NOME DO PACIENTE
+              PROFISSIONAL
             </th>
             <th className="border-1 border-black p-0 lg:p-2 w-1/4 text-xs md:text-base bg-green-900 text-white">
-              DATA DO AGENDAMENTO
+              DATA/HORA
             </th>
             <th className="border-1 border-black p-0 lg:p-2 w-1/4 text-xs md:text-base bg-green-900 text-white">
               STATUS
@@ -32,7 +32,7 @@ function HistoricoConsultas() {
               Maria Sousa
             </td>
             <td className="border-1 border-black p-0 lg:p-2 text-xs md:text-base">
-              20/06/2026 12:00
+              20/06/2026 | 12:00
             </td>
             <td className="border-1 border-black  p-0 lg:p-2 text-xs md:text-base">
               <button className="bg-green-400 w-fit rounded-md p-0 md:p-2 m-2 md:px-3">

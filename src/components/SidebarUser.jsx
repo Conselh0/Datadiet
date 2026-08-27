@@ -22,7 +22,9 @@ function SidebarUser() {
         <Link to="/User/Historico" className="hover:bg-green-700 p-8">
           HISTÓRICO DE CONSULTAS
         </Link>
-        <Link className="hover:bg-green-700 p-8">AGENDAR</Link>
+        <Link to="/User/Agendamentos" className="hover:bg-green-700 p-8">
+          AGENDAR
+        </Link>
         <Link className="hover:bg-green-700 p-8">AGENDAMENTOS</Link>
         <Link to="/" className="hover:bg-green-700 p-8">
           SAIR

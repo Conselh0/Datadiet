@@ -19,6 +19,7 @@ import CadNu from "./pages/CadNu.jsx";
 import UserDashboard from "./layouts/UserDashboard.jsx";
 import UserHome from "./pages/UserHome.jsx";
 import UserHistorico from "./pages/UserHistorico.jsx";
+import Agendamentos from "./pages/Agendamentos.jsx";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "/User/Historico",
         element: <UserHistorico />,
+      },
+      {
+        path: "/User/Agendamentos",
+        element: <Agendamentos />,
       },
     ],
   },
