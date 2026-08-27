@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function SidebarUser() {
   return (
-    <div className="bg-green-900 flex flex-col min-h-screen min-w-75 items-center">
+    <div className="bg-green-900 flex flex-col min-h-screen w-screen lg:w-75 items-center">
       <div className="p-5">
         <img
           src="/img/mulher.jpg"
