@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 function SidebarUser() {
   return (
-    <div className="bg-green-900 flex flex-col h-screen min-w-75 items-center justify-between">
+    <div className="bg-green-900 flex flex-col h-auto min-w-75 items-center">
       <div className="p-5">
         <img
           src="/img/mulher.jpg"
@@ -17,7 +17,7 @@ function SidebarUser() {
         </p>
       </div>
 
-      <section className="flex flex-col text-center text-white bg-green-950 w-full h-fit font-bold">
+      <section className="flex flex-col text-center text-white bg-green-950 w-full font-bold mt-30">
         <Link className="hover:bg-green-700 p-8">PERFIL</Link>
         <Link to="/User/Historico" className="hover:bg-green-700 p-8">
           HISTÓRICO DE CONSULTAS
@@ -25,7 +25,6 @@ function SidebarUser() {
         <Link to="/User/Agendamentos" className="hover:bg-green-700 p-8">
           AGENDAR
         </Link>
-        <Link className="hover:bg-green-700 p-8">AGENDAMENTOS</Link>
         <Link to="/" className="hover:bg-green-700 p-8">
           SAIR
         </Link>

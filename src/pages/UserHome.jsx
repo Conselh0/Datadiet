@@ -1,3 +1,5 @@
+import DataAgendamentos from "../components/DataAgendamentos";
+
 function UserHome() {
   return (
     <main className="w-full p-4 lg:p-10 min-h-screen">
@@ -5,7 +7,7 @@ function UserHome() {
         <h1 className="text-5xl ">Ana Clara</h1>
         <p className="text-2xl">ID: 0001</p>
       </div>
-      <div className="bg-green-950 text-white w-[60vw] p-4 min-h-96 rounded-xl text-xl lg:text-3xl flex flex-col justify-between">
+      <div className="bg-green-950 text-white w-[60vw] p-4 min-h-96 rounded-xl text-xl lg:text-3xl flex flex-col justify-between mb-10">
         <div>
           <p className="p-3">
             <b>Nome:</b> Ana Clara
@@ -26,6 +28,7 @@ function UserHome() {
           </button>
         </div>
       </div>
+      <DataAgendamentos />
     </main>
   );
 }
