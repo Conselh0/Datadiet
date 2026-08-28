@@ -22,7 +22,7 @@ function Sidebar() {
         <HamburguerMenu
           icone={<List className="cursor-pointer" color="white" size={40} />}
         >
-          <section>
+          <section className="bg-gray-400 rounded-xl">
             <Link
               to="/Admin"
               className="flex items-center w-full justify-center text-center rounded-xl text-sm p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"

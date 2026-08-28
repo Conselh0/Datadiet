@@ -41,12 +41,12 @@ function Home() {
               CONHEÇA A NUTRICIONISTA
             </h1>
             <p className="text-green-950 font-light leading-10  sm:leading-18 sm:text-2xl xl:text-[2vw] mb-5 text-justify mx-10">
-              Sou a <b>Dra. Luana Teixeira, Nutricionista </b>em São Paulo,
+              Sou a <span className="font-extrabold">Dra. Luana Teixeira, Nutricionista </span> em São Paulo,
               atendendo presencialmente e online em todo o Brasil. Especializada
               em Nutrição Clínica, tenho experiência em ambientes hospitalares e
               no acompanhamento de doenças crônicas e condições de saúde
               complexas. Dedico-me a oferecer um{" "}
-              <b>atendimento individualizado, </b>
+              <span className="font-extrabold">atendimento individualizado</span>,
               com foco em transformar vidas e promover saúde e bem-estar.
             </p>
           </div>
