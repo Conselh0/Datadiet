@@ -1,7 +1,7 @@
 function Agendamentos() {
   return (
     <div className="flex items-center">
-      <table className="border-2 col-span-3 w-full lg:w-[75vw] text-center border-separate rounded-md border-spacing-0">
+      <table className="border-2 col-span-3 w-full text-center border-separate rounded-md border-spacing-0">
         <thead>
           <tr className="divide-x-3 divide-y-3 w-1/4">
             {" "}

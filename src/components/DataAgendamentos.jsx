@@ -1,6 +1,6 @@
 function DataAgendamentos() {
   return (
-    <div className="bg-green-950 w-full lg:w-[60vw] h-[45vh] p-3 text-center rounded-xl">
+    <div className="bg-green-950 w-full lg:w-[60vw] h-auto p-3 text-center rounded-xl">
       <h1 className="bg-white rounded-md font-bold text-3xl p-2">
         AGENDAMENTOS
       </h1>
