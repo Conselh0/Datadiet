@@ -95,6 +95,22 @@ function CadPa() {
             placeholder="   (00) 00000-0000"
             className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
           />
+
+          <label for="text" className="text-lg mt-5 ">
+            Gênero:
+          </label>
+          <br />
+
+          <select className="bg-gray-50 shadow-md rounded-lg w-60 h-10 mb-5text-lg text-black/50">
+            <option value="" disabled selected className="text-lg">
+              Selecione seu gênero
+            </option>
+
+            <option value="Clinica e Hospitalar">Homem</option>
+            <option value="Esportiva">Mulher</option>
+            <option value="Materno-Infantil">Prefiro não responder</option>
+            <option value="Comportamental e Emagrecimento">Outro</option>
+          </select>
           <br />
           <br />
 

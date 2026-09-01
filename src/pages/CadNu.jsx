@@ -112,7 +112,7 @@ function CadNu() {
 
           <label className="font-semibold"> Sua especialização: </label>
 
-          <select name="" id="" className="bg-amber-50 shadow-md mb-5">
+          <select className="bg-amber-50 shadow-md mb-5">
             <option value="" disabled selected>
               {" "}
               Selecione a Especialização
