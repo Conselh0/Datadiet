@@ -26,8 +26,22 @@ function Navbar() {
 
         <button className="mx-3 hover:underline decoration-2 decoration-green-400 underline-offset-4 hover:text-green-400">
           <Link to="/">Contatos</Link>
-        </button>
+        </button>      
+
       </div>
+
+      <Link to="/CadPa">
+        <button className="cursor-pointer bg-green-700 p-2 rounded-md text-lg text-white ">
+            Cadastrar
+          </button>
+          </Link>
+
+          <Link to="/LoginPa">
+        <button className="cursor-pointer bg-green-700 p-2 rounded-md text-lg ml-5 text-white">
+            Entrar
+          </button>
+          </Link>
+
       <USERH_Menu
         icone={
           <CircleUserRoundIcon
