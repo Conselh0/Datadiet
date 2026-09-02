@@ -129,6 +129,10 @@ function CadPa() {
               <b>Criar conta</b>
             </button>
             </Link>
+            <br />
+
+            <Link to="/CadNu" className='text-gray-400'>Criar conta de nutricionista</Link>
+
           </center>
           <br />
         </form>
