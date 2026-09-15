@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# --- BACKEND (SERVER) ---
+server/node_modules/
+server/.env
+server/.env.local
+server/*-debug.log*
+server/dist/
+server/build/
