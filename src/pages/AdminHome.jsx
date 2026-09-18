@@ -32,7 +32,7 @@ function AdminHome() {
           {/*Arrumar com props */}  
         </div>
 
-        <main className="relative flex-col w-full bg-gray-600 rounded-xl p-3 h-full text-white text-xl  lg:text-3xl align-center justify-center text-justify">        
+        <main className="relative flex-col w-full bg-gray-600 rounded-xl p-3 h-auto text-white text-xl  lg:text-3xl align-center justify-center text-justify">        
           
           <button className="absolute top-4 right-4" onClick={abrirModal}>
           <Settings className="cursor-pointer size-13 p-1.5 bg-gray-400 rounded-2xl" />
@@ -40,7 +40,7 @@ function AdminHome() {
 
         <dialog
           ref={modal}
-          className={`rounded-xl bg-taupe-50/90 h-152 w-150 p-5 fixed top-1/2 left-1/2
+          className={`rounded-xl overflow-hidden bg-taupe-50/90 h-152 w-150 p-5 fixed top-1/2 left-1/2
   -translate-x-1/2 -translate-y-1/2
     ${
       fechando

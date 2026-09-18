@@ -29,14 +29,14 @@ function UserHome() {
         <p className="text-2xl">ID: 0001</p>
       </div>
       
-      <div className="bg-green-950 text-white w-full lg:w-[60vw] p-4 min-h-96 rounded-xl text-xl lg:text-3xl flex flex-col justify-between mb-10 relative">
+      <div className="bg-green-950 text-white w-full lg:w-[60vw] p-4 h-auto rounded-xl text-xl lg:text-3xl flex flex-col justify-between mb-10 relative">
         <button className="absolute top-4 right-4" onClick={abrirModal}>
           <Settings className="cursor-pointer size-13 p-1.5 bg-green-700 rounded-2xl" />
         </button>
 
         <dialog
           ref={modal}
-          className={`rounded-xl bg-taupe-50/90 h-152 w-150 p-5 fixed top-1/2 left-1/2
+          className={`rounded-xl bg-taupe-50/90 overflow-hidden h-152 w-150 p-5 fixed top-1/2 left-1/2
   -translate-x-1/2 -translate-y-1/2
     ${
       fechando
