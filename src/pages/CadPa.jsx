@@ -104,8 +104,7 @@ function CadPa() {
           {/*Input de Nascimento e email kk*/}
           <br />
           <input
-            type="text"
-            placeholder="   DD/MM/AAAA"
+            type="date"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
             value={nascimento}
             onChange={(e) => setNascimento(e.target.value)}

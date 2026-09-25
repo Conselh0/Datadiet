@@ -54,9 +54,10 @@ app.post("/cadastro", async (req, res) => {
       telefone,
       genero,
     });
-    res.status(201).send(`Cadastro realizado! ${user}`);
+    res.status(201).json({ mensagem: "Cadastro realizado!" });
   } catch (error) {
-    return res.status(500).send(error.message);
+    console.error("ERRO NO CADASTRO:", error);
+    return res.status(500).json({ erro: error.message });
   }
 });
 
