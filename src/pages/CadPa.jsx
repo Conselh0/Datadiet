@@ -1,8 +1,9 @@
 import { CircleArrowLeft } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function CadPa() {
+  const navigate = useNavigate();
   //Pegando os dados e armazenando nos states
   const [nome, setNome] = useState("");
   const [sobrenome, setSobrenome] = useState("");
@@ -16,23 +17,35 @@ function CadPa() {
 
   //O clique do botão chama essa função que envia para o cadastro
   async function salvar() {
-    const res = await fetch("http://localhost:8080/cadastro", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nome,
-        sobrenome,
-        nascimento,
-        email,
-        senha,
-        confirmarSenha,
-        cpf,
-        telefone,
-        genero,
-      }),
-    });
-    const data = await res.json();
-    console.log(data);
+    try {
+      const res = await fetch("http://localhost:8080/cadastro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome,
+          sobrenome,
+          nascimento,
+          email,
+          senha,
+          confirmarSenha,
+          cpf,
+          telefone,
+          genero,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      console.log(data);
+
+      if (data.mensagem) {
+        navigate("/User");
+      } else {
+        alert(data.erro || "Erro desconhecido");
+      }
+    } catch (error) {
+      console.error("Erro no fetch:", error);
+      alert("Erro ao conectar com o servidor");
+    }
   }
   return (
     <main className="bg-orange-50/50 bg-full flex items-center bg-[url('./img/bolas.png')] h-[100vh] ">
@@ -45,7 +58,13 @@ function CadPa() {
         </Link>
         <h2 className="text-3xl mb-4">Criar conta</h2>
         {/*Textos de Nome e sobrenome kk*/}
-        <form method="post" className="">
+        <form
+          method="post"
+          onSubmit={(e) => {
+            e.preventDefault();
+            salvar();
+          }}
+        >
           <label for="text" className="text-lg mt-5 font-medium ">
             Nome:
           </label>
@@ -176,11 +195,13 @@ function CadPa() {
           <br />
 
           <center>
-            <Link to="/User">
-              <button className="cursor-pointer bg-green-700 mx-auto shadow-md rounded-lg w-80 h-10 text-white">
-                <b onClick={salvar}>Criar conta</b>
-              </button>
-            </Link>
+            <button
+              type="submit"
+              className="cursor-pointer bg-green-700 mx-auto shadow-md rounded-lg w-80 h-10 text-white"
+            >
+              Criar conta
+            </button>
+
             <br />
 
             <Link to="/CadNu" className="text-gray-400">

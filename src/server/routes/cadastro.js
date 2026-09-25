@@ -1,15 +1,63 @@
 import express from "express";
 import cors from "cors";
+import UserModel from "../models/user.model.js";
 
 const app = express();
 app.use(cors()); //middleware para sempre usarmos o cors
 app.use(express.json()); // vai ler o vody do post/put
 
-//Fazer a mão amanhã
-app.post("/cadastro", (req, res) => {});
+//Cadastro do paciente
+app.post("/cadastro", async (req, res) => {
+  try {
+    const {
+      nome,
+      sobrenome,
+      nascimento,
+      email,
+      senha,
+      confirmarSenha,
+      cpf,
+      telefone,
+      genero,
+    } = req.body; //Requere as variáveis que foram enviadas pelo CadPa
 
-const port = 8080;
+    //Obriga o preenchimento de todos os campos
+    if (
+      !nome ||
+      !sobrenome ||
+      !email ||
+      !senha ||
+      !nascimento ||
+      !cpf ||
+      !telefone ||
+      !genero
+    ) {
+      return res
+        .status(400)
+        .json({ erro: "Preencha todos os campos obrigatórios." });
+    }
 
-app.listen(port, () => console.log(`Rodando o express na porta ${port}`));
+    //Validação do campo da senha
+    if (confirmarSenha !== senha) {
+      return res.status(400).send({ erro: "as senhas não conferem." });
+    }
+
+    //PRINCIPAL = Salva os usuários no banco
+    const user = await UserModel.create({
+      nome,
+      sobrenome,
+      nascimento,
+      email,
+      senha,
+      confirmarSenha,
+      cpf,
+      telefone,
+      genero,
+    });
+    res.status(201).send(`Cadastro realizado! ${user}`);
+  } catch (error) {
+    return res.status(500).send(error.message);
+  }
+});
 
 export default app;

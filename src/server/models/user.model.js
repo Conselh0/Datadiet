@@ -26,9 +26,12 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   cpf: {
-    type: String,
+    type: String, //Trata-se de uma regra usar string para código identificador
     required: true,
     unique: true,
+    minlength: 11,
+    maxlength: 11,
+    match: /^\d{11}$/, //Garante que somente números sejam digitados
   },
   telefone: {
     type: String,
@@ -38,7 +41,7 @@ const userSchema = new mongoose.Schema({
   genero: {
     type: String,
     required: true,
-    enum: ["Masculino", "Feminino", "Outro"],
+    enum: ["M", "F", "Outro"],
   },
 });
 
