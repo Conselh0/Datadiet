@@ -34,14 +34,19 @@ function CadPa() {
         }),
       });
 
+      //Pega a resposta do servidor e transforma o JSON em um objeto
       const data = await res.json().catch(() => ({}));
       console.log(data);
 
+      //Pegando a mensagem acima e trabalhado dentro do if
+      //Se conseguirmos receber a mensagem que o servidor está enviando, vamos para o /User
       if (data.mensagem) {
         navigate("/User");
       } else {
+        //Senão mostramos a mensagem ao usuário
         alert(data.erro || "Erro desconhecido");
       }
+      //Avisa o erro ao tentar conexão com o servidor
     } catch (error) {
       console.error("Erro no fetch:", error);
       alert("Erro ao conectar com o servidor");

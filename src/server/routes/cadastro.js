@@ -57,6 +57,7 @@ app.post("/cadastro", async (req, res) => {
     res.status(201).json({ mensagem: "Cadastro realizado!" });
   } catch (error) {
     console.error("ERRO NO CADASTRO:", error);
+    //Precisamos enviar o texto como json, pois ele está sendo enviado para o CadPa que pega somente JSON.
     return res.status(500).json({ erro: error.message });
   }
 });
