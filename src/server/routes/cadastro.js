@@ -5,9 +5,8 @@ const app = express();
 app.use(cors()); //middleware para sempre usarmos o cors
 app.use(express.json()); // vai ler o vody do post/put
 
-app.get("/users", (req, res) => {
-  res.status(200).send("<h1>hello Piter</h1>");
-});
+//Fazer a mão amanhã
+app.post("/cadastro", (req, res) => {});
 
 const port = 8080;
 
