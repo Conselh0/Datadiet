@@ -3,7 +3,7 @@ import HistoricoConsultas from "../components/HistoricoConsultas";
 
 function UserHistorico() {
   return (
-    <div>
+    <div className="">
       <h1 className="flex items-center text-5xl">
         <RotateCcwClockIcon size={70} /> HISTÓRICO DE CONSULTAS
       </h1>
