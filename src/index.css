@@ -5,6 +5,32 @@
   font-family: "popins", sans-serif;
 }
 
+@keyframes abrirModal {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes fecharModal {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(-30px);
+  }
+}
+
+
+
 /*
 Breakpoints para responsividade:
 sm - 640px - celularesw grandes(paisagem)
@@ -12,9 +38,4 @@ md - 768 - Tablets
 lg - 1024 - Laptops, notebooks
 xl - 1280 - monitores comuns
 2xl - 1536 - monitores grandes/TVs
-
-
-
-
-
 */

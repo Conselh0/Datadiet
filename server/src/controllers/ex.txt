@@ -1,1 +1,0 @@
- # Funções que controlam a lógica das rotas e requisições

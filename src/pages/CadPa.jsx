@@ -1,19 +1,75 @@
-import { CircleArrowLeft } from 'lucide-react';
-import { Link } from "react-router-dom";
+import { CircleArrowLeft } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function CadPa() {
+  const navigate = useNavigate();
+  //Pegando os dados e armazenando nos states
+  const [nome, setNome] = useState("");
+  const [sobrenome, setSobrenome] = useState("");
+  const [nascimento, setNascimento] = useState("");
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [confirmarSenha, setConfirmarSenha] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [genero, setGenero] = useState("");
+
+  //O clique do botão chama essa função que envia para o cadastro
+  async function salvar() {
+    try {
+      const res = await fetch("http://localhost:8080/cadastro", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome,
+          sobrenome,
+          nascimento,
+          email,
+          senha,
+          confirmarSenha,
+          cpf,
+          telefone,
+          genero,
+        }),
+      });
+
+      //Pega a resposta do servidor e transforma o JSON em um objeto
+      const data = await res.json().catch(() => ({}));
+      console.log(data);
+
+      //Pegando a mensagem acima e trabalhado dentro do if
+      //Se conseguirmos receber a mensagem que o servidor está enviando, vamos para o /User
+      if (data.mensagem) {
+        navigate("/User");
+      } else {
+        //Senão mostramos a mensagem ao usuário
+        alert(data.erro || "Erro desconhecido");
+      }
+      //Avisa o erro ao tentar conexão com o servidor
+    } catch (error) {
+      console.error("Erro no fetch:", error);
+      alert("Erro ao conectar com o servidor");
+    }
+  }
   return (
     <main className="bg-orange-50/50 bg-full flex items-center bg-[url('./img/bolas.png')] h-[100vh] ">
       <section className="w-135 mx-auto p-4 rounded-2xl bg-taupe-50/70 shadow-2xl">
-      <Link to="/">
-        <CircleArrowLeft
-          color="#ffffff"
-          className="cursor-pointer absolute ml-116 size-10  p-1.5 bg-green-700 rounded-2xl"
-        />
+        <Link to="/">
+          <CircleArrowLeft
+            color="#ffffff"
+            className="cursor-pointer absolute ml-116 size-10  p-1.5 bg-green-700 rounded-2xl"
+          />
         </Link>
         <h2 className="text-3xl mb-4">Criar conta</h2>
         {/*Textos de Nome e sobrenome kk*/}
-        <form method="post" className="">
+        <form
+          method="post"
+          onSubmit={(e) => {
+            e.preventDefault();
+            salvar();
+          }}
+        >
           <label for="text" className="text-lg mt-5 font-medium ">
             Nome:
           </label>
@@ -27,13 +83,18 @@ function CadPa() {
             type="text"
             placeholder="   Digite o seu nome"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
           />
 
           <input
             type="text"
             placeholder="   Digite o seu sobrenome"
+            id="sobrenome"
             minlength="8"
             className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
+            value={sobrenome}
+            onChange={(e) => setSobrenome(e.target.value)}
           />
           <br />
 
@@ -48,15 +109,18 @@ function CadPa() {
           {/*Input de Nascimento e email kk*/}
           <br />
           <input
-            type="text"
-            placeholder="   DD/MM/AAAA"
+            type="date"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
+            value={nascimento}
+            onChange={(e) => setNascimento(e.target.value)}
           />
 
           <input
             type="email"
             placeholder="   seu@email.com"
             className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <br />
 
@@ -71,19 +135,23 @@ function CadPa() {
           {/*Input de Nascimento e email kk*/}
           <br />
           <input
-            type="text"
+            type="password"
             placeholder="   Digite sua senha"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
           />
 
           <input
-            type="text"
+            type="password"
             placeholder="   Confirme sua senha"
             className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
+            value={confirmarSenha}
+            onChange={(e) => setConfirmarSenha(e.target.value)}
           />
           <br />
 
-          {/*Input de Nascimento e email kk*/}
+          {/*Input de CPF e telefone kk*/}
           <label for="text" className="text-lg mt-5 font-me">
             CPF:
           </label>
@@ -91,18 +159,22 @@ function CadPa() {
             Telefone:
           </label>
 
-          {/*Input de Nascimento e email kk*/}
+          {/*Input de CPF e telefone kk*/}
           <br />
           <input
             type="text"
             placeholder="   Digite o seu CPF"
             className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
           />
 
           <input
             type="text"
             placeholder="   (00) 00000-0000"
             className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
+            value={telefone}
+            onChange={(e) => setTelefone(e.target.value)}
           />
 
           <label for="text" className="text-lg mt-5 ">
@@ -110,29 +182,35 @@ function CadPa() {
           </label>
           <br />
 
-          <select className="bg-gray-50 shadow-md rounded-lg w-60 h-10 mb-5text-lg text-black/50">
+          <select
+            className="bg-gray-50 shadow-md rounded-lg w-60 h-10 mb-5text-lg text-black/50"
+            value={genero}
+            onChange={(e) => setGenero(e.target.value)}
+          >
             <option value="" disabled selected className="text-lg">
               Selecione seu gênero
             </option>
 
-            <option value="Clinica e Hospitalar">Homem</option>
-            <option value="Esportiva">Mulher</option>
-            <option value="Materno-Infantil">Prefiro não responder</option>
-            <option value="Comportamental e Emagrecimento">Outro</option>
+            <option value="M">Homem</option>
+            <option value="F">Mulher</option>
+            <option value="Outro">Prefiro não responder</option>
           </select>
           <br />
           <br />
 
           <center>
-            <Link to="/User">
-            <button className="cursor-pointer bg-green-700 mx-auto shadow-md rounded-lg w-80 h-10 text-white">
-              <b>Criar conta</b>
+            <button
+              type="submit"
+              className="cursor-pointer bg-green-700 mx-auto shadow-md rounded-lg w-80 h-10 text-white"
+            >
+              Criar conta
             </button>
-            </Link>
+
             <br />
 
-            <Link to="/CadNu" className='text-gray-400'>Criar conta de nutricionista</Link>
-
+            <Link to="/CadNu" className="text-gray-400">
+              Criar conta de nutricionista
+            </Link>
           </center>
           <br />
         </form>

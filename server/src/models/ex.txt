@@ -1,1 +1,0 @@
- # Regras de negócio e esquemas do banco de dados (ex: Usuário, Dieta)

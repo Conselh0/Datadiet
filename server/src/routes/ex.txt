@@ -1,1 +1,0 @@
- # Definição dos caminhos das APIs (ex: rotas de login, rotas de alimentos)
