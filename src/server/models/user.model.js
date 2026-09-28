@@ -1,7 +1,6 @@
 //importanto o mongoose
 import mongoose from "mongoose";
 
-//Criando a classe para que possamos criar o usuário no banco de dados
 const userSchema = new mongoose.Schema({
   nome: {
     type: String,

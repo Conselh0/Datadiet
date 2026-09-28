@@ -4,7 +4,7 @@ import "dotenv/config";
 const connectToDatabase = async () => {
   try {
     await mongoose.connect(
-      `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@datadiet.gpqymue.mongodb.net/?appName=Datadiet`,
+      `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@cluster0.gpqymue.mongodb.net/datadiet?retryWrites=true&w=majority&appName=Datadiet`
     );
     console.log("Conexão com o banco de dados foi um sucesso");
   } catch (error) {

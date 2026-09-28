@@ -1,8 +1,10 @@
 import "dotenv/config";
 import connectToDatabase from "./database/connect.js";
 import app from "./routes/cadastro.js";
+import agendamentoRoutes from "./routes/agendamento.js"; //Caminho do 
 
-// Espera a conexão terminar e só depois sobe o servidor. Sobe o servidor e então fica escutando
+app.use(agendamentoRoutes); //Verificar essa linha se der erro no agendamento
+
 connectToDatabase().then(() => {
   const port = 8080;
   app.listen(port, () => console.log(`Rodando na porta ${port}`));
