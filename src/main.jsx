@@ -20,6 +20,7 @@ import UserDashboard from "./layouts/UserDashboard.jsx";
 import UserHome from "./pages/UserHome.jsx";
 import UserHistorico from "./pages/UserHistorico.jsx";
 import Agendamentos from "./pages/Agendamentos.jsx";
+import RedefinirSenha from "./pages/RedefinirSenha.jsx";
 
 const router = createBrowserRouter([
   {
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
   {
     path: "/LoginPa",
     element: <LoginPa />,
+  },
+  {
+    path: "/RedefinirSenha",
+    element: <RedefinirSenha />,
   },
   {
     path: "/CadPa",

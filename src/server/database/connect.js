@@ -3,9 +3,13 @@ import "dotenv/config";
 
 const connectToDatabase = async () => {
   try {
-    await mongoose.connect(
-      `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@cluster0.gpqymue.mongodb.net/datadiet?retryWrites=true&w=majority&appName=Datadiet`
-    );
+    if (!process.env.MONGODB_URI) {
+      throw new Error(
+        "A variável MONGODB_URI não foi encontrada no arquivo .env.",
+      );
+    }
+
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log("Conexão com o banco de dados foi um sucesso");
   } catch (error) {
     console.log("Ocorreu um erro na conexão com o banco", error);
