@@ -100,7 +100,7 @@ function AdminHome() {
 
 
           {/* Botão editar */}
-          <button className="absolute top-4 right-4" onClick={abrirModal}>
+          <button className="absolute top-4 right-4 z-20" onClick={abrirModal}>
 
           <Settings className="cursor-pointer size-13 p-1.5 bg-gray-500 rounded-2xl" />
 
@@ -113,7 +113,7 @@ function AdminHome() {
 
           <dialog
             ref={modal}
-            className={`rounded-xl bg-taupe-50/90 h-152 w-150 p-5 fixed top-1/2 left-1/2
+            className={`rounded-xl bg-taupe-50/90 h-160 w-150 p-5 fixed top-1/2 left-1/2
   -translate-x-1/2 -translate-y-1/2
     ${
       fechando
@@ -227,6 +227,13 @@ function AdminHome() {
               className="cursor-pointer bg-gray-400 p-2 rounded-md text-lg text-white w-full"
             >
               Salvar
+            </button>
+
+            <button
+              onClick={fecharModal}
+              className="cursor-pointer bg-red-700 p-2 rounded-md text-lg text-white w-full mt-5"
+            >
+              Cancelar
             </button>
 
           </dialog>

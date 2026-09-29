@@ -65,7 +65,7 @@ function UserHome() {
 
         <dialog
           ref={modal}
-          className={`rounded-xl bg-taupe-50/90 h-152 w-150 p-5 fixed top-1/2 left-1/2
+          className={`rounded-xl bg-taupe-50/90 h-160 w-150 p-5 fixed top-1/2 left-1/2
   -translate-x-1/2 -translate-y-1/2
     ${
       fechando
@@ -155,6 +155,14 @@ function UserHome() {
           >
             Salvar
           </button>
+
+          <button
+              onClick={fecharModal}
+              className="cursor-pointer bg-red-700 p-2 rounded-md text-lg text-white w-full mt-5"
+            >
+              Cancelar
+            </button>
+
         </dialog>
 
         {/* Conteúdo do perfil */}
