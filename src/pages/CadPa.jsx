@@ -1,10 +1,12 @@
 import { CircleArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import "../index.css";
 
 function CadPa() {
   const navigate = useNavigate();
-  //Pegando os dados e armazenando nos states
+
+  // Armazenando os dados nos states
   const [nome, setNome] = useState("");
   const [sobrenome, setSobrenome] = useState("");
   const [nascimento, setNascimento] = useState("");
@@ -15,7 +17,7 @@ function CadPa() {
   const [telefone, setTelefone] = useState("");
   const [genero, setGenero] = useState("");
 
-  //O clique do botão chama essa função que envia para o cadastro
+  // Função que envia os dados para o backend ao submeter o formulário
   async function salvar() {
     try {
       const res = await fetch("http://localhost:8080/cadastro", {
@@ -34,35 +36,35 @@ function CadPa() {
         }),
       });
 
-      //Pega a resposta do servidor e transforma o JSON em um objeto
       const data = await res.json().catch(() => ({}));
       console.log(data);
 
-      //Pegando a mensagem acima e trabalhado dentro do if
-      //Se conseguirmos receber a mensagem que o servidor está enviando, vamos para o /User
       if (data.mensagem) {
         navigate("/User");
       } else {
-        //Senão mostramos a mensagem ao usuário
         alert(data.erro || "Erro desconhecido");
       }
-      //Avisa o erro ao tentar conexão com o servidor
     } catch (error) {
       console.error("Erro no fetch:", error);
       alert("Erro ao conectar com o servidor");
     }
   }
+
   return (
-    <main className="bg-orange-50/50 bg-full flex items-center bg-[url('./img/bolas.png')] h-[100vh] ">
-      <section className="w-135 mx-auto p-4 rounded-2xl bg-taupe-50/70 shadow-2xl">
-        <Link to="/">
-          <CircleArrowLeft
-            color="#ffffff"
-            className="cursor-pointer absolute ml-116 size-10  p-1.5 bg-green-700 rounded-2xl"
-          />
-        </Link>
-        <h2 className="text-3xl mb-4">Criar conta</h2>
-        {/*Textos de Nome e sobrenome kk*/}
+    <main className="font-poppins bg-orange-50/50 bg-full flex items-center justify-center bg-[url('./img/bolas.png')] min-h-screen py-8 px-4">
+      {/* w-full max-w-2xl garante que ele estique no celular e pare em um tamanho ideal no computador */}
+      <section className="w-full max-w-2xl p-6 rounded-xl bg-taupe-50/70 shadow-2xl relative">
+        
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold">Criar conta</h2>
+          <Link to="/">
+            <CircleArrowLeft
+              color="#ffffff"
+              className="cursor-pointer h-10 w-10 p-1.5 bg-green-700 rounded-xl transition-transform active:scale-95"
+            />
+          </Link>
+        </div>
+        
         <form
           method="post"
           onSubmit={(e) => {
@@ -70,149 +72,168 @@ function CadPa() {
             salvar();
           }}
         >
-          <label for="text" className="text-lg mt-5 font-medium ">
-            Nome:
-          </label>
-          <label for="text" className="ml-54 font-semibold">
-            Sobrenome:
-          </label>
+          {/* grid-cols-1 no celular e md:grid-cols-2 no computador */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
+            
+            {/* Nome */}
+            <div className="flex flex-col">
+              <label htmlFor="nome" className="text-base sm:text-lg font-medium mb-1">
+                Nome:
+              </label>
+              <input
+                id="nome"
+                type="text"
+                placeholder="Digite o seu nome"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+              />
+            </div>
 
-          {/*Input de nome e sobrenome kk*/}
-          <br />
-          <input
-            type="text"
-            placeholder="   Digite o seu nome"
-            className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-          />
+            {/* Sobrenome */}
+            <div className="flex flex-col">
+              <label htmlFor="sobrenome" className="text-base sm:text-lg font-medium mb-1">
+                Sobrenome:
+              </label>
+              <input
+                id="sobrenome"
+                type="text"
+                placeholder="Digite o seu sobrenome"
+                minLength="2"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={sobrenome}
+                onChange={(e) => setSobrenome(e.target.value)}
+                required
+              />
+            </div>
 
-          <input
-            type="text"
-            placeholder="   Digite o seu sobrenome"
-            id="sobrenome"
-            minlength="8"
-            className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
-            value={sobrenome}
-            onChange={(e) => setSobrenome(e.target.value)}
-          />
-          <br />
+            {/* Nascimento */}
+            <div className="flex flex-col">
+              <label htmlFor="nascimento" className="text-base sm:text-lg font-medium mb-1">
+                Nascimento:
+              </label>
+              <input
+                id="nascimento"
+                type="date"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={nascimento}
+                onChange={(e) => setNascimento(e.target.value)}
+                required
+              />
+            </div>
 
-          {/*Input de Nascimento e email kk*/}
-          <label for="text" className="text-lg mt-5 font-me">
-            Nascimento:
-          </label>
-          <label for="email" className="ml-42 font-semibold">
-            E-mail:
-          </label>
+            {/* E-mail */}
+            <div className="flex flex-col">
+              <label htmlFor="email" className="text-base sm:text-lg font-medium mb-1">
+                E-mail:
+              </label>
+              <input
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
 
-          {/*Input de Nascimento e email kk*/}
-          <br />
-          <input
-            type="date"
-            className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
-            value={nascimento}
-            onChange={(e) => setNascimento(e.target.value)}
-          />
+            {/* Senha */}
+            <div className="flex flex-col">
+              <label htmlFor="senha" className="text-base sm:text-lg font-medium mb-1">
+                Senha:
+              </label>
+              <input
+                id="senha"
+                type="password"
+                placeholder="Digite sua senha"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                required
+              />
+            </div>
 
-          <input
-            type="email"
-            placeholder="   seu@email.com"
-            className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <br />
+            {/* Confirmar Senha */}
+            <div className="flex flex-col">
+              <label htmlFor="confirmarSenha" className="text-base sm:text-lg font-medium mb-1">
+                Confirmar senha:
+              </label>
+              <input
+                id="confirmarSenha"
+                type="password"
+                placeholder="Confirme sua senha"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={confirmarSenha}
+                onChange={(e) => setConfirmarSenha(e.target.value)}
+                required
+              />
+            </div>
 
-          {/*Input de Nascimento e email kk*/}
-          <label for="text" className="text-lg mt-5 font-me">
-            Senha:
-          </label>
-          <label for="text" className="ml-53 font-semibold">
-            Confirmar senha:
-          </label>
+            {/* CPF */}
+            <div className="flex flex-col">
+              <label htmlFor="cpf" className="text-base sm:text-lg font-medium mb-1">
+                CPF:
+              </label>
+              <input
+                id="cpf"
+                type="text"
+                placeholder="Digite o seu CPF"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
+                required
+              />
+            </div>
 
-          {/*Input de Nascimento e email kk*/}
-          <br />
-          <input
-            type="password"
-            placeholder="   Digite sua senha"
-            className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-          />
+            {/* Telefone */}
+            <div className="flex flex-col">
+              <label htmlFor="telefone" className="text-base sm:text-lg font-medium mb-1">
+                Telefone:
+              </label>
+              <input
+                id="telefone"
+                type="tel"
+                placeholder="(00) 00000-0000"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+                required
+              />
+            </div>
 
-          <input
-            type="password"
-            placeholder="   Confirme sua senha"
-            className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
-            value={confirmarSenha}
-            onChange={(e) => setConfirmarSenha(e.target.value)}
-          />
-          <br />
+            {/* Gênero (Opcional/Select simples baseado no seu state) */}
+            <div className="flex flex-col md:col-span-2">
+              <label htmlFor="genero" className="text-base sm:text-lg font-medium mb-1">
+                Gênero:
+              </label>
+              <select
+                id="genero"
+                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                value={genero}
+                onChange={(e) => setGenero(e.target.value)}
+                required
+              >
+                <option value="">Selecione...</option>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
 
-          {/*Input de CPF e telefone kk*/}
-          <label for="text" className="text-lg mt-5 font-me">
-            CPF:
-          </label>
-          <label for="text" className="ml-57 font-semibold">
-            Telefone:
-          </label>
+          </div>
 
-          {/*Input de CPF e telefone kk*/}
-          <br />
-          <input
-            type="text"
-            placeholder="   Digite o seu CPF"
-            className="bg-white shadow-md rounded-lg w-60 h-10 mb-5"
-            value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
-          />
-
-          <input
-            type="text"
-            placeholder="   (00) 00000-0000"
-            className="bg-white shadow-md rounded-lg w-60 h-10 ml-5"
-            value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
-          />
-
-          <label for="text" className="text-lg mt-5 ">
-            Gênero:
-          </label>
-          <br />
-
-          <select
-            className="bg-gray-50 shadow-md rounded-lg w-60 h-10 mb-5text-lg text-black/50"
-            value={genero}
-            onChange={(e) => setGenero(e.target.value)}
-          >
-            <option value="" disabled selected className="text-lg">
-              Selecione seu gênero
-            </option>
-
-            <option value="M">Homem</option>
-            <option value="F">Mulher</option>
-            <option value="Outro">Prefiro não responder</option>
-          </select>
-          <br />
-          <br />
-
-          <center>
+          {/* Botão de Enviar */}
+          <div className="mt-6 flex justify-center">
             <button
               type="submit"
-              className="cursor-pointer bg-green-700 mx-auto shadow-md rounded-lg w-80 h-10 text-white"
+              className="bg-green-700 text-white font-semibold py-2 px-8 rounded-lg shadow-md hover:bg-green-800 transition-colors w-full sm:w-auto cursor-pointer"
             >
-              Criar conta
+              Cadastrar
             </button>
+          </div>
 
-            <br />
-
-            <Link to="/CadNu" className="text-gray-400">
-              Criar conta de nutricionista
-            </Link>
-          </center>
-          <br />
         </form>
       </section>
     </main>
