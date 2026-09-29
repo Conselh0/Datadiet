@@ -4,6 +4,7 @@ import UserModel from "../models/user.model.js";
 // Criamos um roteador para este arquivo específico
 const perfilRouter = express.Router(); 
 
+//Get para pegar todos os dados de todos os usuários
 perfilRouter.get("/perfil", async (req, res) => {
     try {
         const dados = await UserModel.find();

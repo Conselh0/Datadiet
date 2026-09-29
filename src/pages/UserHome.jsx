@@ -2,6 +2,7 @@ import DataAgendamentos from "../components/DataAgendamentos";
 import { Settings } from "lucide-react";
 import { useRef, useState } from "react";
 import "../index.css";
+import perfilRouter from "../server/routes/perfilUsuario";
 
 function UserHome() {
   const modal = useRef();
@@ -22,10 +23,24 @@ function UserHome() {
     }, 300);
   }
 
+  async function mostrarDadosCadastrados(){
+    try{
+      const res = await fetch (`http://localhost:8080/perfil/id:`)
+      const {nome, email, idade} = req.body
+    }catch(error){
+      res.status(400)
+      console.log(`Deu erro no: ${error}`)
+    }
+    
+  }
+
+  mostrarDadosCadastrados()
+  
+
   return (
     <main className="w-full p-4 lg:p-10 min-h-screen flex flex-col lg:block items-center">
       <div className="text-green-950 font-bold text-center lg:text-start">
-        <h1 className="text-5xl ">Ana Clara</h1>
+        <h1 className="text-5xl ">{nome}</h1>
         <p className="text-2xl">ID: 0001</p>
       </div>
       
