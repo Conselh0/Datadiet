@@ -139,99 +139,85 @@ function Pacientes() {
         ========================= */}
 
         <div className="max-w-5xl">
-
           <div
             className="
-              bg-white
-              rounded-3xl
-              shadow-xl/20
-              overflow-hidden
-            "
+      bg-white
+      rounded-3xl
+      shadow-xl/20
+      overflow-hidden
+    "
           >
-            <div
-              className="bg-white rounded-3xl shadow-xl/20 overflow-hidden"
-            >
-              <table className="w-full text-center border-collapse">
-                {/* CABEÇALHO */}
+            <table className="w-full text-center border-collapse">
+              <thead>
+                <tr className="bg-gray-500 text-white">
+                  <th className="p-4 font-semibold">ID</th>
 
-                <thead>
-                  <tr className="bg-gray-500 text-white">
-                    <th className="p-4 font-semibold">ID</th>
+                  <th className="p-4 font-semibold">PACIENTE</th>
 
-                    <th className="p-4 font-semibold">PACIENTE</th>
+                  <th className="p-4 font-semibold">ÚLTIMA CONSULTA</th>
+                </tr>
+              </thead>
 
-                    <th className="p-4 font-semibold">ÚLTIMA CONSULTA</th>
-                  </tr>
-                </thead>
-
-                {/* CORPO */}
-
-                <tbody>
-                  {pacientes.map((paciente) => (
-                    <tr
-                      onClick={() => abrirPaciente(paciente)}
+              <tbody>
+                {pacientes.map((paciente) => (
+                  <tr
+                    key={paciente.id}
+                    onClick={() => abrirPaciente(paciente)}
+                    className="
+              border-b
+              border-gray-200
+              cursor-pointer
+              transition
+              hover:bg-gray-100
+            "
+                  >
+                    <td
                       className="
-                        border-b
-                        border-gray-200
-                        cursor-pointer
-                        transition
-                        hover:bg-gray-100
-                      "
+                p-4
+                text-gray-700
+                font-semibold
+              "
                     >
-                      {/* ID */}
+                      #{paciente.id}
+                    </td>
 
-                      <td
-                        className="
-                          p-4
-                          text-gray-700
-                          font-semibold
-                        "
-                      >
-                        #{paciente.id}
-                      </td>
-
-                      {/* PACIENTE */}
-
-                      <td className="p-4">
-                        <div className="flex items-center justify-center gap-3">
-                          <div
-                            className="
-                              w-10
-                              h-10
-                              rounded-full
-                              bg-gray-500
-                              text-white
-                              flex
-                              items-center
-                              justify-center
-                              font-bold
-                            "
-                          >
-                            {iniciais(paciente.nome)}
-                          </div>
-
-                          <span className="font-semibold text-gray-700">
-                            {paciente.nome}
-                          </span>
+                    <td className="p-4">
+                      <div className="flex items-center gap-3 w-64 mx-auto text-left">
+                        <div
+                          className="
+                    w-10
+                    h-10
+                    rounded-full
+                    bg-gray-500
+                    text-white
+                    flex
+                    items-center
+                    justify-center
+                    font-bold
+                  "
+                        >
+                          {iniciais(paciente.nome)}
                         </div>
-                      </td>
 
-                      {/* CONSULTA */}
+                        <span className="font-semibold text-gray-700">
+                          {paciente.nome}
+                        </span>
+                      </div>
+                    </td>
 
-                      <td className="p-4">
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-gray-700">
-                            {paciente.data}
-                          </span>
+                    <td className="p-4">
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-700">
+                          {paciente.data}
+                        </span>
 
-                          <span className="text-gray-400">{paciente.hora}</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                        <span className="text-gray-400">{paciente.hora}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -244,12 +230,11 @@ function Pacientes() {
           aberto={pacienteSelecionado !== null}
           fechar={() => setPacienteSelecionado(null)}
         />
-        
-          <p className="text-gray-500 text-lg mt-5 ml-1">
-            Clique no paciente para ver mais informações.
-          </p>
+
+        <p className="text-gray-500 text-lg mt-5 ml-1">
+          Clique no paciente para ver mais informações.
+        </p>
       </div>
-      
     </div>
   );
 }
