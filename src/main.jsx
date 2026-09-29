@@ -20,6 +20,7 @@ import UserDashboard from "./layouts/UserDashboard.jsx";
 import UserHome from "./pages/UserHome.jsx";
 import UserHistorico from "./pages/UserHistorico.jsx";
 import Agendamentos from "./pages/Agendamentos.jsx";
+import Pacientes from "./pages/Pacientes.jsx";
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,11 @@ const router = createBrowserRouter([
         path: "/Admin/Agendamentos",
         element: <AgendamentosAdmin />,
       },
+      {
+        path: "/Admin/Pacientes",
+        element: <Pacientes />,
+      },
+      
     ],
   },
   {

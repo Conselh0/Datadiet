@@ -63,7 +63,7 @@ function Navbar() {
       <div className="z-10 flex items-center gap-4 pr-2">
         
         {/* Botões escondidos no mobile com 'hidden md:flex' */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden xl:flex items-center gap-3">
           <Link to="/CadPa">
             <button className="cursor-pointer bg-[#2fa84a] hover:bg-[#278d3e] px-16 py-2 rounded-full text-base font-bold text-white transition-colors shadow-md min-w-[160px]">
               Criar Conta
