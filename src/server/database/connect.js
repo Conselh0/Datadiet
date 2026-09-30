@@ -3,7 +3,7 @@ import "dotenv/config";
 
 const connectToDatabase = async () => {
   try {
-    if (!process.env.MONGODB_URI) {
+    if (!process.env.MONGODB_URL) {
       throw new Error(
         "A variável MONGODB_URI não foi encontrada no arquivo .env.",
       );
