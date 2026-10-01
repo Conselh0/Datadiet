@@ -45,9 +45,9 @@ router.post("/login", async (req, res) => {
 
 router.patch("/redefinir-senha", async (req, res) => {
   try {
-    const { email, cpf, novaSenha, confirmarSenha } = req.body;
+    const { email, novaSenha, confirmarSenha } = req.body;
 
-    if (!email || !cpf || !novaSenha || !confirmarSenha) {
+    if (!email || !novaSenha || !confirmarSenha) {
       return res.status(400).json({ erro: "Preencha todos os campos." });
     }
 
@@ -63,13 +63,12 @@ router.patch("/redefinir-senha", async (req, res) => {
 
     const usuario = await UserModel.findOne({
       email: email.trim().toLowerCase(),
-      cpf: cpf.replace(/\D/g, ""),
     });
 
     if (!usuario) {
       return res
         .status(404)
-        .json({ erro: "Não encontramos uma conta com esses dados." });
+        .json({ erro: "Não encontramos uma conta com este e-mail." });
     }
 
     usuario.senha = await bcrypt.hash(novaSenha, 12);

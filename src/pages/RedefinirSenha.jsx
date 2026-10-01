@@ -6,7 +6,6 @@ function RedefinirSenha() {
   const navigate = useNavigate();
   const [formulario, setFormulario] = useState({
     email: "",
-    cpf: "",
     novaSenha: "",
     confirmarSenha: "",
   });
@@ -64,18 +63,6 @@ function RedefinirSenha() {
             type="email"
             required
             value={formulario.email}
-            onChange={atualizarCampo}
-            className="bg-white shadow-md rounded-lg h-10 px-3"
-          />
-
-          <label htmlFor="cpf">CPF</label>
-          <input
-            id="cpf"
-            name="cpf"
-            inputMode="numeric"
-            maxLength="14"
-            required
-            value={formulario.cpf}
             onChange={atualizarCampo}
             className="bg-white shadow-md rounded-lg h-10 px-3"
           />
