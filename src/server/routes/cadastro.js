@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import bcrypt from "bcryptjs";
 import UserModel from "../models/user.model.js";
 
 const app = express();
@@ -42,14 +43,21 @@ app.post("/cadastro", async (req, res) => {
       return res.status(400).send({ erro: "as senhas não conferem." });
     }
 
+    if (senha.length < 8) {
+      return res
+        .status(400)
+        .json({ erro: "A senha deve ter pelo menos 8 caracteres." });
+    }
+
+    const senhaHash = await bcrypt.hash(senha, 12);
+
     //PRINCIPAL = Salva os usuários no banco
-    const user = await UserModel.create({
+    await UserModel.create({
       nome,
       sobrenome,
       nascimento,
-      email,
-      senha,
-      confirmarSenha,
+      email: email.trim().toLowerCase(),
+      senha: senhaHash,
       cpf,
       telefone,
       genero,
