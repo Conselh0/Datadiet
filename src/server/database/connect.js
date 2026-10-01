@@ -9,7 +9,7 @@ const connectToDatabase = async () => {
       );
     }
 
-    await mongoose.connect(process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGODB_URL);
     console.log("Conexão com o banco de dados foi um sucesso");
   } catch (error) {
     console.log("Ocorreu um erro na conexão com o banco", error);
