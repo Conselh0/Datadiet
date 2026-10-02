@@ -4,27 +4,27 @@ export const STATUS = ["Pendente", "Confirmado", "Concluído", "Cancelado"];
 
 const AgendamentoSchema = new mongoose.Schema(
   {
-    // Número sequencial do atendimento (18, 19, 20...)
     numero: { type: Number, unique: true },
     paciente: {
       type: String,
       required: [true, "O nome do paciente é obrigatório."],
       trim: true,
     },
-    // ID do paciente logado (opcional, mas ajuda a filtrar o histórico)
     pacienteId: { type: String, index: true },
+    // Nome (para exibir) e ID (para buscar) do nutricionista
     nutricionista: {
       type: String,
       required: [true, "O nome do nutricionista é obrigatório."],
       trim: true,
     },
-    // Formato "AAAA-MM-DD" (mesmo formato do <input type="date">)
+    nutricionistaId: { type: String, index: true },
+    // "AAAA-MM-DD"
     data: {
       type: String,
       required: [true, "A data da consulta é obrigatória."],
       match: [/^\d{4}-\d{2}-\d{2}$/, "Data inválida."],
     },
-    // Formato "HH:MM"
+    // "HH:MM"
     horario: {
       type: String,
       required: [true, "O horário da consulta é obrigatório."],
