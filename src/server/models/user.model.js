@@ -40,7 +40,8 @@ const userSchema = new mongoose.Schema({
   genero: {
     type: String,
     required: true,
-    enum: ["M", "F", "Outro"],
+    lowercase: true,
+    enum: ["masculino", "feminino", "outro"]
   },
 });
 

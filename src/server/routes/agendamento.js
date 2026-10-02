@@ -56,7 +56,6 @@ router.post("/agendamento", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 // GET /agendamentos?pacienteId=&nutricionista=&status=
 router.get("/agendamentos", async (req, res) => {
   try {
@@ -131,6 +130,3 @@ router.patch("/agendamento/:id/status", async (req, res) => {
 });
 
 export default router;
-=======
-export default router; // Exporta o roteador
->>>>>>> backend_elias

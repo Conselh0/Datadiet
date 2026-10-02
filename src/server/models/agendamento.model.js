@@ -36,7 +36,7 @@ const AgendamentoSchema = new mongoose.Schema(
 );
 
 // Gera o número do atendimento automaticamente
-AgendamentoSchema.pre("validate", async function (next) {
+AgendamentoSchema.pre("validate", async function () {
   if (this.isNew && !this.numero) {
     const ultimo = await mongoose
       .model("Agendamento")
@@ -45,12 +45,7 @@ AgendamentoSchema.pre("validate", async function (next) {
       .select("numero");
     this.numero = (ultimo?.numero || 0) + 1;
   }
-  next();
 });
 
-<<<<<<< HEAD
 const AgendamentoModel = mongoose.model("Agendamento", AgendamentoSchema);
 export default AgendamentoModel;
-=======
-export default AgendamentoModel;
->>>>>>> backend_elias
