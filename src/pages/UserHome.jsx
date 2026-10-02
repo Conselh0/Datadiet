@@ -6,11 +6,12 @@ import "../index.css";
 function UserHome() {
   const modal = useRef();
   const [fechando, setFechando] = useState(false);
-  
+
   // Criando estados para armazenar os dados reais que vêm do banco
   const [nomeUsuario, setNomeUsuario] = useState("Carregando...");
+  const [dataNascimento, setDataNascimento] = useState("Carregando...");
   const [emailUsuario, setEmailUsuario] = useState("Carregando...");
-
+  const [genero, setGenero] = useState("Carregando...");
   function abrirModal() {
     setFechando(false);
     modal.current.showModal();
@@ -26,20 +27,42 @@ function UserHome() {
 
   // O useEffect roda a busca no banco apenas uma vez quando a página carrega
   useEffect(() => {
+    //Pega os dados do usuário no local storage e joga no banco
     async function mostrarDadosCadastrados() {
       try {
-        // Faz a requisição para a rota do seu servidor Express
-        const res = await fetch("http://localhost:8080/perfil");
-        const dados = await res.json();
-        
-        // Como o seu perfilRouter (.get) retorna uma lista (array) com UserModel.find()
-        if (dados && dados.length > 0) {
-          // Pegando o primeiro usuário cadastrado para teste
-          setNomeUsuario(dados[0].nome);
-          setEmailUsuario(dados[0].email);
+        // 1. Pega o ID do usuário que foi salvo no login lá no local storage
+        const idUsuarioLogado = localStorage.getItem("usuario");
+
+        if (!idUsuarioLogado) {
+          console.error("Usuário não está logado ou ID não encontrado.");
+          return;
+        }
+
+        const usuarioJSON = JSON.parse(idUsuarioLogado);
+
+        const idUsuario = usuarioJSON.id;
+
+        // 2. Passa o ID diretamente na URL da requisição
+        const res = await fetch(`http://localhost:8080/perfil/${idUsuario}`);
+
+        if (!res.ok) {
+          throw new Error("Erro ao buscar dados do servidor");
+        }
+
+        // 3. O res.json() deve ser chamado APENAS UMA VEZ
+        const usuario = await res.json();
+
+        // 4. Como o back-end vai devolver só um objeto, basta preencher os estados
+        if (usuario) {
+          setNomeUsuario(usuario.nome);
+          setDataNascimento(usuario.nascimento);
+          setEmailUsuario(usuario.email);
+          setGenero(usuario.genero);
         }
       } catch (error) {
         console.error("Deu erro ao buscar perfil:", error);
+        setNomeUsuario("Erro ao carregar");
+        setEmailUsuario("Erro ao carregar");
       }
     }
 
@@ -53,7 +76,7 @@ function UserHome() {
         <h1 className="text-5xl ">{nomeUsuario}</h1>
         <p className="text-2xl">ID: 0001</p>
       </div>
-      
+
       <div className="bg-green-950 text-white w-full lg:w-[60vw] p-4 h-auto rounded-xl text-xl lg:text-3xl flex flex-col justify-between mb-10 relative">
         <button className="absolute top-4 right-4" onClick={abrirModal}>
           <Settings className="cursor-pointer size-13 p-1.5 bg-green-700 rounded-2xl" />
@@ -125,7 +148,8 @@ function UserHome() {
           <div className="bg-white p-5 rounded-xl shadow-md">
             <p className="font-bold text-3xl">Editar email</p>
             <p className="text-base">
-              Caso queira editar o seu e-mail você terá que clicar no botão abaixo <br />e preencher os dados exigidos.
+              Caso queira editar o seu e-mail você terá que clicar no botão
+              abaixo <br />e preencher os dados exigidos.
             </p>
 
             <div className="mt-3">
@@ -150,13 +174,18 @@ function UserHome() {
             <b>Nome:</b> {nomeUsuario}
           </p>
           <p className="p-3">
-            <b>Data de Nascimento:</b> 20/01/2000
+            <b>Data de Nascimento:</b>{" "}
+            {dataNascimento && dataNascimento !== "Carregando..."
+              ? new Date(dataNascimento).toLocaleDateString("pt-BR", {
+                  timeZone: "UTC",
+                })
+              : "Carregando..."}
           </p>
           <p className="p-3">
             <b>E-mail:</b> {emailUsuario}
           </p>
           <p className="p-3">
-            <b>Gênero:</b> Feminino
+            <b>Gênero:</b> {genero}
           </p>
         </div>
       </div>
@@ -201,11 +230,10 @@ export default UserHome;
 //       res.status(400)
 //       console.log(`Deu erro no: ${error}`)
 //     }
-    
+
 //   }
 
 //   mostrarDadosCadastrados()
-  
 
 //   return (
 //     <main className="w-full p-4 lg:p-10 min-h-screen flex flex-col lg:block items-center">
@@ -213,7 +241,7 @@ export default UserHome;
 //         <h1 className="text-5xl ">{nome}</h1>
 //         <p className="text-2xl">ID: 0001</p>
 //       </div>
-      
+
 //       <div className="bg-green-950 text-white w-full lg:w-[60vw] p-4 h-auto rounded-xl text-xl lg:text-3xl flex flex-col justify-between mb-10 relative">
 //         <button className="absolute top-4 right-4" onClick={abrirModal}>
 //           <Settings className="cursor-pointer size-13 p-1.5 bg-green-700 rounded-2xl" />
