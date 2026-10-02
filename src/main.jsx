@@ -20,7 +20,11 @@ import UserDashboard from "./layouts/UserDashboard.jsx";
 import UserHome from "./pages/UserHome.jsx";
 import UserHistorico from "./pages/UserHistorico.jsx";
 import Agendamentos from "./pages/Agendamentos.jsx";
+<<<<<<< HEAD
 import Pacientes from "./pages/Pacientes.jsx";
+=======
+import RedefinirSenha from "./pages/RedefinirSenha.jsx";
+>>>>>>> backend_elias
 
 const router = createBrowserRouter([
   {
@@ -85,6 +89,10 @@ const router = createBrowserRouter([
     element: <LoginPa />,
   },
   {
+    path: "/RedefinirSenha",
+    element: <RedefinirSenha />,
+  },
+  {
     path: "/CadPa",
     element: <CadPa />,
   },
@@ -102,6 +110,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />
   </StrictMode>,
+<<<<<<< HEAD
 );
 
 
@@ -121,3 +130,6 @@ module.exports = {
   },
   plugins: [],
 }
+=======
+);
+>>>>>>> backend_elias

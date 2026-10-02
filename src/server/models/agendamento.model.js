@@ -48,5 +48,9 @@ AgendamentoSchema.pre("validate", async function (next) {
   next();
 });
 
+<<<<<<< HEAD
 const AgendamentoModel = mongoose.model("Agendamento", AgendamentoSchema);
 export default AgendamentoModel;
+=======
+export default AgendamentoModel;
+>>>>>>> backend_elias
