@@ -1,226 +1,115 @@
+import { useEffect, useState } from "react";
+import StatusBadge from "./StatusBadge";
+import {
+  listarAgendamentos,
+  atualizarStatus,
+  getUsuario,
+} from "../services/agendamentoService";
+import { formatarData } from "../utils/formatters";
+
+const FILTROS = ["Todas", "Pendente", "Confirmado", "Concluído", "Cancelado"];
+
 function HistoricoConsultas() {
+  const [lista, setLista] = useState([]);
+  const [filtro, setFiltro] = useState("Todas");
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+
+  const carregar = async () => {
+    try {
+      setErro("");
+      const { id } = getUsuario();
+      setLista(await listarAgendamentos({ pacienteId: id }));
+    } catch (e) {
+      setErro(e.message);
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  useEffect(() => {
+    carregar();
+  }, []);
+
+  const cancelar = async (id) => {
+    if (!window.confirm("Deseja cancelar esta consulta?")) return;
+    try {
+      await atualizarStatus(id, "Cancelado");
+      carregar();
+    } catch (e) {
+      setErro(e.message);
+    }
+  };
+
+  const visiveis =
+    filtro === "Todas" ? lista : lista.filter((a) => a.status === filtro);
+
   return (
-    
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 ">
+    <section className="w-full">
+      <h2 className="mb-4 text-xl md:text-2xl font-bold text-green-950">
+        Histórico de consultas
+      </h2>
 
-        <table className="w-full text-center border-collapse">
-
-          {/* Cabeçalho */}
-          <thead>
-
-            <tr className="bg-green-900 text-white">
-
-              <th className="p-3 lg:p-4 text-xs md:text-sm font-semibold">
-                NÚMERO DO ATENDIMENTO
-              </th>
-
-              <th className="p-3 lg:p-4 text-xs md:text-sm font-semibold">
-                NOME DO PACIENTE
-              </th>
-
-              <th className="p-3 lg:p-4 text-xs md:text-sm font-semibold">
-                DATA DO AGENDAMENTO
-              </th>
-
-              <th className="p-3 lg:p-4 text-xs md:text-sm font-semibold">
-                STATUS
-              </th>
-
-            </tr>
-
-          </thead>
-
-
-          {/* Conteúdo */}
-          <tbody>
-
-            <tr
-              className="
-                border-b
-                border-gray-200
-                transition
-                hover:bg-gray-100
-              "
-            >
-
-              {/* Número */}
-              <td className="p-3 lg:p-4 text-sm md:text-base text-gray-700 font-semibold">
-                18
-              </td>
-
-
-              {/* Paciente */}
-              <td className="p-3 lg:p-4 text-sm md:text-base text-gray-700">
-
-                <div className="flex items-center justify-center gap-2">
-
-                  <div
-                    className="
-                      w-8
-                      h-8
-                      rounded-full
-                      bg-gray-300
-                      flex
-                      items-center
-                      justify-center
-                      text-gray-700
-                      font-bold
-                    "
-                  >
-                    MS
-                  </div>
-
-                  <span>
-                    Maria Sousa
-                  </span>
-
-                </div>
-
-              </td>
-
-
-              {/* Data */}
-              <td className="p-3 lg:p-4 text-sm md:text-base text-gray-600">
-
-                <div className="flex flex-col">
-
-                  <span className="font-semibold text-gray-700">
-                    20/06/2026
-                  </span>
-
-                  <span className="text-gray-500 text-sm">
-                    12:00
-                  </span>
-
-                </div>
-
-              </td>
-
-
-              {/* Status */}
-              <td className="p-3 lg:p-4">
-
-                <span
-                  className="
-                    inline-flex
-                    items-center
-                    gap-2
-                    bg-green-100
-                    text-green-700
-                    font-semibold
-                    text-xs
-                    md:text-sm
-                    px-3
-                    py-2
-                    rounded-full
-                  "
-                >
-
-                  <span className="w-2 h-2 rounded-full bg-green-500" />
-
-                  Confirmado
-
-                </span>
-
-              </td>
-
-            </tr>
-
-
-            {/* Exemplo de outra linha */}
-            <tr
-              className="
-                border-b
-                border-gray-200
-                transition
-                hover:bg-gray-100
-              "
-            >
-
-              <td className="p-3 lg:p-4 text-sm md:text-base text-gray-700 font-semibold">
-                19
-              </td>
-
-
-              <td className="p-3 lg:p-4 text-sm md:text-base text-gray-700">
-
-                <div className="flex items-center justify-center gap-2">
-
-                  <div
-                    className="
-                      w-8
-                      h-8
-                      rounded-full
-                      bg-gray-300
-                      flex
-                      items-center
-                      justify-center
-                      text-gray-700
-                      font-bold
-                    "
-                  >
-                    JS
-                  </div>
-
-                  <span>
-                    João Silva
-                  </span>
-
-                </div>
-
-              </td>
-
-
-              <td className="p-3 lg:p-4 text-sm md:text-base text-gray-600">
-
-                <div className="flex flex-col">
-
-                  <span className="font-semibold text-gray-700">
-                    21/06/2026
-                  </span>
-
-                  <span className="text-gray-500 text-sm">
-                    14:30
-                  </span>
-
-                </div>
-
-              </td>
-
-
-              <td className="p-3 lg:p-4">
-
-                <span
-                  className="
-                    inline-flex
-                    items-center
-                    gap-2
-                    bg-yellow-100
-                    text-yellow-700
-                    font-semibold
-                    text-xs
-                    md:text-sm
-                    px-3
-                    py-2
-                    rounded-full
-                  "
-                >
-
-                  <span className="w-2 h-2 rounded-full bg-yellow-500" />
-
-                  Pendente
-
-                </span>
-
-              </td>
-
-            </tr>
-
-          </tbody>
-
-        </table>
-
+      <div className="mb-4 flex flex-wrap gap-2">
+        {FILTROS.map((f) => (
+          <button
+            key={f}
+            onClick={() => setFiltro(f)}
+            className={`rounded-full px-4 py-1 text-sm font-semibold transition ${
+              filtro === f
+                ? "bg-green-900 text-white"
+                : "bg-white text-green-900 border border-green-900 hover:bg-green-50"
+            }`}
+          >
+            {f}
+          </button>
+        ))}
       </div>
+
+      {erro && (
+        <p className="mb-3 rounded-md bg-red-100 p-3 text-red-700">{erro}</p>
+      )}
+      {carregando && <p className="text-gray-600">Carregando consultas...</p>}
+      {!carregando && visiveis.length === 0 && (
+        <p className="rounded-xl bg-white p-8 text-center text-gray-600 shadow">
+          Nenhuma consulta encontrada nesse filtro.
+        </p>
+      )}
+
+      <ul className="space-y-3">
+        {visiveis.map((a) => {
+          const podeCancelar = ["Pendente", "Confirmado"].includes(a.status);
+          return (
+            <li
+              key={a._id}
+              className="flex flex-col gap-3 rounded-xl bg-white p-4 shadow md:flex-row md:items-center md:justify-between"
+            >
+              <div>
+                <p className="text-xs font-bold text-gray-500">
+                  Atendimento #{a.numero}
+                </p>
+                <p className="text-lg font-bold text-slate-800">
+                  {formatarData(a.data)} às {a.horario}
+                </p>
+                <p className="text-sm text-gray-600">com {a.nutricionista}</p>
+              </div>
+
+              <div className="flex items-center justify-between gap-3 md:justify-end">
+                <StatusBadge status={a.status} />
+                {podeCancelar && (
+                  <button
+                    onClick={() => cancelar(a._id)}
+                    className="rounded-md border border-red-300 px-3 py-1 text-sm font-semibold text-red-700 hover:bg-red-50"
+                  >
+                    Cancelar
+                  </button>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
