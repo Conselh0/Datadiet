@@ -21,6 +21,7 @@ import UserHome from "./pages/UserHome.jsx";
 import UserHistorico from "./pages/UserHistorico.jsx";
 import Agendamentos from "./pages/Agendamentos.jsx";
 import Pacientes from "./pages/Pacientes.jsx";
+import RedefinirSenha from "./pages/RedefinirSenha.jsx";
 
 const router = createBrowserRouter([
   {
@@ -59,7 +60,6 @@ const router = createBrowserRouter([
         path: "/Admin/Pacientes",
         element: <Pacientes />,
       },
-      
     ],
   },
   {
@@ -85,6 +85,10 @@ const router = createBrowserRouter([
     element: <LoginPa />,
   },
   {
+    path: "/RedefinirSenha",
+    element: <RedefinirSenha />,
+  },
+  {
     path: "/CadPa",
     element: <CadPa />,
   },
@@ -104,20 +108,16 @@ createRoot(document.getElementById("root")).render(
   </StrictMode>,
 );
 
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       // ADICIONE ESTE BLOCO FONTFAMILY AQUI:
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },
   plugins: [],
-}
+};
