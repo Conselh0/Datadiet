@@ -29,8 +29,8 @@ function CadPa() {
           email,
           senha,
           confirmarSenha,
-          cpf,
-          telefone,
+          cpf: cpf.replace(/\D/g, ""), //Substitui a formtação pro cpf ser cadastrado da maneira certa no banco
+          telefone: telefone.replace(/\D/g, ""), //Faz a mesma coisa que o CPF
           genero,
         }),
       });
@@ -215,13 +215,22 @@ function CadPa() {
               </label>
 
               <input
-                id="cpf"
                 type="text"
                 placeholder="Digite o seu CPF"
                 className="bg-white shadow-md rounded-lg w-full h-10 px-3"
                 value={cpf}
-                onChange={(e) => setCpf(e.target.value)}
-                required
+                onChange={(e) => {
+                  //Máscra de formação
+                  let valor = e.target.value.replace(/\D/g, "");
+
+                  valor = valor
+                    .replace(/^(\d{3})(\d)/, "$1.$2")
+                    .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+                    .replace(/\.(\d{3})(\d)/, ".$1-$2")
+                    .slice(0, 14);
+
+                  setCpf(valor);
+                }}
               />
             </div>
 
@@ -235,13 +244,20 @@ function CadPa() {
               </label>
 
               <input
-                id="telefone"
                 type="text"
                 placeholder="(00) 00000-0000"
                 className="bg-white shadow-md rounded-lg w-full h-10 px-3"
                 value={telefone}
-                onChange={(e) => setTelefone(e.target.value)}
-                required
+                onChange={(e) => {
+                  let valor = e.target.value.replace(/\D/g, "");
+
+                  valor = valor
+                    .replace(/^(\d{2})(\d)/, "($1) $2")
+                    .replace(/(\d{5})(\d)/, "$1-$2")
+                    .slice(0, 15);
+
+                  setTelefone(valor);
+                }}
               />
             </div>
 
