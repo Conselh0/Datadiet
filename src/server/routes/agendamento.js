@@ -5,11 +5,21 @@ import NutricionistaModel from "../models/nutricionista.model.js";
 
 import { agora, gerarHorarios, diaDaSemana } from "../../utils/horarios.js";
 
+//Função para aceitar formatação de data
+function normalizarData(d) {
+  if (typeof d !== "string") return "";
+  const s = d.trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  return m ? `${m[3]}-${m[2]}-${m[1]}` : "";
+}
+
 const router = express.Router();
 
 router.post("/agendamento", async (req, res) => {
   try {
-    const { paciente, pacienteId, nutricionistaId, data, horario } = req.body;
+    const { paciente, pacienteId, nutricionistaId, horario } = req.body;
+    const data = normalizarData(req.body.data);
 
     if (!paciente || !nutricionistaId || !data || !horario) {
       return res.status(400).json({ erro: "Preencha todos os campos do agendamento." });
@@ -21,8 +31,10 @@ router.post("/agendamento", async (req, res) => {
     const nutri = await NutricionistaModel.findById(nutricionistaId);
     if (!nutri) return res.status(404).json({ erro: "Nutricionista não encontrado." });
 
-    if (!/^\d{4}-\d{2}-\d{2}\$/.test(data)) {
-      return res.status(400).json({ erro: "Data inválida." });
+    if (!data) {
+      return res.status(400).json({
+        erro: `Data inválida (recebido: ${JSON.stringify(req.body.data)}).`,
+      });
     }
     if (!nutri.diasAtendimento.includes(diaDaSemana(data))) {
       return res.status(400).json({ erro: "O nutricionista não atende nesse dia." });

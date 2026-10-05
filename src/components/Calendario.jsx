@@ -8,8 +8,10 @@ const pad = (n) => String(n).padStart(2, "0");
 function Calendario({ value, onChange, diasAtendimento = [0, 1, 2, 3, 4, 5, 6] }) {
   const hoje = new Date();
   const hojeIso = hoje.toLocaleDateString("sv-SE");
-  const [mes, setMes] = useState(hoje.getMonth());
-  const [ano, setAno] = useState(hoje.getFullYear());
+  // Abre no mês da data já escolhida (ou no mês atual)
+  const inicial = value ? new Date(`${value}T12:00:00`) : hoje;
+  const [mes, setMes] = useState(inicial.getMonth());
+  const [ano, setAno] = useState(inicial.getFullYear());
 
   const primeiroDia = new Date(ano, mes, 1).getDay();
   const totalDias = new Date(ano, mes + 1, 0).getDate();
