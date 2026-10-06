@@ -22,6 +22,7 @@ import UserHistorico from "./pages/UserHistorico.jsx";
 import Agendamentos from "./pages/Agendamentos.jsx";
 import Pacientes from "./pages/Pacientes.jsx";
 import RedefinirSenha from "./pages/RedefinirSenha.jsx";
+import ConfirmarRedefinicaoSenha from "./pages/ConfirmarRedefinicaoSenha.jsx";
 
 const router = createBrowserRouter([
   {
@@ -87,6 +88,10 @@ const router = createBrowserRouter([
   {
     path: "/RedefinirSenha",
     element: <RedefinirSenha />,
+  },
+  {
+    path: "/ConfirmarRedefinicaoSenha",
+    element: <ConfirmarRedefinicaoSenha />,
   },
   {
     path: "/CadPa",

@@ -3,13 +3,15 @@ import "dotenv/config";
 
 const connectToDatabase = async () => {
   try {
-    if (!process.env.MONGODB_URL) {
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGODB_URL;
+
+    if (!mongoUri) {
       throw new Error(
         "A variável MONGODB_URI não foi encontrada no arquivo .env.",
       );
     }
 
-    await mongoose.connect(process.env.MONGODB_URL);
+    await mongoose.connect(mongoUri);
     console.log("Conexão com o banco de dados foi um sucesso");
   } catch (error) {
     console.log("Ocorreu um erro na conexão com o banco", error);

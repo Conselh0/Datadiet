@@ -23,7 +23,7 @@ function RedefinirSenha() {
 
     try {
       const resposta = await fetch("http://localhost:8080/redefinir-senha", {
-        method: "PATCH",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formulario),
       });
@@ -47,12 +47,12 @@ function RedefinirSenha() {
         <Link to="/LoginPa" aria-label="Voltar para o login">
           <CircleArrowLeft
             color="#ffffff"
-            className="cursor-pointer absolute size-10 p-1.5 bg-green-700 rounded-2xl"
-          />
+            className="cursor-pointer absolute size-10 p-1.5 bg-green-700 rounded-2xl"/>
         </Link>
         <h2 className="text-3xl mb-2">Redefinir senha</h2>
         <p className="text-gray-600 mb-6">
-          Confirme seus dados para criar uma nova senha.
+          Informe seu e-mail e a nova senha. Você receberá um link para confirmar
+          a alteração.
         </p>
 
         <form onSubmit={redefinir} className="flex flex-col gap-3">
@@ -97,7 +97,7 @@ function RedefinirSenha() {
             type="submit"
             className="cursor-pointer bg-green-700 shadow-md rounded-lg h-10 text-white mt-3"
           >
-            Redefinir senha
+            Solicitar alteração
           </button>
         </form>
       </section>

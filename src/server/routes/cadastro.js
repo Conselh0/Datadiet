@@ -38,6 +38,17 @@ app.post("/cadastro", async (req, res) => {
         .json({ erro: "Preencha todos os campos obrigatórios." });
     }
 
+    const emailNormalizado = email.trim().toLowerCase();
+    const emailJaCadastrado = await UserModel.exists({
+      email: emailNormalizado,
+    });
+
+    if (emailJaCadastrado) {
+      return res.status(409).json({
+        erro: "Já existe uma conta utilizando este e-mail. Use outro e-mail ou recupere sua senha.",
+      });
+    }
+
     //Validação do campo da senha
     if (confirmarSenha !== senha) {
       return res.status(400).send({ erro: "as senhas não conferem." });
@@ -56,7 +67,7 @@ app.post("/cadastro", async (req, res) => {
       nome,
       sobrenome,
       nascimento,
-      email: email.trim().toLowerCase(),
+      email: emailNormalizado,
       senha: senhaHash,
       cpf,
       telefone,
@@ -65,6 +76,12 @@ app.post("/cadastro", async (req, res) => {
     res.status(201).json({ mensagem: "Cadastro realizado!" });
   } catch (error) {
     console.error("ERRO NO CADASTRO:", error);
+    if (error?.code === 11000 && error?.keyPattern?.email) {
+      return res.status(409).json({
+        erro: "Já existe uma conta utilizando este e-mail. Use outro e-mail ou recupere sua senha.",
+      });
+    }
+
     //Precisamos enviar o texto como json, pois ele está sendo enviado para o CadPa que pega somente JSON.
     return res.status(500).json({ erro: error.message });
   }
