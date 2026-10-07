@@ -83,19 +83,25 @@ router.patch("/redefinir-senha", async (req, res) => {
   }
 });
 
-router.get("/usuarios/:id", async (req, res) => {
+// O ":id" na URL torna a rota dinâmica
+router.get("/perfil/:id", async (req, res) => {
   try {
-    const usuario = await UserModel.findById(req.params.id).select("-senha");
+    const idUsuario = req.params.id; // Pega o ID enviado pela URL
+
+    // Procura no banco de dados especificamente por esse ID
+    const usuario = await UserModel.findById(idUsuario);
 
     if (!usuario) {
-      return res.status(404).json({ erro: "Usuário não encontrado." });
+      return res.status(404).json({ mensagem: "Usuário não encontrado" });
     }
 
-    return res.json(usuario);
-  } catch {
-    return res.status(400).json({ erro: "Id de usuário inválido." });
+    // Retorna apenas os dados do usuário encontrado (como um objeto, não uma lista)
+    res.json(usuario);
+  } catch (error) {
+    res.status(500).json({ mensagem: "Erro interno no servidor", error });
   }
 });
+
 
 router.delete("/usuarios/:id", async (req, res) => {
   try {

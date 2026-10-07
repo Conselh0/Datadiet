@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev:server": "nodemon src/server/server.js",
+    "dev:server": "cross-env NODE_OPTIONS=\"--dns-result-order=ipv4first\" nodemon src/server/server.js",
     "dev:client": "vite",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "build": "vite build",
@@ -15,6 +15,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
+    "cross-env": "^10.1.0",
     "dotenv": "^18.0.4",
     "express": "^5.2.1",
     "lucide-react": "^1.30.0",

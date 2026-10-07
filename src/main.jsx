@@ -60,7 +60,6 @@ const router = createBrowserRouter([
         path: "/Admin/Pacientes",
         element: <Pacientes />,
       },
-      
     ],
   },
   {
@@ -109,20 +108,16 @@ createRoot(document.getElementById("root")).render(
   </StrictMode>,
 );
 
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       // ADICIONE ESTE BLOCO FONTFAMILY AQUI:
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'],
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },
   plugins: [],
-}
+};

@@ -17,3 +17,5 @@ If you are developing a production application, we recommend using TypeScript wi
 
 
 Se o concurrently falhar: npm install concurrently --save-dev
+Erro do npm no powershell: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
