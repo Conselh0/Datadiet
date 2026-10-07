@@ -19,3 +19,14 @@ If you are developing a production application, we recommend using TypeScript wi
 Se o concurrently falhar: npm install concurrently --save-dev
 Erro do npm no powershell: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 
+## Recuperação de senha
+
+O fluxo de recuperação é feito em duas etapas:
+
+1. O usuário informa o e-mail e a nova senha em `/RedefinirSenha`.
+2. O servidor envia um link de confirmação por e-mail. A senha atual só é
+   substituída quando o link é acessado, e o token expira em uma hora.
+
+Configure as variáveis de banco e SMTP do arquivo `.env` conforme o
+[`.env.example`](./.env.example). `APP_URL` deve apontar para a URL em que o
+frontend está sendo executado, pois ela será usada no link de confirmação.

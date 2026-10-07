@@ -1,8 +1,41 @@
 import express from "express";
 import bcrypt from "bcryptjs";
+import crypto from "node:crypto";
+import nodemailer from "nodemailer";
 import UserModel from "../models/user.model.js";
+import PasswordResetModel from "../models/password-reset.model.js";
 
 const router = express.Router();
+
+const TEMPO_EXPIRACAO_TOKEN_MS = 60 * 60 * 1000;
+
+function gerarToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+function criarHashToken(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
+function criarTransportadorEmail() {
+  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD } = process.env;
+
+  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASSWORD) {
+    throw new Error(
+      "Configure SMTP_HOST, SMTP_PORT, SMTP_USER e SMTP_PASSWORD para enviar e-mails.",
+    );
+  }
+
+  return nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: Number(SMTP_PORT),
+    secure: process.env.SMTP_SECURE === "true",
+    auth: {
+      user: SMTP_USER.trim(),
+      pass: SMTP_PASSWORD.replace(/\s/g, ""),
+    },
+  });
+}
 
 router.post("/login", async (req, res) => {
   try {
@@ -43,7 +76,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.patch("/redefinir-senha", async (req, res) => {
+router.post("/redefinir-senha", async (req, res) => {
   try {
     const { email, novaSenha, confirmarSenha } = req.body;
 
@@ -66,20 +99,101 @@ router.patch("/redefinir-senha", async (req, res) => {
     });
 
     if (!usuario) {
-      return res
-        .status(404)
-        .json({ erro: "Não encontramos uma conta com este e-mail." });
+      return res.json({
+        mensagem:
+          "Se existir uma conta com este e-mail, você receberá um link para confirmar a alteração.",
+      });
     }
 
-    usuario.senha = await bcrypt.hash(novaSenha, 12);
-    await usuario.save();
+    await PasswordResetModel.deleteMany({ usuario: usuario._id });
 
-    return res.json({ mensagem: "Senha redefinida com sucesso!" });
+    const token = gerarToken();
+    const reset = await PasswordResetModel.create({
+      usuario: usuario._id,
+      tokenHash: criarHashToken(token),
+      senhaHash: await bcrypt.hash(novaSenha, 12),
+      expiraEm: new Date(Date.now() + TEMPO_EXPIRACAO_TOKEN_MS),
+    });
+
+    try {
+      const transportador = criarTransportadorEmail();
+      const urlAplicacao = (
+        process.env.APP_URL || "http://localhost:5173"
+      ).replace(/\/$/, "");
+      const linkConfirmacao = `${urlAplicacao}/ConfirmarRedefinicaoSenha?token=${token}`;
+
+      await transportador.sendMail({
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        to: usuario.email,
+        subject: "Confirme a alteração da sua senha - Datadiet",
+        text: `Recebemos uma solicitação para alterar sua senha. Confirme a alteração acessando: ${linkConfirmacao}. Este link expira em 1 hora. Se você não solicitou a alteração, ignore este e-mail.`,
+        html: `
+          <p>Olá, ${usuario.nome}!</p>
+          <p>Recebemos uma solicitação para alterar sua senha.</p>
+          <p><a href="${linkConfirmacao}">Clique aqui para confirmar a alteração da senha</a></p>
+          <p>Este link expira em 1 hora. Se você não solicitou a alteração, ignore este e-mail. Sua senha atual continuará funcionando.</p>
+        `,
+      });
+    } catch (emailError) {
+      await PasswordResetModel.findByIdAndDelete(reset._id);
+      throw emailError;
+    }
+
+    return res.json({
+      mensagem:
+        "Enviamos um link de confirmação para o seu e-mail. A senha só será alterada após a confirmação.",
+    });
   } catch (error) {
-    console.error("ERRO AO REDEFINIR SENHA:", error);
+    console.error("ERRO AO SOLICITAR REDEFINIÇÃO DE SENHA:", error);
+
+    if (error.message?.startsWith("Configure SMTP")) {
+      return res.status(500).json({
+        erro: "O envio de e-mail não está configurado. Preencha as variáveis SMTP no arquivo .env e reinicie o servidor.",
+      });
+    }
+
     return res
       .status(500)
-      .json({ erro: "Não foi possível redefinir a senha." });
+      .json({ erro: "Não foi possível enviar o e-mail de confirmação." });
+  }
+});
+
+router.post("/redefinir-senha/confirmar", async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ erro: "Token de confirmação ausente." });
+    }
+
+    const reset = await PasswordResetModel.findOne({
+      tokenHash: criarHashToken(token),
+      expiraEm: { $gt: new Date() },
+    });
+
+    if (!reset) {
+      return res
+        .status(400)
+        .json({ erro: "O link é inválido ou expirou. Solicite uma nova redefinição." });
+    }
+
+    const usuario = await UserModel.findById(reset.usuario);
+
+    if (!usuario) {
+      await PasswordResetModel.findByIdAndDelete(reset._id);
+      return res.status(404).json({ erro: "Usuário não encontrado." });
+    }
+
+    usuario.senha = reset.senhaHash;
+    await usuario.save();
+    await PasswordResetModel.deleteMany({ usuario: usuario._id });
+
+    return res.json({ mensagem: "Senha alterada com sucesso!" });
+  } catch (error) {
+    console.error("ERRO AO CONFIRMAR REDEFINIÇÃO DE SENHA:", error);
+    return res
+      .status(500)
+      .json({ erro: "Não foi possível confirmar a alteração da senha." });
   }
 });
 
