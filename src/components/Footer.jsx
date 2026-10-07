@@ -57,7 +57,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 items-center pt-6 gap-4 text-xs text-emerald-300/70 text-center md:text-left">
         
         {/* Coluna 1: Copyright à esquerda */}
-        <p className="md:order-1">&copy; {new Date().getFullYear()} Luana Teixeira. Todos os direitos reservados.</p>
+        <p className="md:order-1">&copy; {new Date().getFullYear()} Datadiet. Todos os direitos reservados.</p>
         
         {/* Coluna 2: Redes Sociais perfeitamente centralizadas no meio */}
         <div className="flex items-center justify-center gap-5 md:order-2">

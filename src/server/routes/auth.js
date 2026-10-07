@@ -78,20 +78,10 @@ router.post("/login", async (req, res) => {
 
 router.post("/redefinir-senha", async (req, res) => {
   try {
-    const { email, novaSenha, confirmarSenha } = req.body;
+    const { email } = req.body;
 
-    if (!email || !novaSenha || !confirmarSenha) {
-      return res.status(400).json({ erro: "Preencha todos os campos." });
-    }
-
-    if (novaSenha !== confirmarSenha) {
-      return res.status(400).json({ erro: "As senhas não conferem." });
-    }
-
-    if (novaSenha.length < 8) {
-      return res
-        .status(400)
-        .json({ erro: "A senha deve ter pelo menos 8 caracteres." });
+    if (!email) {
+      return res.status(400).json({ erro: "Informe o seu e-mail." });
     }
 
     const usuario = await UserModel.findOne({
@@ -101,7 +91,7 @@ router.post("/redefinir-senha", async (req, res) => {
     if (!usuario) {
       return res.json({
         mensagem:
-          "Se existir uma conta com este e-mail, você receberá um link para confirmar a alteração.",
+          "Se existir uma conta com este e-mail, você receberá um link para escolher uma nova senha.",
       });
     }
 
@@ -111,7 +101,6 @@ router.post("/redefinir-senha", async (req, res) => {
     const reset = await PasswordResetModel.create({
       usuario: usuario._id,
       tokenHash: criarHashToken(token),
-      senhaHash: await bcrypt.hash(novaSenha, 12),
       expiraEm: new Date(Date.now() + TEMPO_EXPIRACAO_TOKEN_MS),
     });
 
@@ -125,12 +114,12 @@ router.post("/redefinir-senha", async (req, res) => {
       await transportador.sendMail({
         from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to: usuario.email,
-        subject: "Confirme a alteração da sua senha - Datadiet",
-        text: `Recebemos uma solicitação para alterar sua senha. Confirme a alteração acessando: ${linkConfirmacao}. Este link expira em 1 hora. Se você não solicitou a alteração, ignore este e-mail.`,
+        subject: "Redefina sua senha - Datadiet",
+        text: `Recebemos uma solicitação para redefinir sua senha. Acesse ${linkConfirmacao} para escolher uma nova senha. Este link expira em 1 hora. Se você não solicitou a alteração, ignore este e-mail.`,
         html: `
           <p>Olá, ${usuario.nome}!</p>
-          <p>Recebemos uma solicitação para alterar sua senha.</p>
-          <p><a href="${linkConfirmacao}">Clique aqui para confirmar a alteração da senha</a></p>
+          <p>Recebemos uma solicitação para redefinir sua senha.</p>
+          <p><a href="${linkConfirmacao}">Clique aqui para escolher uma nova senha</a></p>
           <p>Este link expira em 1 hora. Se você não solicitou a alteração, ignore este e-mail. Sua senha atual continuará funcionando.</p>
         `,
       });
@@ -141,7 +130,7 @@ router.post("/redefinir-senha", async (req, res) => {
 
     return res.json({
       mensagem:
-        "Enviamos um link de confirmação para o seu e-mail. A senha só será alterada após a confirmação.",
+        "Se existir uma conta com este e-mail, você receberá um link para escolher uma nova senha.",
     });
   } catch (error) {
     console.error("ERRO AO SOLICITAR REDEFINIÇÃO DE SENHA:", error);
@@ -154,16 +143,30 @@ router.post("/redefinir-senha", async (req, res) => {
 
     return res
       .status(500)
-      .json({ erro: "Não foi possível enviar o e-mail de confirmação." });
+      .json({ erro: "Não foi possível enviar o e-mail de redefinição." });
   }
 });
 
 router.post("/redefinir-senha/confirmar", async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, novaSenha, confirmarSenha } = req.body;
 
     if (!token) {
-      return res.status(400).json({ erro: "Token de confirmação ausente." });
+      return res.status(400).json({ erro: "Token de redefinição ausente." });
+    }
+
+    if (!novaSenha || !confirmarSenha) {
+      return res.status(400).json({ erro: "Preencha os dois campos de senha." });
+    }
+
+    if (novaSenha !== confirmarSenha) {
+      return res.status(400).json({ erro: "As senhas não conferem." });
+    }
+
+    if (novaSenha.length < 8) {
+      return res
+        .status(400)
+        .json({ erro: "A senha deve ter pelo menos 8 caracteres." });
     }
 
     const reset = await PasswordResetModel.findOne({
@@ -184,7 +187,7 @@ router.post("/redefinir-senha/confirmar", async (req, res) => {
       return res.status(404).json({ erro: "Usuário não encontrado." });
     }
 
-    usuario.senha = reset.senhaHash;
+    usuario.senha = await bcrypt.hash(novaSenha, 12);
     await usuario.save();
     await PasswordResetModel.deleteMany({ usuario: usuario._id });
 
