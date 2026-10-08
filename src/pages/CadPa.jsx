@@ -1,6 +1,7 @@
 import { LogIn } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { cpfValido, limparCpf } from "../utils/cpf.js";
 
 function CadPa() {
   const navigate = useNavigate();
@@ -15,9 +16,15 @@ function CadPa() {
   const [cpf, setCpf] = useState("");
   const [telefone, setTelefone] = useState("");
   const [genero, setGenero] = useState("");
+  const [erroCpf, setErroCpf] = useState("");
 
   // O clique do botão chama essa função que envia para o cadastro
   async function salvar() {
+    if (!cpfValido(cpf)) {
+      setErroCpf("Digite um CPF válido.");
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:8080/cadastro", {
         method: "POST",
@@ -29,7 +36,7 @@ function CadPa() {
           email,
           senha,
           confirmarSenha,
-          cpf: cpf.replace(/\D/g, ""), //Substitui a formtação pro cpf ser cadastrado da maneira certa no banco
+          cpf: limparCpf(cpf), //Substitui a formtação pro cpf ser cadastrado da maneira certa no banco
           telefone: telefone.replace(/\D/g, ""), //Faz a mesma coisa que o CPF
           genero,
         }),
@@ -215,12 +222,18 @@ function CadPa() {
               </label>
 
               <input
+                id="cpf"
                 type="text"
                 placeholder="Digite o seu CPF"
-                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                inputMode="numeric"
+                maxLength="14"
+                aria-invalid={Boolean(erroCpf)}
+                aria-describedby={erroCpf ? "cpf-erro" : undefined}
+                className={`bg-white shadow-md rounded-lg w-full h-10 px-3 ${
+                  erroCpf ? "border-2 border-red-500" : ""
+                }`}
                 value={cpf}
                 onChange={(e) => {
-                  //Máscra de formação
                   let valor = e.target.value.replace(/\D/g, "");
 
                   valor = valor
@@ -230,8 +243,19 @@ function CadPa() {
                     .slice(0, 14);
 
                   setCpf(valor);
+                    setErroCpf(
+                      valor.length === 14 && !cpfValido(valor)
+                        ? "Digite um CPF válido."
+                        : "",
+                    );
                 }}
+                required
               />
+              {erroCpf && (
+                <span id="cpf-erro" className="mt-1 text-sm text-red-600">
+                  {erroCpf}
+                </span>
+              )}
             </div>
 
             {/* Telefone */}

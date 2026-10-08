@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
 import { LogIn } from 'lucide-react';
+import { useState } from "react";
 import "../index.css";
+import { cpfValido } from "../utils/cpf.js";
 
 function CadNu() {
+  const [cpf, setCpf] = useState("");
+  const [erroCpf, setErroCpf] = useState("");
+
   return (
     // min-h-screen com py-8 e px-4 para total responsividade e rolagem suave no mobile
     <main className="font-poppins bg-orange-50/50 bg-full flex items-center justify-center bg-[url('./img/bolas.png')] min-h-screen py-8 px-4">
@@ -111,8 +116,37 @@ function CadNu() {
                 id="cpf"
                 type="text"
                 placeholder="Digite o seu CPF"
-                className="bg-white shadow-md rounded-lg w-full h-10 px-3"
+                inputMode="numeric"
+                maxLength="14"
+                aria-invalid={Boolean(erroCpf)}
+                aria-describedby={erroCpf ? "cpf-erro" : undefined}
+                className={`bg-white shadow-md rounded-lg w-full h-10 px-3 ${
+                  erroCpf ? "border-2 border-red-500" : ""
+                }`}
+                value={cpf}
+                onChange={(e) => {
+                  let valor = e.target.value.replace(/\D/g, "");
+
+                  valor = valor
+                    .replace(/^(\d{3})(\d)/, "$1.$2")
+                    .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+                    .replace(/\.(\d{3})(\d)/, ".$1-$2")
+                    .slice(0, 14);
+
+                  setCpf(valor);
+                  setErroCpf(
+                    valor.length === 14 && !cpfValido(valor)
+                      ? "Digite um CPF válido."
+                      : "",
+                  );
+                }}
+                required
               />
+              {erroCpf && (
+                <span id="cpf-erro" className="mt-1 text-sm text-red-600">
+                  {erroCpf}
+                </span>
+              )}
             </div>
 
             {/* CRN */}
