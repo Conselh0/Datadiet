@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     enum: ["M", "F", "Outro"],
   },
+  fotoPerfil: {
+    type: String,
+    default: "",
+  },
 });
 
 //Convenção começar com letra maiúscula

@@ -8,6 +8,8 @@ import PasswordResetModel from "../models/password-reset.model.js";
 const router = express.Router();
 
 const TEMPO_EXPIRACAO_TOKEN_MS = 60 * 60 * 1000;
+const TIPOS_MIME_IMAGEM = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
+const TAMANHO_MAXIMO_FOTO_BYTES = 2 * 1024 * 1024;
 
 function gerarToken() {
   return crypto.randomBytes(32).toString("hex");
@@ -35,6 +37,31 @@ function criarTransportadorEmail() {
       pass: SMTP_PASSWORD.replace(/\s/g, ""),
     },
   });
+}
+
+function urlImagemValida(url) {
+  try {
+    const urlNormalizada = new URL(url);
+    return ["http:", "https:"].includes(urlNormalizada.protocol);
+  } catch {
+    return false;
+  }
+}
+
+function parseDataUrlImagem(dataUrl) {
+  const resultado = /^data:(image\/[a-z0-9.+-]+);base64,([a-z0-9+/=]+)$/i.exec(
+    dataUrl || "",
+  );
+
+  if (!resultado) {
+    return null;
+  }
+
+  const mime = resultado[1].toLowerCase();
+  const base64 = resultado[2];
+  const tamanhoBytes = Buffer.from(base64, "base64").length;
+
+  return { mime, tamanhoBytes };
 }
 
 router.post("/login", async (req, res) => {
@@ -216,6 +243,58 @@ router.get("/perfil/:id", async (req, res) => {
     res.json(usuario);
   } catch (error) {
     res.status(500).json({ mensagem: "Erro interno no servidor", error });
+  }
+});
+
+router.put("/perfil/:id/foto", async (req, res) => {
+  try {
+    const { tipo, valor } = req.body;
+    const tipoNormalizado = typeof tipo === "string" ? tipo.trim().toLowerCase() : "";
+    const valorNormalizado = typeof valor === "string" ? valor.trim() : "";
+
+    if (!["url", "upload", "remover"].includes(tipoNormalizado)) {
+      return res.status(400).json({ erro: "Tipo de atualização de foto inválido." });
+    }
+
+    if (tipoNormalizado !== "remover" && !valorNormalizado) {
+      return res.status(400).json({ erro: "Informe a imagem para atualizar a foto de perfil." });
+    }
+
+    if (tipoNormalizado === "url") {
+      if (valorNormalizado.length > 2048 || !urlImagemValida(valorNormalizado)) {
+        return res.status(400).json({ erro: "Informe uma URL de imagem válida (http/https)." });
+      }
+    }
+
+    if (tipoNormalizado === "upload") {
+      const dataUrlImagem = parseDataUrlImagem(valorNormalizado);
+
+      if (!dataUrlImagem || !TIPOS_MIME_IMAGEM.includes(dataUrlImagem.mime)) {
+        return res.status(400).json({ erro: "Formato de imagem não suportado." });
+      }
+
+      if (dataUrlImagem.tamanhoBytes > TAMANHO_MAXIMO_FOTO_BYTES) {
+        return res.status(400).json({ erro: "A imagem deve ter no máximo 2 MB." });
+      }
+    }
+
+    const usuarioAtualizado = await UserModel.findByIdAndUpdate(
+      req.params.id,
+      { fotoPerfil: tipoNormalizado === "remover" ? "" : valorNormalizado },
+      { new: true },
+    );
+
+    if (!usuarioAtualizado) {
+      return res.status(404).json({ erro: "Usuário não encontrado." });
+    }
+
+    return res.json({
+      mensagem: "Foto de perfil atualizada com sucesso.",
+      fotoPerfil: usuarioAtualizado.fotoPerfil || "",
+    });
+  } catch (error) {
+    console.error("ERRO AO ATUALIZAR FOTO DE PERFIL:", error);
+    return res.status(500).json({ erro: "Não foi possível atualizar a foto de perfil." });
   }
 });
 

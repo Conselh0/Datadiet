@@ -12,6 +12,11 @@ function UserHome() {
   const [dataNascimento, setDataNascimento] = useState("Carregando...");
   const [emailUsuario, setEmailUsuario] = useState("Carregando...");
   const [genero, setGenero] = useState("Carregando...");
+  const [fotoPerfil, setFotoPerfil] = useState("");
+  const [urlFoto, setUrlFoto] = useState("");
+  const [erroFoto, setErroFoto] = useState("");
+  const [mensagemFoto, setMensagemFoto] = useState("");
+  const [salvandoFoto, setSalvandoFoto] = useState(false);
 
   function abrirModal() {
     setFechando(false);
@@ -25,6 +30,119 @@ function UserHome() {
       modal.current.close();
       setFechando(false);
     }, 300);
+  }
+
+  function obterIdUsuarioLogado() {
+    const usuarioSalvo = localStorage.getItem("usuario");
+
+    if (!usuarioSalvo) {
+      return "";
+    }
+
+    try {
+      const usuarioJSON = JSON.parse(usuarioSalvo);
+      return usuarioJSON.id || "";
+    } catch {
+      return "";
+    }
+  }
+
+  async function atualizarFotoPerfil(tipo, valor) {
+    try {
+      setErroFoto("");
+      setMensagemFoto("");
+      setSalvandoFoto(true);
+
+      const idUsuario = obterIdUsuarioLogado();
+
+      if (!idUsuario) {
+        setErroFoto("Não foi possível identificar o usuário logado.");
+        return;
+      }
+
+      const resposta = await fetch(`http://localhost:8080/perfil/${idUsuario}/foto`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tipo, valor }),
+      });
+
+      const dados = await resposta.json().catch(() => ({}));
+
+      if (!resposta.ok) {
+        setErroFoto(dados.erro || "Não foi possível atualizar a foto de perfil.");
+        return;
+      }
+
+      setFotoPerfil(dados.fotoPerfil || "");
+      setMensagemFoto("Foto de perfil atualizada com sucesso!");
+      window.dispatchEvent(
+        new CustomEvent("perfil-atualizado", {
+          detail: { fotoPerfil: dados.fotoPerfil || "" },
+        }),
+      );
+
+      if (tipo === "url") {
+        setUrlFoto("");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar foto de perfil:", error);
+      setErroFoto("Não foi possível conectar ao servidor para atualizar a foto.");
+    } finally {
+      setSalvandoFoto(false);
+    }
+  }
+
+  async function salvarFotoPorUrl() {
+    const urlNormalizada = urlFoto.trim();
+
+    if (!urlNormalizada) {
+      setErroFoto("Digite uma URL de imagem.");
+      return;
+    }
+
+    await atualizarFotoPerfil("url", urlNormalizada);
+  }
+
+  async function removerFotoPerfil() {
+    await atualizarFotoPerfil("remover", "");
+  }
+
+  async function enviarUploadFoto(event) {
+    const arquivo = event.target.files?.[0];
+
+    if (!arquivo) {
+      return;
+    }
+
+    if (!arquivo.type.startsWith("image/")) {
+      setErroFoto("Selecione um arquivo de imagem válido.");
+      return;
+    }
+
+    if (arquivo.size > 2 * 1024 * 1024) {
+      setErroFoto("A imagem deve ter no máximo 2 MB.");
+      return;
+    }
+
+    const leitor = new FileReader();
+
+    leitor.onload = async () => {
+      const resultado = typeof leitor.result === "string" ? leitor.result : "";
+
+      if (!resultado) {
+        setErroFoto("Não foi possível ler a imagem selecionada.");
+        return;
+      }
+
+      await atualizarFotoPerfil("upload", resultado);
+    };
+
+    leitor.onerror = () => {
+      setErroFoto("Não foi possível processar o upload da imagem.");
+    };
+
+    leitor.readAsDataURL(arquivo);
+    event.target.value = "";
   }
 
   // O useEffect roda a busca no banco apenas uma vez quando a página carrega
@@ -61,6 +179,7 @@ function UserHome() {
           setDataNascimento(usuario.nascimento);
           setEmailUsuario(usuario.email);
           setGenero(usuario.genero);
+          setFotoPerfil(usuario.fotoPerfil || "");
         }
       } catch (error) {
         console.error("Deu erro ao buscar perfil:", error);
@@ -69,6 +188,7 @@ function UserHome() {
         setDataNascimento("Erro ao carregar");
         setEmailUsuario("Erro ao carregar");
         setGenero("Erro ao carregar");
+        setFotoPerfil("");
       }
     }
 
@@ -126,9 +246,9 @@ function UserHome() {
           className={`
             rounded-xl
             bg-taupe-50/90
-            overflow-hidden
-            h-160
-            w-150
+            max-h-[90vh]
+            w-[min(38rem,calc(100vw-2rem))]
+            overflow-y-auto
             p-5
             fixed
             top-1/2
@@ -235,6 +355,65 @@ function UserHome() {
                 Editar email
               </button>
             </div>
+          </div>
+
+          <br />
+
+          <div className="bg-white p-5 rounded-xl shadow-md">
+            <p className="font-bold text-3xl">Foto de perfil</p>
+
+            <div className="flex items-center gap-4 mt-4">
+              <img
+                src={fotoPerfil || "/img/avatar.png"}
+                alt="Pré-visualização da foto de perfil"
+                className="w-32 h-32 rounded-full object-cover border border-gray-300"
+              />
+              <p className="text-sm text-gray-600">
+                Você pode usar um link (URL) ou fazer upload de uma imagem.
+              </p>
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              <input
+                type="url"
+                placeholder="https://exemplo.com/minha-foto.jpg"
+                value={urlFoto}
+                onChange={(event) => setUrlFoto(event.target.value)}
+                className="bg-gray-50 shadow-md rounded-lg w-full h-10 px-3 text-sm"
+              />
+              <button
+                type="button"
+                onClick={salvarFotoPorUrl}
+                disabled={salvandoFoto}
+                className="cursor-pointer bg-green-700 hover:bg-green-800 px-4 rounded-md text-white text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {salvandoFoto ? "Salvando..." : "Salvar URL"}
+              </button>
+            </div>
+
+            <div className="mt-3">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={enviarUploadFoto}
+                disabled={salvandoFoto}
+                className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-3 file:rounded-md file:border-0 file:bg-green-700 file:text-white hover:file:bg-green-800"
+              />
+            </div>
+
+            <button
+              type="button"
+              onClick={removerFotoPerfil}
+              disabled={salvandoFoto || !fotoPerfil}
+              className="cursor-pointer mt-3 bg-red-700 hover:bg-red-800 px-4 py-2 rounded-md text-white text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Remover foto
+            </button>
+
+            {erroFoto && <p className="text-red-600 text-sm mt-2">{erroFoto}</p>}
+            {mensagemFoto && (
+              <p className="text-green-700 text-sm mt-2">{mensagemFoto}</p>
+            )}
           </div>
 
           <br />
