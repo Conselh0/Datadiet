@@ -105,6 +105,10 @@ const router = createBrowserRouter([
     path: "/CadNu",
     element: <CadNu />,
   },
+  {
+    path: "/Admin/CadNutricionista",
+    element: <CadNu />, // Se o arquivo correto for o CadNutricionista, troque aqui para <CadNutricionista /> e importe-o no topo do arquivo
+  },
 ]);
 
 createRoot(document.getElementById("root")).render(

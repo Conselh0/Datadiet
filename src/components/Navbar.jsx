@@ -2,13 +2,27 @@ import { useEffect, useState } from "react";
 import { CircleUserRoundIcon, Menu, X, LogOut } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import USERH_Menu from "./USERH_Menu";
+import { getSessao, sair } from "../utils/sessao";
+
+// Itens do menu do usuário: cada tipo de conta tem os seus
+const MENU_PACIENTE = [
+  ["PERFIL", "/User"],
+  ["HISTORICO", "/User/Historico"],
+  ["AGENDAR CONSULTA", "/User/Agendamentos"],
+];
+
+const MENU_NUTRICIONISTA = [
+  ["PERFIL", "/Admin"],
+  ["HISTÓRICO", "/Admin/Historico"],
+  ["PACIENTES", "/Admin/Pacientes"],
+];
 
 function Navbar() {
   const navigate = useNavigate();
 
   const [menuAberto, setMenuAberto] = useState(false);
 
-  // Usuário logado
+  // Usuário logado (paciente ou nutricionista)
   const [usuario, setUsuario] = useState(null);
 
   // Controla o popup de logout
@@ -16,21 +30,14 @@ function Navbar() {
 
   // Verifica se existe usuário salvo no localStorage
   useEffect(() => {
-    const usuarioSalvo = localStorage.getItem("usuario");
-
-    if (usuarioSalvo) {
-      try {
-        setUsuario(JSON.parse(usuarioSalvo));
-      } catch (error) {
-        console.error("Erro ao ler usuário:", error);
-        localStorage.removeItem("usuario");
-      }
-    }
+    setUsuario(getSessao());
   }, []);
+
+  const itensMenu = usuario?.tipo === "nutricionista" ? MENU_NUTRICIONISTA : MENU_PACIENTE;
 
   // Faz o logout
   function confirmarSaida() {
-    localStorage.removeItem("usuario");
+    sair();
     setUsuario(null);
     setMostrarLogout(false);
     setMenuAberto(false);
@@ -119,21 +126,11 @@ function Navbar() {
                 />
               }
             >
-              <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
-                PERFIL
-              </Link>
-
-              <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
-                AGENDAMENTO
-              </Link>
-
-              <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
-                AGENDAR CONSULTA
-              </Link>
-
-              <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
-                CONSULTA
-              </Link>
+              {itensMenu.map(([texto, rota]) => (
+                <Link key={texto} to={rota} className="p-5 hover:bg-slate-200 rounded-xl">
+                  {texto}
+                </Link>
+              ))}
 
               {/* Botão de sair abre o popup de confirmação */}
               <button
@@ -200,37 +197,16 @@ function Navbar() {
             ) : (
               /* Menu do usuário no mobile */
               <div className="flex flex-col gap-2 mt-2">
-                <Link
-                  to="/User"
-                  onClick={() => setMenuAberto(false)}
-                  className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
-                >
-                  PERFIL
-                </Link>
-
-                <Link
-                  to="/User"
-                  onClick={() => setMenuAberto(false)}
-                  className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
-                >
-                  AGENDAMENTO
-                </Link>
-
-                <Link
-                  to="/User"
-                  onClick={() => setMenuAberto(false)}
-                  className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
-                >
-                  AGENDAR CONSULTA
-                </Link>
-
-                <Link
-                  to="/User"
-                  onClick={() => setMenuAberto(false)}
-                  className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
-                >
-                  CONSULTA
-                </Link>
+                {itensMenu.map(([texto, rota]) => (
+                  <Link
+                    key={texto}
+                    to={rota}
+                    onClick={() => setMenuAberto(false)}
+                    className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
+                  >
+                    {texto}
+                  </Link>
+                ))}
 
                 <button
                   type="button"

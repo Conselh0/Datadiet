@@ -1,62 +1,66 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import HamburguerMenu from "./ADMH_Menu";
+import useNutricionista from "../hooks/useNutricionista";
+import { iniciais } from "../utils/formatters";
 import { List } from "lucide-react";
 
+const estiloLink =
+  "flex items-center w-full justify-center text-center rounded-xl text-sm p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200";
+
 function Sidebar() {
+  const { nutricionista, carregando } = useNutricionista();
+  const [fotoQuebrada, setFotoQuebrada] = useState(false);
+
+  const nome = carregando ? "Carregando..." : nutricionista?.nome || "Nutricionista";
+
   return (
     <div className="flex flex-row relative justify-between lg:flex-col lg:w-fit lg:min-h-screen lg:w-70 bg-gray-500">
-      <img
-        src="/img/luana.png"
-        alt=""
-        className="rounded-[300px] border-2 w-20 lg:w-50 lg:m-auto"
-      />
+      {/* Foto do nutricionista (ou as iniciais, se não tiver foto) */}
+      {nutricionista?.foto && !fotoQuebrada ? (
+        <img
+          src={nutricionista.foto}
+          alt={nutricionista.nome}
+          onError={() => setFotoQuebrada(true)}
+          className="rounded-[300px] border-2 w-20 lg:w-50 aspect-square object-cover lg:m-auto"
+        />
+      ) : (
+        <div className="rounded-[300px] border-2 w-20 lg:w-50 aspect-square lg:m-auto bg-gray-400 flex items-center justify-center text-white text-3xl lg:text-7xl font-bold">
+          {nutricionista ? iniciais(nutricionista.nome) : ""}
+        </div>
+      )}
+
       <p className="hidden lg:block lg:text-white lg:text-center lg:text-4xl lg:font-bold">
-        Luana Teixeira <br />
+        {nome} <br />
       </p>
       <p className="hidden lg:block lg:text-white lg:text-center">
-        ID: 001 {/*Colocar com props o id dinâmico aqui */}
+        {nutricionista && `ID: ${nutricionista._id.slice(-6).toUpperCase()}`}
       </p>
 
-      <button>
-        {/*Chamando o menu hambuerguer */}
-        <HamburguerMenu
-          icone={<List className="cursor-pointer" color="white" size={40} />}
-        >
-          <section className="bg-gray-400 rounded-xl">
-            <Link
-              to="/Admin"
-              className="flex items-center w-full justify-center text-center rounded-xl text-sm p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
-            >
-              PERFIL
-            </Link>
-            <Link
-              to="/Admin/Historico"
-              className="flex items-center w-full justify-center text-center  rounded-xl text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
-            >
-              HISTÓRICO DE CONSULTAS
-            </Link>
-            <Link
-              to="/Admin/Pacientes"
-              className="flex items-center w-full justify-center text-center rounded-xl text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
-            >
-              PACIENTES
-            </Link>
-            <Link
-              to="#"
-              className="flex items-center w-full justify-center text-center rounded-xl text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
-            >
-              CADASTRO NUTRI
-            </Link>
+      {/* HamburguerMenu sem a tag <button> externa para limpar o HTML */}
+      <HamburguerMenu
+        icone={<List className="cursor-pointer" color="white" size={40} />}
+      >
+        <section className="bg-gray-400 rounded-xl">
+          <Link to="/Admin" className={estiloLink}>
+            PERFIL
+          </Link>
+          <Link to="/Admin/Historico" className={estiloLink}>
+            HISTÓRICO DE CONSULTAS
+          </Link>
+          <Link to="/Admin/Pacientes" className={estiloLink}>
+            PACIENTES
+          </Link>
+          <Link to="/CadNu" className={estiloLink}>
+            CADASTRO NUTRI
+          </Link>
 
-            <Link
-              to="/"
-              className="flex items-center w-full justify-center text-center rounded-xl text-sm  p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200"
-            >
-              SAIR
-            </Link>
-          </section>
-        </HamburguerMenu>
-      </button>
+          {/* Alterado: Agora é um Link direto para a Home, sem interceptação ou modais */}
+          <Link to="/" className={estiloLink}>
+            SAIR
+          </Link>
+        </section>
+      </HamburguerMenu>
     </div>
   );
 }

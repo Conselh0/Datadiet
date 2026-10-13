@@ -36,8 +36,8 @@ function Acoes({ item, onMudar, carregando }) {
   );
 }
 
-// Use <Agendamentos nutricionista="Ana Clara" /> para ver só as consultas dela
-function Agendamentos({ nutricionista }) {
+// Use <Agendamentos nutricionistaId={id} /> para ver só as consultas desse nutricionista
+function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca = "" }) {
   const [lista, setLista] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
@@ -45,7 +45,7 @@ function Agendamentos({ nutricionista }) {
   const carregar = async () => {
     try {
       setErro("");
-      setLista(await listarAgendamentos({ nutricionista }));
+      setLista(await listarAgendamentos({ nutricionista, nutricionistaId }));
     } catch (e) {
       setErro(e.message);
     } finally {
@@ -55,12 +55,21 @@ function Agendamentos({ nutricionista }) {
 
   useEffect(() => {
     carregar();
-  }, [nutricionista]);
+  }, [nutricionista, nutricionistaId]);
 
-  const mudarStatus = async (id, status) => {
+  const termo = busca.trim().toLowerCase();
+  const visiveis = lista.filter(
+    (a) =>
+      (status === "Todas" || a.status === status) &&
+      (!termo ||
+        (a.paciente || "").toLowerCase().includes(termo) ||
+        String(a.numero).includes(termo))
+  );
+
+  const mudarStatus = async (id, novoStatus) => {
     try {
       setCarregando(true);
-      await atualizarStatus(id, status);
+      await atualizarStatus(id, novoStatus);
       await carregar();
     } catch (e) {
       setErro(e.message);
@@ -73,10 +82,10 @@ function Agendamentos({ nutricionista }) {
       <p className="rounded-md bg-red-100 p-4 text-center text-red-700">{erro}</p>
     );
 
-  if (!carregando && lista.length === 0)
+  if (!carregando && visiveis.length === 0)
     return (
       <p className="rounded-xl bg-white p-8 text-center text-gray-600 shadow">
-        Nenhuma consulta agendada ainda.
+        Nenhuma consulta encontrada.
       </p>
     );
 
@@ -95,7 +104,7 @@ function Agendamentos({ nutricionista }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {lista.map((a) => (
+            {visiveis.map((a) => (
               <tr key={a._id} className="hover:bg-green-50">
                 <td className="p-3 font-bold text-slate-700">{a.numero}</td>
                 <td className="p-3">
@@ -124,7 +133,7 @@ function Agendamentos({ nutricionista }) {
 
       {/* Cards: celular */}
       <div className="md:hidden space-y-3">
-        {lista.map((a) => (
+        {visiveis.map((a) => (
           <div key={a._id} className="rounded-xl bg-white p-4 shadow">
             <div className="mb-2 flex items-center justify-between">
               <span className="text-sm font-bold text-slate-500">
