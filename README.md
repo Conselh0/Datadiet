@@ -23,9 +23,10 @@ Erro do npm no powershell: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 O fluxo de recuperação é feito em duas etapas:
 
-1. O usuário informa o e-mail e a nova senha em `/RedefinirSenha`.
-2. O servidor envia um link de confirmação por e-mail. A senha atual só é
-   substituída quando o link é acessado, e o token expira em uma hora.
+1. O usuário informa apenas o e-mail em `/RedefinirSenha`.
+2. O servidor envia um link por e-mail. Ao acessá-lo, o usuário informa e
+   confirma a nova senha. O token expira em uma hora e só então a senha é
+   substituída.
 
 Configure as variáveis de banco e SMTP do arquivo `.env` conforme o
 [`.env.example`](./.env.example). `APP_URL` deve apontar para a URL em que o

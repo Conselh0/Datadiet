@@ -4,60 +4,71 @@ import { List } from "lucide-react";
 import { useState, useEffect } from "react";
 
 function SidebarUser() {
-const [nomeUsuario, setNomeUsuario] = useState("Carregando...");
-useEffect(() => {
-  //Pega os dados do usuário no local storage e joga no banco
-  async function mostrarDadosCadastrados() {
-    try {
-      
-      
-      // 1. Pega o ID do usuário que foi salvo no login lá no local storage
-      const idUsuarioLogado = localStorage.getItem("usuario"); 
+  const [nomeUsuario, setNomeUsuario] = useState("Carregando...");
+  const [fotoPerfil, setFotoPerfil] = useState("");
 
-      if (!idUsuarioLogado) {
-        console.error("Usuário não está logado ou ID não encontrado.");
-        return;
+  useEffect(() => {
+    function sincronizarFotoPerfil(evento) {
+      const novaFoto = evento?.detail?.fotoPerfil;
+
+      if (typeof novaFoto === "string") {
+        setFotoPerfil(novaFoto);
       }
-
-      const usuarioJSON = JSON.parse(idUsuarioLogado)
-
-      const idUsuario = usuarioJSON.id
-
-      // 2. Passa o ID diretamente na URL da requisição
-      const res = await fetch(`http://localhost:8080/perfil/${idUsuario}`);
-      
-      if (!res.ok) {
-        throw new Error("Erro ao buscar dados do servidor");
-      }
-
-      // 3. O res.json() deve ser chamado APENAS UMA VEZ
-      const usuario = await res.json();
-      
-      // 4. Como o back-end vai devolver só um objeto, basta preencher os estados
-      if (usuario) {
-        setNomeUsuario(usuario.nome);
-      }
-    } catch (error) {
-      console.error("Deu erro ao buscar perfil:", error);
-      setNomeUsuario("Erro ao carregar");
-      setEmailUsuario("Erro ao carregar");
     }
-  }
 
-  mostrarDadosCadastrados();
-}, []);
+    async function mostrarDadosCadastrados() {
+      try {
+        const usuarioSalvo = localStorage.getItem("usuario");
+
+        if (!usuarioSalvo) {
+          console.error("Usuário não está logado ou ID não encontrado.");
+          return;
+        }
+
+        const usuarioJSON = JSON.parse(usuarioSalvo);
+        const idUsuario = usuarioJSON.id;
+
+        if (!idUsuario) {
+          console.error("ID do usuário não encontrado no localStorage.");
+          return;
+        }
+
+        const res = await fetch(`http://localhost:8080/perfil/${idUsuario}`);
+
+        if (!res.ok) {
+          throw new Error("Erro ao buscar dados do servidor");
+        }
+
+        const usuario = await res.json();
+
+        if (usuario) {
+          setNomeUsuario(usuario.nome);
+          setFotoPerfil(usuario.fotoPerfil || "");
+        }
+      } catch (error) {
+        console.error("Deu erro ao buscar perfil:", error);
+        setNomeUsuario("Erro ao carregar");
+      }
+    }
+
+    window.addEventListener("perfil-atualizado", sincronizarFotoPerfil);
+    mostrarDadosCadastrados();
+
+    return () => {
+      window.removeEventListener("perfil-atualizado", sincronizarFotoPerfil);
+    };
+  }, []);
 
   return (
     <div className="bg-green-900 flex flex-row justify-between lg:justify-evenly lg:flex-col min-h-10  lg:min-h-screen w-autolg:w-60 items-center">
       <div className="p-5">
         <img
-          src="/img/mulher.jpg"
-          alt=""
-          className="rounded-[300px] border-2 w-20 lg:w-50 m-auto"
+          src={fotoPerfil || "/img/avatar.png"}
+          alt="Foto de perfil do usuário"
+          className="w-32 h-32 object-cover rounded-full border-2 m-auto"
         />
         <p className="lg:block hidden text-white text-center text-4xl font-bold">
-          {nomeUsuario
-          } <br />
+          {nomeUsuario} <br />
         </p>
         <p className="lg:block hidden text-white text-center">
           ID:...{/*Colocar com props o id dinâmico aqui */}

@@ -12,10 +12,6 @@ const passwordResetSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    senhaHash: {
-      type: String,
-      required: true,
-    },
     expiraEm: {
       type: Date,
       required: true,

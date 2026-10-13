@@ -1,45 +1,51 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { CircleArrowLeft } from "lucide-react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 function ConfirmarRedefinicaoSenha() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const navigate = useNavigate();
+  const [formulario, setFormulario] = useState({
+    novaSenha: "",
+    confirmarSenha: "",
+  });
   const [mensagem, setMensagem] = useState("");
-  const [erro, setErro] = useState(token ? "" : "O link de confirmação está incompleto.");
-  const confirmado = useRef(false);
+  const [erro, setErro] = useState(
+    token ? "" : "O link de redefinição está incompleto.",
+  );
 
-  useEffect(() => {
-    if (!token || confirmado.current) {
-      return;
-    }
-    confirmado.current = true;
+  function atualizarCampo(event) {
+    setFormulario({ ...formulario, [event.target.name]: event.target.value });
+  }
 
-    async function confirmar() {
-      try {
-        const resposta = await fetch(
-          "http://localhost:8080/redefinir-senha/confirmar",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ token }),
-          },
-        );
-        const dados = await resposta.json().catch(() => ({}));
+  async function redefinir(event) {
+    event.preventDefault();
+    setMensagem("");
+    setErro("");
 
-        if (!resposta.ok) {
-          setErro(dados.erro || "Não foi possível confirmar a alteração.");
-          return;
-        }
+    try {
+      const resposta = await fetch(
+        "http://localhost:8080/redefinir-senha/confirmar",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, ...formulario }),
+        },
+      );
+      const dados = await resposta.json().catch(() => ({}));
 
-        setMensagem(dados.mensagem);
-      } catch {
-        setErro("Não foi possível conectar ao servidor.");
+      if (!resposta.ok) {
+        setErro(dados.erro || "Não foi possível redefinir a senha.");
+        return;
       }
-    }
 
-    confirmar();
-  }, [token]);
+      setMensagem(dados.mensagem);
+      setTimeout(() => navigate("/LoginPa"), 60000);
+    } catch {
+      setErro("Não foi possível conectar ao servidor.");
+    }
+  }
 
   return (
     <main className="bg-orange-50/50 flex items-center bg-[url('./img/bolas.png')] min-h-screen p-4">
@@ -50,8 +56,43 @@ function ConfirmarRedefinicaoSenha() {
             className="cursor-pointer absolute size-10 p-1.5 bg-green-700 rounded-2xl"
           />
         </Link>
-        <h2 className="text-3xl mb-4">Confirmação de senha</h2>
-        {erro && <p className="text-red-700 text-sm">{erro}</p>}
+        <h2 className="text-3xl mb-4">Redefinir senha</h2>
+        {erro && <p className="text-red-700 text-sm mb-3">{erro}</p>}
+        {!mensagem && token && (
+          <form onSubmit={redefinir} className="flex flex-col gap-3">
+            <p className="text-gray-600 mb-2">
+              Escolha uma nova senha para sua conta.
+            </p>
+            <label htmlFor="novaSenha">Nova senha</label>
+            <input
+              id="novaSenha"
+              name="novaSenha"
+              type="password"
+              minLength="8"
+              required
+              value={formulario.novaSenha}
+              onChange={atualizarCampo}
+              className="bg-white shadow-md rounded-lg h-10 px-3"
+            />
+            <label htmlFor="confirmarSenha">Confirmar nova senha</label>
+            <input
+              id="confirmarSenha"
+              name="confirmarSenha"
+              type="password"
+              minLength="8"
+              required
+              value={formulario.confirmarSenha}
+              onChange={atualizarCampo}
+              className="bg-white shadow-md rounded-lg h-10 px-3"
+            />
+            <button
+              type="submit"
+              className="cursor-pointer bg-green-700 shadow-md rounded-lg h-10 text-white mt-3"
+            >
+              Salvar nova senha
+            </button>
+          </form>
+        )}
         {mensagem && (
           <div className="text-green-800 text-sm">
             <p>{mensagem}</p>

@@ -6,8 +6,6 @@ function RedefinirSenha() {
   const navigate = useNavigate();
   const [formulario, setFormulario] = useState({
     email: "",
-    novaSenha: "",
-    confirmarSenha: "",
   });
   const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState("");
@@ -25,7 +23,7 @@ function RedefinirSenha() {
       const resposta = await fetch("http://localhost:8080/redefinir-senha", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formulario),
+        body: JSON.stringify({ email: formulario.email }),
       });
       const dados = await resposta.json().catch(() => ({}));
 
@@ -35,7 +33,7 @@ function RedefinirSenha() {
       }
 
       setMensagem(dados.mensagem);
-      setTimeout(() => navigate("/LoginPa"), 1200);
+      setTimeout(() => navigate("/LoginPa"), 60000);
     } catch {
       setErro("Não foi possível conectar ao servidor.");
     }
@@ -51,8 +49,8 @@ function RedefinirSenha() {
         </Link>
         <h2 className="text-3xl mb-2">Redefinir senha</h2>
         <p className="text-gray-600 mb-6">
-          Informe seu e-mail e a nova senha. Você receberá um link para confirmar
-          a alteração.
+          Informe seu e-mail para receber um link. Você poderá escolher uma nova
+          senha depois de acessá-lo.
         </p>
 
         <form onSubmit={redefinir} className="flex flex-col gap-3">
@@ -64,41 +62,13 @@ function RedefinirSenha() {
             required
             value={formulario.email}
             onChange={atualizarCampo}
-            className="bg-white shadow-md rounded-lg h-10 px-3"
-          />
-
-          <label htmlFor="novaSenha">Nova senha</label>
-          <input
-            id="novaSenha"
-            name="novaSenha"
-            type="password"
-            minLength="8"
-            required
-            value={formulario.novaSenha}
-            onChange={atualizarCampo}
-            className="bg-white shadow-md rounded-lg h-10 px-3"
-          />
-
-          <label htmlFor="confirmarSenha">Confirmar nova senha</label>
-          <input
-            id="confirmarSenha"
-            name="confirmarSenha"
-            type="password"
-            minLength="8"
-            required
-            value={formulario.confirmarSenha}
-            onChange={atualizarCampo}
-            className="bg-white shadow-md rounded-lg h-10 px-3"
-          />
+            className="bg-white shadow-md rounded-lg h-10 px-3"/>
 
           {erro && <p className="text-red-700 text-sm">{erro}</p>}
           {mensagem && <p className="text-green-800 text-sm">{mensagem}</p>}
           <button
             type="submit"
-            className="cursor-pointer bg-green-700 shadow-md rounded-lg h-10 text-white mt-3"
-          >
-            Solicitar alteração
-          </button>
+            className="cursor-pointer bg-green-700 shadow-md rounded-lg h-10 text-white mt-3">Enviar link</button>
         </form>
       </section>
     </main>

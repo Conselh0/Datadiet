@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import bcrypt from "bcryptjs";
 import UserModel from "../models/user.model.js";
+import { cpfValido, limparCpf } from "../../utils/cpf.js";
 
 const app = express();
 app.use(cors()); //middleware para sempre usarmos o cors
@@ -38,6 +39,11 @@ app.post("/cadastro", async (req, res) => {
         .json({ erro: "Preencha todos os campos obrigatórios." });
     }
 
+    const cpfNormalizado = limparCpf(cpf);
+    if (!cpfValido(cpfNormalizado)) {
+      return res.status(400).json({ erro: "Digite um CPF válido." });
+    }
+
     const emailNormalizado = email.trim().toLowerCase();
     const emailJaCadastrado = await UserModel.exists({
       email: emailNormalizado,
@@ -69,7 +75,7 @@ app.post("/cadastro", async (req, res) => {
       nascimento,
       email: emailNormalizado,
       senha: senhaHash,
-      cpf,
+      cpf: cpfNormalizado,
       telefone,
       genero,
     });

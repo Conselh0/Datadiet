@@ -4,6 +4,7 @@ import { LogIn } from "lucide-react";
 import { cadastrarNutricionista } from "../services/nutricionistaService";
 import { getSessao, iniciarSessao } from "../utils/sessao";
 import "../index.css";
+import { cpfValido } from "../utils/cpf.js";
 
 const DIAS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
