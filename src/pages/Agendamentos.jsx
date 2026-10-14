@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Check } from "lucide-react";
 import NutricionistaCard from "../components/NutricionistaCard";
 import Calendario from "../components/Calendario";
+import FormAnamnese from "../components/FormAnamnese";
 import { listarNutricionistas, buscarHorarios } from "../services/nutricionistaService";
-import { criarAgendamento, getUsuario } from "../services/agendamentoService";
+import {
+  criarAgendamento,
+  listarAgendamentos,
+  getUsuario,
+  getUsuarioId,
+} from "../services/agendamentoService";
 import { formatarData } from "../utils/formatters";
 
-const ETAPAS = ["Nutricionista", "Data", "Horário", "Confirmar"];
+const ETAPAS = ["Nutricionista", "Data", "Horário", "Ficha", "Confirmar"];
+const ATIVOS = ["Pendente", "Confirmado"];
 
 // Barra de progresso: etapas já feitas podem ser clicadas para voltar
 function Etapas({ passo, onIr }) {
@@ -61,7 +69,7 @@ function Voltar({ onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="mt-6 font-semibold text-green-800 underline-offset-4 hover:underline"
+      className="mt-6 cursor-pointer font-semibold text-green-800 underline-offset-4 hover:underline"
     >
       ← Voltar
     </button>
@@ -70,6 +78,10 @@ function Voltar({ onClick }) {
 
 function Agendamentos() {
   const [passo, setPasso] = useState(1);
+
+  // Regra: só agenda outra consulta quando não houver uma em andamento
+  const [verificando, setVerificando] = useState(true);
+  const [emAndamento, setEmAndamento] = useState(null);
 
   const [nutricionistas, setNutricionistas] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -80,6 +92,7 @@ function Agendamentos() {
   const [horarios, setHorarios] = useState([]);
   const [carregandoHorarios, setCarregandoHorarios] = useState(false);
   const [horario, setHorario] = useState("");
+  const [anamnese, setAnamnese] = useState(null);
 
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState("");
@@ -90,6 +103,13 @@ function Agendamentos() {
       .then(setNutricionistas)
       .catch((e) => setErroLista(e.message))
       .finally(() => setCarregando(false));
+
+    const id = getUsuarioId();
+    if (!id) return setVerificando(false);
+    listarAgendamentos({ pacienteId: id })
+      .then((l) => setEmAndamento(l.find((a) => ATIVOS.includes(a.status)) || null))
+      .catch(() => {})
+      .finally(() => setVerificando(false));
   }, []);
 
   const carregarHorarios = async () => {
@@ -105,7 +125,6 @@ function Agendamentos() {
     }
   };
 
-  // Ao mudar nutricionista ou data, busca os horários daquele dia
   useEffect(() => {
     setHorario("");
     setHorarios([]);
@@ -131,45 +150,40 @@ function Agendamentos() {
     setPasso(4);
   };
 
+  const guardarFicha = (ficha) => {
+    setAnamnese(ficha);
+    setPasso(5);
+  };
+
   const confirmar = async () => {
     setErro("");
     if (!getUsuario().nome) {
-      return setErro("Não foi possível identificar o paciente. Abra o seu perfil e tente novamente.");
+      return setErro("Não foi possível identificar o paciente. Entre na sua conta e tente novamente.");
     }
     try {
       setEnviando(true);
-      await criarAgendamento({
-        nutricionistaId: selecionado._id,
-        data,
-        horario,
-      });
+      await criarAgendamento({ nutricionistaId: selecionado._id, data, horario, anamnese });
       setSucesso({ nutricionista: selecionado.nome, data, horario });
     } catch (e) {
       setErro(e.message);
-      setHorario("");
-      carregarHorarios(); // atualiza, caso o horário tenha sido ocupado
-      setPasso(3);
+      // Horário tomado por outra pessoa: volta para escolher outro
+      if (e.status === 409 && /ocupado/i.test(e.message)) {
+        setHorario("");
+        carregarHorarios();
+        setPasso(3);
+      }
     } finally {
       setEnviando(false);
     }
   };
 
-  const recomecar = () => {
-    setSucesso(null);
-    setSelecionado(null);
-    setData("");
-    setHorario("");
-    setErro("");
-    setPasso(1);
-  };
-
-  const livres = horarios.filter((h) => h.livre).length;
-
   return (
     <div className="flex min-h-screen w-full flex-col items-center bg-[url('/img/bolas.png')] bg-green-400/20 p-4 pb-16 text-center">
       <h1 className="my-8 text-3xl font-bold text-green-700 md:text-5xl">AGENDE SUA CONSULTA</h1>
 
-      {sucesso ? (
+      {verificando ? (
+        <p className="text-gray-600">Verificando suas consultas...</p>
+      ) : sucesso ? (
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
           <p className="text-2xl font-bold text-green-800">Consulta agendada!</p>
           <p className="mt-4 text-lg text-slate-700">
@@ -177,19 +191,35 @@ function Agendamentos() {
           </p>
           <p className="text-slate-600">com {sucesso.nutricionista}</p>
           <p className="mt-4 text-sm text-gray-500">
-            O nutricionista vai confirmar o atendimento. Acompanhe o status em Histórico de consultas.
+            Sua ficha de anamnese foi enviada. O nutricionista vai confirmar o atendimento.
           </p>
-          <button
-            onClick={recomecar}
-            className="mt-6 w-full rounded-lg bg-green-600 py-2 font-bold text-white hover:bg-green-700"
+          <Link
+            to="/User/Historico"
+            className="mt-6 block w-full rounded-lg bg-green-600 py-2 font-bold text-white hover:bg-green-700"
           >
-            Agendar outra consulta
-          </button>
+            Ver minhas consultas
+          </Link>
+        </div>
+      ) : emAndamento ? (
+        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
+          <p className="text-2xl font-bold text-green-800">Você já tem uma consulta em andamento</p>
+          <p className="mt-4 text-lg text-slate-700">
+            {formatarData(emAndamento.data)} às {emAndamento.horario}
+          </p>
+          <p className="text-slate-600">com {emAndamento.nutricionista}</p>
+          <p className="mt-4 text-sm text-gray-500">
+            Você poderá agendar outra depois que ela for concluída ou o cancelamento for confirmado
+            pelo nutricionista. Para mudar o horário, peça o reagendamento no histórico.
+          </p>
+          <Link
+            to="/User/Historico"
+            className="mt-6 block w-full rounded-lg bg-green-600 py-2 font-bold text-white hover:bg-green-700"
+          >
+            Ver minhas consultas
+          </Link>
         </div>
       ) : (
         <>
-
-        {/* <section className="bg-white p-20 max-w-[90vw] rounded-4xl"> */}
           <Etapas passo={passo} onIr={setPasso} />
 
           {/* Etapa 1: nutricionista */}
@@ -214,7 +244,6 @@ function Agendamentos() {
                 ))}
               </div>
             </section>
-            
           )}
 
           {/* Etapa 2: data */}
@@ -234,14 +263,11 @@ function Agendamentos() {
           {/* Etapa 3: horário */}
           {passo === 3 && selecionado && data && (
             <section className="flex w-full max-w-2xl flex-col items-center">
-              <Titulo
-                texto="Escolha o horário"
-                detalhe={`${selecionado.nome} · ${formatarData(data)}`}
-              />
+              <Titulo texto="Escolha o horário" detalhe={`${selecionado.nome} · ${formatarData(data)}`} />
               <div className="w-full rounded-2xl bg-white p-5 shadow-lg">
                 {carregandoHorarios ? (
                   <p className="text-gray-600">Buscando horários...</p>
-                ) : livres === 0 ? (
+                ) : horarios.filter((h) => h.livre).length === 0 ? (
                   <p className="text-gray-600">
                     Não há horários livres nesse dia. Volte e escolha outra data.
                   </p>
@@ -269,8 +295,20 @@ function Agendamentos() {
             </section>
           )}
 
-          {/* Etapa 4: confirmação */}
+          {/* Etapa 4: ficha de anamnese (uma por consulta) */}
           {passo === 4 && selecionado && data && horario && (
+            <section className="flex w-full max-w-2xl flex-col items-center">
+              <Titulo
+                texto="Ficha de anamnese"
+                detalhe={`Consulta em ${formatarData(data)} às ${horario}`}
+              />
+              <FormAnamnese inicial={anamnese} onContinuar={guardarFicha} />
+              <Voltar onClick={() => setPasso(3)} />
+            </section>
+          )}
+
+          {/* Etapa 5: confirmação */}
+          {passo === 5 && selecionado && data && horario && anamnese && (
             <section className="flex w-full max-w-md flex-col items-center">
               <Titulo texto="Confirme sua consulta" />
               <div className="w-full rounded-2xl bg-green-950 p-6 text-white shadow-xl">
@@ -289,25 +327,28 @@ function Agendamentos() {
                   </div>
                 </div>
 
+                <p className="mt-4 flex items-center gap-2 text-sm text-green-200">
+                  <Check size={16} /> Ficha de anamnese preenchida
+                </p>
+
                 <button
                   onClick={confirmar}
                   disabled={enviando}
-                  className="mt-6 w-full rounded-lg bg-green-400 py-3 font-bold text-green-950 hover:bg-green-300 disabled:opacity-60"
+                  className="mt-6 w-full cursor-pointer rounded-lg bg-green-400 py-3 font-bold text-green-950 hover:bg-green-300 disabled:opacity-60"
                 >
                   {enviando ? "Agendando..." : "Confirmar agendamento"}
                 </button>
               </div>
-              <Voltar onClick={() => setPasso(3)} />
+              <Voltar onClick={() => setPasso(4)} />
             </section>
           )}
-          {/* </section> */}
+
           {erro && (
             <p className="mt-6 max-w-md rounded-md bg-red-100 p-3 font-semibold text-red-700">{erro}</p>
           )}
         </>
       )}
     </div>
-    
   );
 }
 

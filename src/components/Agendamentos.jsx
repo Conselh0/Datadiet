@@ -1,34 +1,103 @@
 import { useEffect, useState } from "react";
-import StatusBadge from "./StatusBadge";
-import { listarAgendamentos, atualizarStatus } from "../services/agendamentoService";
+import StatusBadge, { PedidoBadge } from "./StatusBadge";
+import ReagendarModal from "./ReagendarModal";
+import {
+  listarAgendamentos,
+  atualizarStatus,
+  responderSolicitacao,
+  retirarSolicitacao,
+} from "../services/agendamentoService";
 import { formatarData, iniciais } from "../utils/formatters";
 
-function Acoes({ item, onMudar, carregando }) {
+const btn = "cursor-pointer rounded-md px-3 py-1 text-xs md:text-sm font-semibold disabled:opacity-50";
+
+const descricao = (sol) =>
+  sol.tipo === "Cancelamento"
+    ? "pediu o cancelamento"
+    : `pediu para reagendar para ${formatarData(sol.novaData)} às ${sol.novoHorario}`;
+
+function Acoes({ item, ocupado, onStatus, onReagendar, onResponder, onRetirar }) {
+  const sol = item.solicitacao;
   if (item.status === "Cancelado" || item.status === "Concluído") return null;
+
+  // O paciente pediu algo: o nutricionista aprova ou recusa
+  if (sol?.origem === "paciente") {
+    return (
+      <div className="flex flex-col items-center gap-2">
+        <p className="max-w-60 text-xs text-gray-600">
+          Paciente {descricao(sol)}.{sol.motivo && <> Motivo: “{sol.motivo}”.</>}
+        </p>
+        <div className="flex gap-2">
+          <button
+            disabled={ocupado}
+            onClick={() => onResponder(item._id, true)}
+            className={`${btn} bg-green-700 text-white hover:bg-green-800`}
+          >
+            Aprovar
+          </button>
+          <button
+            disabled={ocupado}
+            onClick={() => onResponder(item._id, false)}
+            className={`${btn} border border-red-300 text-red-700 hover:bg-red-50`}
+          >
+            Recusar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // O nutricionista propôs novo horário: aguardando o paciente
+  if (sol?.origem === "nutricionista") {
+    return (
+      <div className="flex flex-col items-center gap-2">
+        <p className="max-w-60 text-xs text-gray-600">
+          Proposta de {formatarData(sol.novaData)} às {sol.novoHorario} enviada. Aguardando o
+          paciente.
+        </p>
+        <button
+          disabled={ocupado}
+          onClick={() => onRetirar(item._id)}
+          className={`${btn} border border-gray-300 text-gray-700 hover:bg-gray-100`}
+        >
+          Retirar proposta
+        </button>
+      </div>
+    );
+  }
+
+  // Sem pedido em andamento
   return (
     <div className="flex flex-wrap justify-center gap-2">
       {item.status === "Pendente" && (
         <button
-          disabled={carregando}
-          onClick={() => onMudar(item._id, "Confirmado")}
-          className="rounded-md bg-green-700 px-3 py-1 text-xs md:text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-50"
+          disabled={ocupado}
+          onClick={() => onStatus(item._id, "Confirmado")}
+          className={`${btn} bg-green-700 text-white hover:bg-green-800`}
         >
           Confirmar
         </button>
       )}
       {item.status === "Confirmado" && (
         <button
-          disabled={carregando}
-          onClick={() => onMudar(item._id, "Concluído")}
-          className="rounded-md bg-blue-600 px-3 py-1 text-xs md:text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+          disabled={ocupado}
+          onClick={() => onStatus(item._id, "Concluído")}
+          className={`${btn} bg-blue-600 text-white hover:bg-blue-700`}
         >
           Concluir
         </button>
       )}
       <button
-        disabled={carregando}
-        onClick={() => onMudar(item._id, "Cancelado")}
-        className="rounded-md border border-red-300 px-3 py-1 text-xs md:text-sm font-semibold text-red-700 hover:bg-red-50 disabled:opacity-50"
+        disabled={ocupado}
+        onClick={() => onReagendar(item)}
+        className={`${btn} border border-green-700 text-green-800 hover:bg-green-50`}
+      >
+        Reagendar
+      </button>
+      <button
+        disabled={ocupado}
+        onClick={() => onStatus(item._id, "Cancelado")}
+        className={`${btn} border border-red-300 text-red-700 hover:bg-red-50`}
       >
         Cancelar
       </button>
@@ -36,11 +105,14 @@ function Acoes({ item, onMudar, carregando }) {
   );
 }
 
-// Use <Agendamentos nutricionistaId={id} /> para ver só as consultas desse nutricionista
+// <Agendamentos nutricionistaId={id} status="Todas" busca="" />
 function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca = "" }) {
   const [lista, setLista] = useState([]);
   const [carregando, setCarregando] = useState(true);
+  const [ocupado, setOcupado] = useState(false);
   const [erro, setErro] = useState("");
+  const [erroAcao, setErroAcao] = useState("");
+  const [reagendando, setReagendando] = useState(null);
 
   const carregar = async () => {
     try {
@@ -57,6 +129,24 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
     carregar();
   }, [nutricionista, nutricionistaId]);
 
+  async function executar(acao) {
+    setErroAcao("");
+    try {
+      setOcupado(true);
+      await acao();
+      await carregar();
+    } catch (e) {
+      setErroAcao(e.message);
+    } finally {
+      setOcupado(false);
+    }
+  }
+
+  const mudarStatus = (id, novo) => executar(() => atualizarStatus(id, novo));
+  const responder = (id, aceitar) =>
+    executar(() => responderSolicitacao(id, "nutricionista", aceitar));
+  const retirar = (id) => executar(() => retirarSolicitacao(id, "nutricionista"));
+
   const termo = busca.trim().toLowerCase();
   const visiveis = lista.filter(
     (a) =>
@@ -66,21 +156,8 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
         String(a.numero).includes(termo))
   );
 
-  const mudarStatus = async (id, novoStatus) => {
-    try {
-      setCarregando(true);
-      await atualizarStatus(id, novoStatus);
-      await carregar();
-    } catch (e) {
-      setErro(e.message);
-      setCarregando(false);
-    }
-  };
-
   if (erro)
-    return (
-      <p className="rounded-md bg-red-100 p-4 text-center text-red-700">{erro}</p>
-    );
+    return <p className="rounded-md bg-red-100 p-4 text-center text-red-700">{erro}</p>;
 
   if (!carregando && visiveis.length === 0)
     return (
@@ -89,13 +166,28 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
       </p>
     );
 
+  const acoes = (a) => (
+    <Acoes
+      item={a}
+      ocupado={ocupado}
+      onStatus={mudarStatus}
+      onReagendar={setReagendando}
+      onResponder={responder}
+      onRetirar={retirar}
+    />
+  );
+
   return (
     <div className="w-full">
+      {erroAcao && (
+        <p className="mb-3 rounded-md bg-red-100 p-3 text-sm font-semibold text-red-700">{erroAcao}</p>
+      )}
+
       {/* Tabela: telas médias e grandes */}
-      <div className="hidden md:block overflow-hidden rounded-xl bg-white shadow-lg">
+      <div className="hidden overflow-hidden rounded-xl bg-white shadow-lg md:block">
         <table className="w-full text-center">
           <thead>
-            <tr className="bg-gray-500 text-white text-sm lg:text-base">
+            <tr className="bg-green-900 text-sm text-white lg:text-base">
               <th className="p-3">NÚMERO DO ATENDIMENTO</th>
               <th className="p-3">NOME DO PACIENTE</th>
               <th className="p-3">DATA DO AGENDAMENTO</th>
@@ -105,7 +197,7 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
           </thead>
           <tbody className="divide-y divide-gray-200">
             {visiveis.map((a) => (
-              <tr key={a._id} className="hover:bg-green-50">
+              <tr key={a._id} className={a.solicitacao ? "bg-orange-50/60" : "hover:bg-green-50"}>
                 <td className="p-3 font-bold text-slate-700">{a.numero}</td>
                 <td className="p-3">
                   <div className="flex items-center justify-center gap-2">
@@ -120,11 +212,12 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
                   <p className="text-sm text-gray-500">{a.horario}</p>
                 </td>
                 <td className="p-3">
-                  <StatusBadge status={a.status} />
+                  <div className="flex flex-col items-center gap-1">
+                    <StatusBadge status={a.status} />
+                    <PedidoBadge solicitacao={a.solicitacao} />
+                  </div>
                 </td>
-                <td className="p-3">
-                  <Acoes item={a} onMudar={mudarStatus} carregando={carregando} />
-                </td>
+                <td className="p-3">{acoes(a)}</td>
               </tr>
             ))}
           </tbody>
@@ -132,14 +225,18 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
       </div>
 
       {/* Cards: celular */}
-      <div className="md:hidden space-y-3">
+      <div className="space-y-3 md:hidden">
         {visiveis.map((a) => (
-          <div key={a._id} className="rounded-xl bg-white p-4 shadow">
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm font-bold text-slate-500">
-                Atendimento #{a.numero}
-              </span>
-              <StatusBadge status={a.status} />
+          <div
+            key={a._id}
+            className={`rounded-xl p-4 shadow ${a.solicitacao ? "bg-orange-50" : "bg-white"}`}
+          >
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <span className="text-sm font-bold text-gray-500">Atendimento #{a.numero}</span>
+              <div className="flex flex-wrap items-center gap-1">
+                <StatusBadge status={a.status} />
+                <PedidoBadge solicitacao={a.solicitacao} />
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-300 text-xs font-bold text-slate-700">
@@ -152,12 +249,22 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
                 </p>
               </div>
             </div>
-            <div className="mt-3">
-              <Acoes item={a} onMudar={mudarStatus} carregando={carregando} />
-            </div>
+            <div className="mt-3">{acoes(a)}</div>
           </div>
         ))}
       </div>
+
+      {reagendando && (
+        <ReagendarModal
+          agendamento={reagendando}
+          quem="nutricionista"
+          onFechar={() => setReagendando(null)}
+          onEnviado={() => {
+            setReagendando(null);
+            carregar();
+          }}
+        />
+      )}
     </div>
   );
 }

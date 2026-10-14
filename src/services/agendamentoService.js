@@ -6,7 +6,11 @@ export async function request(path, options = {}) {
     ...options,
   });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(body.erro || "Não foi possível concluir a ação.");
+  if (!res.ok) {
+    const erro = new Error(body.erro || "Não foi possível concluir a ação.");
+    erro.status = res.status;
+    throw erro;
+  }
   return body;
 }
 
@@ -18,6 +22,12 @@ export function getUsuario() {
   }
 }
 
+// O id do usuário pode estar em _id ou id
+export const getUsuarioId = () => {
+  const u = getUsuario();
+  return u._id || u.id;
+};
+
 const qs = (obj) =>
   new URLSearchParams(
     Object.entries(obj).filter(([, v]) => v !== undefined && v !== "")
@@ -25,16 +35,16 @@ const qs = (obj) =>
 
 export const criarAgendamento = (dados) => {
   const usuarioLogado = getUsuario();
-  
+
   const dadosCompletos = {
     ...dados,
     paciente: usuarioLogado.nome,
-    pacienteId: usuarioLogado._id || usuarioLogado.id
+    pacienteId: usuarioLogado._id || usuarioLogado.id,
   };
 
-  return request("/agendamento", { 
-    method: "POST", 
-    body: JSON.stringify(dadosCompletos) 
+  return request("/agendamento", {
+    method: "POST",
+    body: JSON.stringify(dadosCompletos),
   });
 };
 
@@ -49,3 +59,22 @@ export const atualizarStatus = (id, status) =>
     method: "PATCH",
     body: JSON.stringify({ status }),
   });
+
+// Pedido de reagendamento/cancelamento (ou proposta de novo horário do nutricionista)
+// dados: { tipo, origem, novaData?, novoHorario?, motivo? }
+export const solicitarAlteracao = (id, dados) =>
+  request(`/agendamento/${id}/solicitacao`, {
+    method: "POST",
+    body: JSON.stringify(dados),
+  });
+
+// por: "paciente" | "nutricionista" (quem está respondendo)
+export const responderSolicitacao = (id, por, aceitar) =>
+  request(`/agendamento/${id}/solicitacao/responder`, {
+    method: "POST",
+    body: JSON.stringify({ por, aceitar }),
+  });
+
+// por: quem fez o pedido
+export const retirarSolicitacao = (id, por) =>
+  request(`/agendamento/${id}/solicitacao?${qs({ por })}`, { method: "DELETE" });

@@ -150,6 +150,38 @@ router.get("/nutricionistas/:id/pacientes", async (req, res) => {
   }
 });
 
+// GET /nutricionistas/:id/pacientes/:pacienteId/anamneses
+// -> fichas de anamnese do paciente (uma por consulta), da mais nova para a mais antiga
+router.get("/nutricionistas/:id/pacientes/:pacienteId/anamneses", async (req, res) => {
+  try {
+    const { id, pacienteId } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(404).json({ erro: "Nutricionista não encontrado." });
+    }
+
+    const consultas = await AgendamentoModel.find({
+      nutricionistaId: id,
+      pacienteId,
+      anamnese: { $exists: true },
+    })
+      .select("+anamnese")
+      .sort({ data: -1, horario: -1 });
+
+    res.json(
+      consultas.map((a) => ({
+        _id: a._id,
+        numero: a.numero,
+        data: a.data,
+        horario: a.horario,
+        status: a.status,
+        anamnese: a.anamnese,
+      }))
+    );
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+});
+
 // POST /login/nutricionista  -> login do nutricionista
 router.post("/login/nutricionista", async (req, res) => {
   try {
@@ -214,12 +246,17 @@ router.get("/nutricionistas/:id/horarios", async (req, res) => {
 
     if (!nutri.diasAtendimento.includes(diaDaSemana(data))) return res.json([]);
 
-    const ocupados = await AgendamentoModel.find({
+    // Tomados: consultas marcadas + horários propostos em reagendamentos pendentes
+    const consultas = await AgendamentoModel.find({
       nutricionistaId: id,
-      data,
       status: { $ne: "Cancelado" },
-    }).select("horario");
-    const tomados = new Set(ocupados.map((a) => a.horario));
+      $or: [{ data }, { "solicitacao.novaData": data }],
+    });
+    const tomados = new Set();
+    for (const a of consultas) {
+      if (a.data === data) tomados.add(a.horario);
+      if (a.solicitacao?.novaData === data) tomados.add(a.solicitacao.novoHorario);
+    }
 
     res.json(
       gerarHorarios(nutri.horaInicio, nutri.horaFim, nutri.duracao).map((hora) => ({

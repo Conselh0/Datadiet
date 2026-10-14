@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { buscarProximaConsulta, getUsuario } from "../services/agendamentoService";
+import { buscarProximaConsulta, getUsuarioId } from "../services/agendamentoService";
 import { formatarData } from "../utils/formatters";
 
 function Info({ titulo, valor }) {
@@ -18,7 +18,7 @@ function ProximaConsulta({ refresh }) {
   const [erro, setErro] = useState("");
 
   useEffect(() => {
-    const { id } = getUsuario();
+    const id = getUsuarioId();
     if (!id) return;
     buscarProximaConsulta(id)
       .then(setConsulta)

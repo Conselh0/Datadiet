@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useNutricionista from "../hooks/useNutricionista";
-import { listarPacientes } from "../services/nutricionistaService";
+import { listarPacientes, listarAnamneses } from "../services/nutricionistaService";
+import AnamneseView from "../components/AnamneseView";
 import { formatarData, iniciais } from "../utils/formatters";
 
 const idCurto = (id = "") => id.slice(-6).toUpperCase();
@@ -23,6 +24,31 @@ function Pacientes() {
   const [erro, setErro] = useState("");
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState(null);
+
+  // Ficha de anamnese do paciente aberto
+  const [fichas, setFichas] = useState(null); // null = ainda não carregou
+  const [fichaSel, setFichaSel] = useState(0);
+  const [carregandoFichas, setCarregandoFichas] = useState(false);
+  const [erroFicha, setErroFicha] = useState("");
+
+  function abrir(p) {
+    setAberto(p);
+    setFichas(null);
+    setFichaSel(0);
+    setErroFicha("");
+  }
+
+  async function carregarFichas() {
+    try {
+      setCarregandoFichas(true);
+      setErroFicha("");
+      setFichas(await listarAnamneses(nutricionista._id, aberto.pacienteId));
+    } catch (e) {
+      setErroFicha(e.message);
+    } finally {
+      setCarregandoFichas(false);
+    }
+  }
 
   useEffect(() => {
     if (!nutricionista) return;
@@ -106,7 +132,7 @@ function Pacientes() {
                       {visiveis.map((p) => (
                         <tr
                           key={p.pacienteId}
-                          onClick={() => setAberto(p)}
+                          onClick={() => abrir(p)}
                           className="cursor-pointer hover:bg-gray-50"
                         >
                           <td className="hidden p-4 font-bold text-slate-700 sm:table-cell">
@@ -149,7 +175,7 @@ function Pacientes() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl"
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 text-center shadow-2xl"
           >
             <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-500 text-xl font-bold text-white">
               {iniciais(aberto.paciente)}
@@ -178,6 +204,44 @@ function Pacientes() {
                     : "—"}
                 </p>
               </div>
+            </div>
+
+            {/* Ficha de anamnese */}
+            <div className="mt-5 text-left">
+              {fichas === null ? (
+                <button
+                  onClick={carregarFichas}
+                  disabled={carregandoFichas}
+                  className="w-full cursor-pointer rounded-lg border border-gray-500 py-2 font-semibold text-gray-700 hover:bg-gray-100 disabled:opacity-60"
+                >
+                  {carregandoFichas ? "Carregando ficha..." : "Ver ficha de anamnese"}
+                </button>
+              ) : fichas.length === 0 ? (
+                <p className="rounded-xl bg-gray-100 p-3 text-center text-sm text-gray-600">
+                  Este paciente ainda não preencheu a ficha de anamnese.
+                </p>
+              ) : (
+                <>
+                  <label className="mb-2 block text-sm font-semibold text-gray-700">
+                    Ficha da consulta
+                    <select
+                      value={fichaSel}
+                      onChange={(e) => setFichaSel(Number(e.target.value))}
+                      className="mt-1 h-10 w-full rounded-lg bg-gray-100 px-3 font-normal"
+                    >
+                      {fichas.map((f, i) => (
+                        <option key={f._id} value={i}>
+                          #{f.numero} · {formatarData(f.data)} às {f.horario} · {f.status}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <AnamneseView anamnese={fichas[fichaSel].anamnese} />
+                </>
+              )}
+              {erroFicha && (
+                <p className="mt-2 rounded-md bg-red-100 p-2 text-sm text-red-700">{erroFicha}</p>
+              )}
             </div>
 
             <button

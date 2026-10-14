@@ -2,67 +2,98 @@ import express from "express";
 import mongoose from "mongoose";
 import AgendamentoModel, { STATUS } from "../models/agendamento.model.js";
 import NutricionistaModel from "../models/nutricionista.model.js";
-
 import { agora, gerarHorarios, diaDaSemana } from "../../utils/horarios.js";
-
-//Função para aceitar formatação de data
-function normalizarData(d) {
-  if (typeof d !== "string") return "";
-  const s = d.trim();
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
-  const m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-  return m ? `${m[3]}-${m[2]}-${m[1]}` : "";
-}
 
 const router = express.Router();
 
+// Consulta "em andamento": enquanto existir, o paciente não marca outra
+const ATIVOS = ["Pendente", "Confirmado"];
+const ORIGENS = ["paciente", "nutricionista"];
+
+// Confere se data/horário podem ser usados com esse nutricionista.
+// Devolve { nutri } se estiver tudo certo, ou { status, erro }.
+async function validarSlot({ nutricionistaId, data, horario, ignorarId }) {
+  if (!mongoose.isValidObjectId(nutricionistaId)) {
+    return { status: 404, erro: "Nutricionista não encontrado." };
+  }
+  const nutri = await NutricionistaModel.findById(nutricionistaId);
+  if (!nutri) return { status: 404, erro: "Nutricionista não encontrado." };
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(data || "")) return { status: 400, erro: "Data inválida." };
+  if (!nutri.diasAtendimento.includes(diaDaSemana(data))) {
+    return { status: 400, erro: "O nutricionista não atende nesse dia." };
+  }
+  if (!gerarHorarios(nutri.horaInicio, nutri.horaFim, nutri.duracao).includes(horario)) {
+    return { status: 400, erro: "Horário fora do atendimento do nutricionista." };
+  }
+  if (`${data} ${horario}` <= agora()) {
+    return { status: 400, erro: "Escolha uma data e horário futuros." };
+  }
+
+  // Ocupado por outra consulta, ou reservado por um reagendamento pendente
+  const filtro = {
+    nutricionistaId,
+    status: { $ne: "Cancelado" },
+    $or: [{ data, horario }, { "solicitacao.novaData": data, "solicitacao.novoHorario": horario }],
+  };
+  if (ignorarId) filtro._id = { $ne: ignorarId };
+  if (await AgendamentoModel.exists(filtro)) {
+    return { status: 409, erro: "Este horário já está ocupado. Escolha outro." };
+  }
+  return { nutri };
+}
+
+function validarAnamnese(a) {
+  if (!a || typeof a !== "object") return "Preencha a ficha de anamnese.";
+  const textos = ["pesoCorporal", "altura", "pesoIdeal", "aguaLitros"];
+  if (textos.some((c) => !String(a[c] || "").trim())) {
+    return "Preencha peso, altura, peso ideal e consumo de água na ficha de anamnese.";
+  }
+  const simNao = ["bebidaAlcoolica", "fuma", "atividadeFisica", "desconfortoIntestinal", "cansaco"];
+  if (simNao.some((c) => !["Sim", "Não"].includes(a[c]))) {
+    return "Responda todas as perguntas de Sim/Não da ficha de anamnese.";
+  }
+  if (!["Regular", "Irregular"].includes(a.funcionamentoIntestinal)) {
+    return "Informe o funcionamento intestinal na ficha de anamnese.";
+  }
+  return null;
+}
+
+const enviarErro = (res, r) => res.status(r.status).json({ erro: r.erro });
+
+// POST /agendamento  -> cria uma consulta (com a ficha de anamnese)
 router.post("/agendamento", async (req, res) => {
   try {
-    const { paciente, pacienteId, nutricionistaId, horario } = req.body;
-    const data = normalizarData(req.body.data);
+    const { paciente, pacienteId, nutricionistaId, data, horario, anamnese } = req.body;
 
-    if (!paciente || !nutricionistaId || !data || !horario) {
+    if (!paciente || !pacienteId) {
+      return res.status(400).json({ erro: "Não foi possível identificar o paciente." });
+    }
+    if (!nutricionistaId || !data || !horario) {
       return res.status(400).json({ erro: "Preencha todos os campos do agendamento." });
     }
-    if (!mongoose.isValidObjectId(nutricionistaId)) {
-      return res.status(404).json({ erro: "Nutricionista não encontrado." });
-    }
 
-    const nutri = await NutricionistaModel.findById(nutricionistaId);
-    if (!nutri) return res.status(404).json({ erro: "Nutricionista não encontrado." });
+    const erroFicha = validarAnamnese(anamnese);
+    if (erroFicha) return res.status(400).json({ erro: erroFicha });
 
-    if (!data) {
-      return res.status(400).json({
-        erro: `Data inválida (recebido: ${JSON.stringify(req.body.data)}).`,
+    // Só marca outra consulta depois de concluir (ou cancelar, com aprovação) a atual
+    if (await AgendamentoModel.exists({ pacienteId, status: { $in: ATIVOS } })) {
+      return res.status(409).json({
+        erro: "Você já tem uma consulta em andamento. Só é possível agendar outra depois que ela for concluída ou o cancelamento for confirmado.",
       });
     }
-    if (!nutri.diasAtendimento.includes(diaDaSemana(data))) {
-      return res.status(400).json({ erro: "O nutricionista não atende nesse dia." });
-    }
-    if (!gerarHorarios(nutri.horaInicio, nutri.horaFim, nutri.duracao).includes(horario)) {
-      return res.status(400).json({ erro: "Horário fora do atendimento do nutricionista." });
-    }
-    if (`${data} ${horario}` <= agora()) {
-      return res.status(400).json({ erro: "Escolha uma data e horário futuros." });
-    }
 
-    const ocupado = await AgendamentoModel.findOne({
-      nutricionistaId,
-      data,
-      horario,
-      status: { $ne: "Cancelado" },
-    });
-    if (ocupado) {
-      return res.status(409).json({ erro: "Este horário acabou de ser ocupado. Escolha outro." });
-    }
+    const slot = await validarSlot({ nutricionistaId, data, horario });
+    if (slot.erro) return enviarErro(res, slot);
 
     const novo = await AgendamentoModel.create({
       paciente,
       pacienteId,
-      nutricionista: nutri.nome,
+      nutricionista: slot.nutri.nome,
       nutricionistaId,
       data,
       horario,
+      anamnese,
     });
 
     res.status(201).json({ mensagem: "Consulta agendada com sucesso!", agendamento: novo });
@@ -72,6 +103,7 @@ router.post("/agendamento", async (req, res) => {
   }
 });
 
+// GET /agendamentos?pacienteId=&nutricionista=&nutricionistaId=&status=
 router.get("/agendamentos", async (req, res) => {
   try {
     const { pacienteId, nutricionista, nutricionistaId, status } = req.query;
@@ -87,7 +119,7 @@ router.get("/agendamentos", async (req, res) => {
   }
 });
 
-
+// GET /agendamentos/proximo?pacienteId=
 router.get("/agendamentos/proximo", async (req, res) => {
   try {
     const { pacienteId } = req.query;
@@ -95,7 +127,7 @@ router.get("/agendamentos/proximo", async (req, res) => {
 
     const futuras = await AgendamentoModel.find({
       pacienteId,
-      status: { $in: ["Pendente", "Confirmado"] },
+      status: { $in: ATIVOS },
       data: { $gte: agora().slice(0, 10) },
     }).sort({ data: 1, horario: 1 });
 
@@ -105,6 +137,7 @@ router.get("/agendamentos/proximo", async (req, res) => {
   }
 });
 
+// PATCH /agendamento/:id/status  -> confirmar, concluir ou cancelar (ação do nutricionista)
 router.patch("/agendamento/:id/status", async (req, res) => {
   try {
     const { status } = req.body;
@@ -112,11 +145,142 @@ router.patch("/agendamento/:id/status", async (req, res) => {
 
     const atualizado = await AgendamentoModel.findByIdAndUpdate(
       req.params.id,
-      { status },
+      { status, $unset: { solicitacao: "" } }, // qualquer pedido pendente perde o sentido
       { new: true }
     );
     if (!atualizado) return res.status(404).json({ erro: "Consulta não encontrada." });
     res.json(atualizado);
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+});
+
+// POST /agendamento/:id/solicitacao
+// body: { tipo: "Reagendamento"|"Cancelamento", origem, novaData?, novoHorario?, motivo? }
+//  - paciente pede reagendamento ou cancelamento  -> o nutricionista responde
+//  - nutricionista propõe reagendamento           -> o paciente responde
+router.post("/agendamento/:id/solicitacao", async (req, res) => {
+  try {
+    const { tipo, origem, novaData, novoHorario, motivo } = req.body;
+
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({ erro: "Consulta não encontrada." });
+    }
+    const ag = await AgendamentoModel.findById(req.params.id);
+    if (!ag) return res.status(404).json({ erro: "Consulta não encontrada." });
+
+    if (!ORIGENS.includes(origem)) return res.status(400).json({ erro: "Origem inválida." });
+    if (!["Reagendamento", "Cancelamento"].includes(tipo)) {
+      return res.status(400).json({ erro: "Tipo de solicitação inválido." });
+    }
+    if (origem === "nutricionista" && tipo !== "Reagendamento") {
+      return res.status(400).json({ erro: "O nutricionista cancela a consulta diretamente." });
+    }
+    if (!ATIVOS.includes(ag.status)) {
+      return res.status(400).json({ erro: "Esta consulta não pode mais ser alterada." });
+    }
+    if (ag.solicitacao) {
+      return res.status(409).json({ erro: "Já existe uma solicitação em andamento nesta consulta." });
+    }
+
+    const nova = { tipo, origem, motivo: (motivo || "").trim().slice(0, 300) };
+
+    if (tipo === "Reagendamento") {
+      if (novaData === ag.data && novoHorario === ag.horario) {
+        return res.status(400).json({ erro: "Escolha uma data ou horário diferente do atual." });
+      }
+      const slot = await validarSlot({
+        nutricionistaId: ag.nutricionistaId,
+        data: novaData,
+        horario: novoHorario,
+        ignorarId: ag._id,
+      });
+      if (slot.erro) return enviarErro(res, slot);
+      nova.novaData = novaData;
+      nova.novoHorario = novoHorario;
+    }
+
+    ag.solicitacao = nova;
+    await ag.save();
+
+    res.status(201).json({
+      mensagem:
+        origem === "paciente"
+          ? "Solicitação enviada. Aguarde a resposta do nutricionista."
+          : "Proposta enviada. Aguarde a confirmação do paciente.",
+      agendamento: ag,
+    });
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+});
+
+// POST /agendamento/:id/solicitacao/responder   body: { por, aceitar }
+// Quem responde é sempre o lado que NÃO fez o pedido.
+router.post("/agendamento/:id/solicitacao/responder", async (req, res) => {
+  try {
+    const { por, aceitar } = req.body;
+    if (!ORIGENS.includes(por)) return res.status(400).json({ erro: "Origem inválida." });
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({ erro: "Consulta não encontrada." });
+    }
+
+    const ag = await AgendamentoModel.findById(req.params.id);
+    if (!ag) return res.status(404).json({ erro: "Consulta não encontrada." });
+    if (!ag.solicitacao) return res.status(404).json({ erro: "Não há solicitação pendente." });
+
+    const { tipo, origem, novaData, novoHorario } = ag.solicitacao;
+    if (origem === por) {
+      return res.status(400).json({ erro: "Você não pode responder ao seu próprio pedido." });
+    }
+
+    if (!aceitar) {
+      ag.solicitacao = undefined;
+      await ag.save();
+      return res.json({ mensagem: "Solicitação recusada.", agendamento: ag });
+    }
+
+    if (tipo === "Cancelamento") {
+      ag.status = "Cancelado"; // libera o paciente para marcar outra consulta
+    } else {
+      const slot = await validarSlot({
+        nutricionistaId: ag.nutricionistaId,
+        data: novaData,
+        horario: novoHorario,
+        ignorarId: ag._id,
+      });
+      if (slot.erro) return enviarErro(res, slot);
+      ag.data = novaData;
+      ag.horario = novoHorario;
+      ag.status = "Confirmado";
+    }
+    ag.solicitacao = undefined;
+    await ag.save();
+
+    res.json({
+      mensagem: tipo === "Cancelamento" ? "Cancelamento confirmado." : "Reagendamento confirmado.",
+      agendamento: ag,
+    });
+  } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+});
+
+// DELETE /agendamento/:id/solicitacao?por=paciente|nutricionista
+// Quem fez o pedido pode retirá-lo.
+router.delete("/agendamento/:id/solicitacao", async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({ erro: "Consulta não encontrada." });
+    }
+    const ag = await AgendamentoModel.findById(req.params.id);
+    if (!ag?.solicitacao) return res.status(404).json({ erro: "Não há solicitação pendente." });
+    if (ag.solicitacao.origem !== req.query.por) {
+      return res.status(400).json({ erro: "Só quem fez o pedido pode retirá-lo." });
+    }
+    ag.solicitacao = undefined;
+    await ag.save();
+    res.json({ mensagem: "Solicitação retirada.", agendamento: ag });
   } catch (error) {
     res.status(500).json({ erro: error.message });
   }

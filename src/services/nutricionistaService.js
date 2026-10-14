@@ -15,3 +15,7 @@ export const buscarNutricionista = (id) => request(`/nutricionista/${id}`);
 // Pacientes que já agendaram com o nutricionista
 export const listarPacientes = (nutricionistaId) =>
   request(`/nutricionistas/${nutricionistaId}/pacientes`);
+
+// Fichas de anamnese de um paciente (uma por consulta)
+export const listarAnamneses = (nutricionistaId, pacienteId) =>
+  request(`/nutricionistas/${nutricionistaId}/pacientes/${pacienteId}/anamneses`);

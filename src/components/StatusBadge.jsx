@@ -19,3 +19,21 @@ function StatusBadge({ status }) {
 }
 
 export default StatusBadge;
+
+// Selo do pedido em andamento (reagendamento/cancelamento)
+export function PedidoBadge({ solicitacao }) {
+  if (!solicitacao) return null;
+  const doPaciente = solicitacao.origem === "paciente";
+  const texto =
+    solicitacao.tipo === "Cancelamento"
+      ? "Cancelamento solicitado"
+      : doPaciente
+      ? "Reagendamento solicitado"
+      : "Reagendamento proposto";
+
+  return (
+    <span className="inline-flex items-center rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-800">
+      {texto}
+    </span>
+  );
+}
