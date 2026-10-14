@@ -46,9 +46,11 @@ function AdminHome() {
       <div className="w-full p-4 lg:p-10">
         {/* Cabeçalho */}
         <div className="max-w-5xl mb-8">
-          <h1 className="text-4xl lg:text-5xl font-bold text-gray-800">{nome}</h1>
+          <h1 className="text-gray-800 text-3xl lg:text-4xl text-center font-bold w-full">
+            {nome}
+          </h1>
           {nutricionista && (
-            <p className="text-gray-500 text-lg mt-1">
+            <p className="text-gray-600 text-center text-lg mt-1 fs-6">
               ID: {nutricionista._id.slice(-6).toUpperCase()}
             </p>
           )}
@@ -65,7 +67,7 @@ function AdminHome() {
         )}
 
         {/* CARD DO PERFIL */}
-        <main className="relative w-full max-w-5xl shadow-xl/20 bg-gray-500 rounded-3xl p-6 lg:p-8 text-white overflow-hidden mb-10">
+        <main className="relative w-full max-w-auto shadow-xl/20 bg-gray-500 rounded-3xl p-6 lg:p-8 text-white overflow-hidden mb-10">
           {/* Decorações */}
           <div className="absolute -right-16 -top-16 w-40 h-40 rounded-full bg-gray-600/50 pointer-events-none" />
           <div className="absolute -right-10 -bottom-24 w-52 h-52 rounded-full bg-gray-600/30 pointer-events-none" />
@@ -140,7 +142,9 @@ function AdminHome() {
                 </option>
                 <option value="Masculino">Homem</option>
                 <option value="Feminino">Mulher</option>
-                <option value="Prefiro não responder">Prefiro não responder</option>
+                <option value="Prefiro não responder">
+                  Prefiro não responder
+                </option>
                 <option value="Outro">Outro</option>
               </select>
             </div>
@@ -192,7 +196,9 @@ function AdminHome() {
                   className="bg-gray-600/70 rounded-2xl p-4 transition hover:bg-gray-600"
                 >
                   <p className="text-sm text-gray-300">{rotulo}</p>
-                  <p className={`text-xl font-semibold mt-1 ${quebra ? "break-all" : ""}`}>
+                  <p
+                    className={`text-xl font-semibold mt-1 ${quebra ? "break-all" : ""}`}
+                  >
                     {valor || "—"}
                   </p>
                 </div>
@@ -202,12 +208,16 @@ function AdminHome() {
         </main>
 
         {/* AGENDAMENTOS (só deste nutricionista) */}
-        <div className="max-w-5xl">
+        <div className="max-w-auto">
           <div className="flex items-center gap-3 mb-5">
-            <h2 className="text-gray-800 text-3xl lg:text-4xl font-bold">Agendamentos</h2>
+            <h2 className="text-gray-800 text-3xl lg:text-4xl text-center font-bold w-full">
+              Agendamentos
+            </h2>
           </div>
 
-          {nutricionista && <Agendamentos nutricionistaId={nutricionista._id} />}
+          {nutricionista && (
+            <Agendamentos nutricionistaId={nutricionista._id} />
+          )}
         </div>
       </div>
     </div>

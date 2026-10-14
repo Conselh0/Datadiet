@@ -95,7 +95,7 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
       <div className="hidden md:block overflow-hidden rounded-xl bg-white shadow-lg">
         <table className="w-full text-center">
           <thead>
-            <tr className="bg-green-900 text-white text-sm lg:text-base">
+            <tr className="bg-gray-500 text-white text-sm lg:text-base">
               <th className="p-3">NÚMERO DO ATENDIMENTO</th>
               <th className="p-3">NOME DO PACIENTE</th>
               <th className="p-3">DATA DO AGENDAMENTO</th>
