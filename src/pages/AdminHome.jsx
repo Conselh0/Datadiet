@@ -45,7 +45,7 @@ function AdminHome() {
     <div className="w-full min-h-screen bg-gray-100">
       <div className="w-full p-4 lg:p-10">
         {/* Cabeçalho */}
-        <div className="max-w-5xl mb-8">
+        <div className="max-w-auto mb-8">
           <h1 className="text-gray-800 text-3xl lg:text-4xl text-center font-bold w-full">
             {nome}
           </h1>

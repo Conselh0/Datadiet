@@ -9,14 +9,22 @@ import {
 } from "../services/agendamentoService";
 import { formatarData, iniciais } from "../utils/formatters";
 
-const btn = "cursor-pointer rounded-md px-3 py-1 text-xs md:text-sm font-semibold disabled:opacity-50";
+const btn =
+  "cursor-pointer rounded-md px-3 py-1 text-xs md:text-sm font-semibold disabled:opacity-50";
 
 const descricao = (sol) =>
   sol.tipo === "Cancelamento"
     ? "pediu o cancelamento"
     : `pediu para reagendar para ${formatarData(sol.novaData)} às ${sol.novoHorario}`;
 
-function Acoes({ item, ocupado, onStatus, onReagendar, onResponder, onRetirar }) {
+function Acoes({
+  item,
+  ocupado,
+  onStatus,
+  onReagendar,
+  onResponder,
+  onRetirar,
+}) {
   const sol = item.solicitacao;
   if (item.status === "Cancelado" || item.status === "Concluído") return null;
 
@@ -25,7 +33,8 @@ function Acoes({ item, ocupado, onStatus, onReagendar, onResponder, onRetirar })
     return (
       <div className="flex flex-col items-center gap-2">
         <p className="max-w-60 text-xs text-gray-600">
-          Paciente {descricao(sol)}.{sol.motivo && <> Motivo: “{sol.motivo}”.</>}
+          Paciente {descricao(sol)}.
+          {sol.motivo && <> Motivo: “{sol.motivo}”.</>}
         </p>
         <div className="flex gap-2">
           <button
@@ -52,8 +61,8 @@ function Acoes({ item, ocupado, onStatus, onReagendar, onResponder, onRetirar })
     return (
       <div className="flex flex-col items-center gap-2">
         <p className="max-w-60 text-xs text-gray-600">
-          Proposta de {formatarData(sol.novaData)} às {sol.novoHorario} enviada. Aguardando o
-          paciente.
+          Proposta de {formatarData(sol.novaData)} às {sol.novoHorario} enviada.
+          Aguardando o paciente.
         </p>
         <button
           disabled={ocupado}
@@ -106,7 +115,12 @@ function Acoes({ item, ocupado, onStatus, onReagendar, onResponder, onRetirar })
 }
 
 // <Agendamentos nutricionistaId={id} status="Todas" busca="" />
-function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca = "" }) {
+function Agendamentos({
+  nutricionista,
+  nutricionistaId,
+  status = "Todas",
+  busca = "",
+}) {
   const [lista, setLista] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [ocupado, setOcupado] = useState(false);
@@ -145,7 +159,8 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
   const mudarStatus = (id, novo) => executar(() => atualizarStatus(id, novo));
   const responder = (id, aceitar) =>
     executar(() => responderSolicitacao(id, "nutricionista", aceitar));
-  const retirar = (id) => executar(() => retirarSolicitacao(id, "nutricionista"));
+  const retirar = (id) =>
+    executar(() => retirarSolicitacao(id, "nutricionista"));
 
   const termo = busca.trim().toLowerCase();
   const visiveis = lista.filter(
@@ -153,11 +168,15 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
       (status === "Todas" || a.status === status) &&
       (!termo ||
         (a.paciente || "").toLowerCase().includes(termo) ||
-        String(a.numero).includes(termo))
+        String(a.numero).includes(termo)),
   );
 
   if (erro)
-    return <p className="rounded-md bg-red-100 p-4 text-center text-red-700">{erro}</p>;
+    return (
+      <p className="rounded-md bg-red-100 p-4 text-center text-red-700">
+        {erro}
+      </p>
+    );
 
   if (!carregando && visiveis.length === 0)
     return (
@@ -180,14 +199,16 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
   return (
     <div className="w-full">
       {erroAcao && (
-        <p className="mb-3 rounded-md bg-red-100 p-3 text-sm font-semibold text-red-700">{erroAcao}</p>
+        <p className="mb-3 rounded-md bg-red-100 p-3 text-sm font-semibold text-red-700">
+          {erroAcao}
+        </p>
       )}
 
       {/* Tabela: telas médias e grandes */}
       <div className="hidden overflow-hidden rounded-xl bg-white shadow-lg md:block">
         <table className="w-full text-center">
           <thead>
-            <tr className="bg-green-900 text-sm text-white lg:text-base">
+            <tr className="bg-gray-600 text-sm text-white lg:text-base">
               <th className="p-3">NÚMERO DO ATENDIMENTO</th>
               <th className="p-3">NOME DO PACIENTE</th>
               <th className="p-3">DATA DO AGENDAMENTO</th>
@@ -197,7 +218,7 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
           </thead>
           <tbody className="divide-y divide-gray-200">
             {visiveis.map((a) => (
-              <tr key={a._id} className={a.solicitacao ? "bg-orange-50/60" : "hover:bg-green-50"}>
+              <tr key={a._id} className={a.solicitacao}>
                 <td className="p-3 font-bold text-slate-700">{a.numero}</td>
                 <td className="p-3">
                   <div className="flex items-center justify-center gap-2">
@@ -208,7 +229,9 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
                   </div>
                 </td>
                 <td className="p-3">
-                  <p className="font-bold text-slate-800">{formatarData(a.data)}</p>
+                  <p className="font-bold text-slate-800">
+                    {formatarData(a.data)}
+                  </p>
                   <p className="text-sm text-gray-500">{a.horario}</p>
                 </td>
                 <td className="p-3">
@@ -232,7 +255,9 @@ function Agendamentos({ nutricionista, nutricionistaId, status = "Todas", busca 
             className={`rounded-xl p-4 shadow ${a.solicitacao ? "bg-orange-50" : "bg-white"}`}
           >
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-              <span className="text-sm font-bold text-gray-500">Atendimento #{a.numero}</span>
+              <span className="text-sm font-bold text-gray-500">
+                Atendimento #{a.numero}
+              </span>
               <div className="flex flex-wrap items-center gap-1">
                 <StatusBadge status={a.status} />
                 <PedidoBadge solicitacao={a.solicitacao} />

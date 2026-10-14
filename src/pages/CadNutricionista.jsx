@@ -24,7 +24,8 @@ function CadNutricionista() {
   const [enviando, setEnviando] = useState(false);
   const [msg, setMsg] = useState({ tipo: "", texto: "" });
 
-  const mudar = (campoNome) => (e) => setForm({ ...form, [campoNome]: e.target.value });
+  const mudar = (campoNome) => (e) =>
+    setForm({ ...form, [campoNome]: e.target.value });
 
   const alternarDia = (dia) =>
     setForm({
@@ -39,7 +40,10 @@ function CadNutricionista() {
     setMsg({ tipo: "", texto: "" });
     try {
       setEnviando(true);
-      const r = await cadastrarNutricionista({ ...form, duracao: Number(form.duracao) });
+      const r = await cadastrarNutricionista({
+        ...form,
+        duracao: Number(form.duracao),
+      });
       setMsg({ tipo: "ok", texto: r.mensagem });
       setForm(VAZIO);
     } catch (err) {
@@ -62,7 +66,12 @@ function CadNutricionista() {
         >
           <label className="text-sm font-medium text-gray-700">
             Nome
-            <input className={campo} value={form.nome} onChange={mudar("nome")} required />
+            <input
+              className={campo}
+              value={form.nome}
+              onChange={mudar("nome")}
+              required
+            />
           </label>
 
           <label className="text-sm font-medium text-gray-700">
@@ -79,11 +88,20 @@ function CadNutricionista() {
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="text-sm font-medium text-gray-700">
               CRN
-              <input className={campo} value={form.crn} onChange={mudar("crn")} />
+              <input
+                className={campo}
+                value={form.crn}
+                onChange={mudar("crn")}
+              />
             </label>
             <label className="text-sm font-medium text-gray-700">
               E-mail
-              <input type="email" className={campo} value={form.email} onChange={mudar("email")} />
+              <input
+                type="email"
+                className={campo}
+                value={form.email}
+                onChange={mudar("email")}
+              />
             </label>
           </div>
 
@@ -98,7 +116,9 @@ function CadNutricionista() {
           </label>
 
           <div>
-            <p className="mb-1 text-sm font-medium text-gray-700">Dias de atendimento</p>
+            <p className="mb-1 text-sm font-medium text-gray-700">
+              Dias de atendimento
+            </p>
             <div className="flex flex-wrap gap-2">
               {DIAS.map((nome, i) => (
                 <button
@@ -120,15 +140,31 @@ function CadNutricionista() {
           <div className="grid gap-4 sm:grid-cols-3">
             <label className="text-sm font-medium text-gray-700">
               Início
-              <input type="time" className={campo} value={form.horaInicio} onChange={mudar("horaInicio")} required />
+              <input
+                type="time"
+                className={campo}
+                value={form.horaInicio}
+                onChange={mudar("horaInicio")}
+                required
+              />
             </label>
             <label className="text-sm font-medium text-gray-700">
               Fim
-              <input type="time" className={campo} value={form.horaFim} onChange={mudar("horaFim")} required />
+              <input
+                type="time"
+                className={campo}
+                value={form.horaFim}
+                onChange={mudar("horaFim")}
+                required
+              />
             </label>
             <label className="text-sm font-medium text-gray-700">
               Duração
-              <select className={campo} value={form.duracao} onChange={mudar("duracao")}>
+              <select
+                className={campo}
+                value={form.duracao}
+                onChange={mudar("duracao")}
+              >
                 <option value={30}>30 min</option>
                 <option value={45}>45 min</option>
                 <option value={60}>1 hora</option>
@@ -139,7 +175,9 @@ function CadNutricionista() {
           {msg.texto && (
             <p
               className={`rounded-md p-3 text-sm font-semibold ${
-                msg.tipo === "ok" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-700"
+                msg.tipo === "ok"
+                  ? "bg-green-100 text-green-800"
+                  : "bg-red-100 text-red-700"
               }`}
             >
               {msg.texto}
@@ -156,7 +194,9 @@ function CadNutricionista() {
 
         {/* Prévia do card que o paciente vai ver */}
         <div className="flex flex-col items-center gap-2">
-          <p className="text-sm font-semibold text-green-800">Assim o paciente vai ver:</p>
+          <p className="text-sm font-semibold text-green-800">
+            Assim o paciente vai ver:
+          </p>
           <NutricionistaCard
             nutricionista={{
               ...form,

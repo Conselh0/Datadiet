@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useNutricionista from "../hooks/useNutricionista";
-import { listarPacientes, listarAnamneses } from "../services/nutricionistaService";
+import {
+  listarPacientes,
+  listarAnamneses,
+} from "../services/nutricionistaService";
 import AnamneseView from "../components/AnamneseView";
 import { formatarData, iniciais } from "../utils/formatters";
 
@@ -64,14 +67,16 @@ function Pacientes() {
     (p) =>
       !termo ||
       p.paciente.toLowerCase().includes(termo) ||
-      idCurto(p.pacienteId).toLowerCase().includes(termo)
+      idCurto(p.pacienteId).toLowerCase().includes(termo),
   );
 
   return (
     <div className="w-full min-h-screen bg-gray-100">
       <div className="w-full p-4 lg:p-10">
-        <div className="max-w-5xl">
-          <h1 className="mb-8 text-4xl font-bold text-gray-800 lg:text-5xl">Pacientes</h1>
+        <div className="max-w-auto">
+          <h1 className="mb-8 text-4xl text-center font-bold text-gray-800 lg:text-5xl">
+            Pacientes
+          </h1>
 
           {!carregando && !nutricionista && (
             <div className="rounded-2xl bg-yellow-100 p-4 text-yellow-900">
@@ -86,7 +91,10 @@ function Pacientes() {
             <>
               {/* Busca */}
               <div className="mb-6 rounded-2xl bg-gray-500 p-5 shadow-xl">
-                <label htmlFor="busca" className="text-sm font-semibold text-white">
+                <label
+                  htmlFor="busca"
+                  className="text-sm font-semibold text-white"
+                >
                   Buscar paciente
                 </label>
                 <div className="mt-2 flex flex-col gap-3 sm:flex-row">
@@ -106,8 +114,14 @@ function Pacientes() {
                 </div>
               </div>
 
-              {erro && <p className="mb-4 rounded-md bg-red-100 p-3 text-red-700">{erro}</p>}
-              {buscando && <p className="text-gray-600">Carregando pacientes...</p>}
+              {erro && (
+                <p className="mb-4 rounded-md bg-red-100 p-3 text-red-700">
+                  {erro}
+                </p>
+              )}
+              {buscando && (
+                <p className="text-gray-600">Carregando pacientes...</p>
+              )}
 
               {!buscando && !erro && visiveis.length === 0 && (
                 <p className="rounded-2xl bg-white p-8 text-center text-gray-600 shadow">
@@ -143,7 +157,9 @@ function Pacientes() {
                               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-500 text-xs font-bold text-white">
                                 {iniciais(p.paciente)}
                               </span>
-                              <span className="font-semibold text-slate-800">{p.paciente}</span>
+                              <span className="font-semibold text-slate-800">
+                                {p.paciente}
+                              </span>
                             </div>
                           </td>
                           <td className="p-4">
@@ -160,7 +176,9 @@ function Pacientes() {
               )}
 
               {visiveis.length > 0 && (
-                <p className="mt-3 text-gray-500">Clique no paciente para ver mais informações.</p>
+                <p className="mt-3 text-gray-500">
+                  Clique no paciente para ver mais informações.
+                </p>
               )}
             </>
           )}
@@ -180,8 +198,12 @@ function Pacientes() {
             <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-500 text-xl font-bold text-white">
               {iniciais(aberto.paciente)}
             </span>
-            <h2 className="mt-3 text-2xl font-bold text-gray-800">{aberto.paciente}</h2>
-            <p className="text-sm text-gray-500">ID #{idCurto(aberto.pacienteId)}</p>
+            <h2 className="mt-3 text-2xl font-bold text-gray-800">
+              {aberto.paciente}
+            </h2>
+            <p className="text-sm text-gray-500">
+              ID #{idCurto(aberto.pacienteId)}
+            </p>
 
             <div className="mt-5 space-y-2 text-left">
               <div className="rounded-xl bg-gray-100 p-3">
@@ -214,7 +236,9 @@ function Pacientes() {
                   disabled={carregandoFichas}
                   className="w-full cursor-pointer rounded-lg border border-gray-500 py-2 font-semibold text-gray-700 hover:bg-gray-100 disabled:opacity-60"
                 >
-                  {carregandoFichas ? "Carregando ficha..." : "Ver ficha de anamnese"}
+                  {carregandoFichas
+                    ? "Carregando ficha..."
+                    : "Ver ficha de anamnese"}
                 </button>
               ) : fichas.length === 0 ? (
                 <p className="rounded-xl bg-gray-100 p-3 text-center text-sm text-gray-600">
@@ -231,7 +255,8 @@ function Pacientes() {
                     >
                       {fichas.map((f, i) => (
                         <option key={f._id} value={i}>
-                          #{f.numero} · {formatarData(f.data)} às {f.horario} · {f.status}
+                          #{f.numero} · {formatarData(f.data)} às {f.horario} ·{" "}
+                          {f.status}
                         </option>
                       ))}
                     </select>
@@ -240,7 +265,9 @@ function Pacientes() {
                 </>
               )}
               {erroFicha && (
-                <p className="mt-2 rounded-md bg-red-100 p-2 text-sm text-red-700">{erroFicha}</p>
+                <p className="mt-2 rounded-md bg-red-100 p-2 text-sm text-red-700">
+                  {erroFicha}
+                </p>
               )}
             </div>
 

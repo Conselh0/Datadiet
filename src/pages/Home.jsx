@@ -17,7 +17,8 @@ function Home() {
               personalizada <br />
             </h1>
             <p className="text-2xl sm:text-[2vw]">
-              Protocolos personalizados para emagrecer com <br />
+              Protocolos personalizados para emagrecer com
+              <br />
               saúde, corrigir deficiências e aumentar sua energia
             </p>
           </div>
@@ -41,13 +42,18 @@ function Home() {
               CONHEÇA A NUTRICIONISTA
             </h1>
             <p className="text-green-950 font-light leading-10  sm:leading-18 sm:text-2xl xl:text-[2vw] mb-5 text-justify mx-10">
-              Sou a <span className="font-extrabold">Dra. Luana Teixeira, Nutricionista </span> em São Paulo,
-              atendendo presencialmente e online em todo o Brasil. Especializada
-              em Nutrição Clínica, tenho experiência em ambientes hospitalares e
-              no acompanhamento de doenças crônicas e condições de saúde
-              complexas. Dedico-me a oferecer um{" "}
-              <span className="font-extrabold">atendimento individualizado</span>,
-              com foco em transformar vidas e promover saúde e bem-estar.
+              Sou a{" "}
+              <span className="font-extrabold">
+                Dra. Luana Teixeira, Nutricionista{" "}
+              </span>{" "}
+              em São Paulo, atendendo presencialmente e online em todo o Brasil.
+              Especializada em Nutrição Clínica, tenho experiência em ambientes
+              hospitalares e no acompanhamento de doenças crônicas e condições
+              de saúde complexas. Dedico-me a oferecer um{" "}
+              <span className="font-extrabold">
+                atendimento individualizado
+              </span>
+              , com foco em transformar vidas e promover saúde e bem-estar.
             </p>
           </div>
         </section>

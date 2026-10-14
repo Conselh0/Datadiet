@@ -14,8 +14,8 @@ function Historico() {
   return (
     <div className="w-full min-h-screen bg-gray-100">
       <div className="w-full p-4 lg:p-10">
-        <div className="max-w-5xl">
-          <h1 className="mb-6 flex items-center gap-3 text-2xl font-bold text-gray-800 lg:text-3xl">
+        <div className="max-w-auto">
+          <h1 className="mb-6 flex items-center gap-3 text-center text-2xl font-bold text-gray-800 lg:text-3xl">
             <NotebookPen className="size-9 shrink-0" />
             HISTÓRICO DE CONSULTAS E DIETAS PLANEJADAS
           </h1>
