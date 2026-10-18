@@ -63,7 +63,7 @@ function Footer() {
         <div className="flex items-center justify-center gap-5 md:order-2">
           {/* Link do WhatsApp Corrigido e Valido */}
           <a 
-            href="https://wa.me" 
+            href="https://wa.me/5511971172735"
             target="_blank" 
             rel="noopener noreferrer" 
             className="inline-block cursor-pointer z-50"
@@ -73,7 +73,7 @@ function Footer() {
 
           {/* Link do Instagram */}
           <a 
-            href="https://instagram.com" 
+            href="https://www.instagram.com/nutriluanateixeira/"
             target="_blank" 
             rel="noopener noreferrer" 
             className="inline-block cursor-pointer z-50"
