@@ -47,17 +47,31 @@ function Navbar() {
           {/* Botão de abrir/fechar menu apenas visível em telas menores que 'md' */}
           <button
             onClick={() => setMenuAberto(!menuAberto)}
-            className="text-white hover:bg-emerald-800 p-2 rounded-lg md:hidden focus:outline-none cursor-pointer"
+            type="button"
+            aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={menuAberto}
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none md:hidden"
           >
             {menuAberto ? <X size={28} /> : <Menu size={28} />}
           </button>
 
-          <img
-            src="/img/logo 2.png"
-            alt="logoLuana"
-            className="hidden sm:block w-[50px] h-[50px] object-contain"
-          />
+          <Link to="/" aria-label="Voltar para a página inicial">
+            <img
+              src="/img/logo 2.png"
+              alt="Luana Teixeira - página inicial"
+              className="block h-10 w-10 object-contain sm:h-[50px] sm:w-[50px]"
+            />
+          </Link>
         </div>
+
+        {!usuario && (
+          <Link
+            to="/LoginPa"
+            className="absolute right-5 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-green-200 hover:underline md:hidden"
+          >
+            Entrar / Criar Conta
+          </Link>
+        )}
 
         {/* LINKS DO MEIO: CENTRALIZADOS ABSOLUTAMENTE NO DESKTOP */}
         {/* O hidden md:flex faz desaparecer no mobile para não amassar a tela */}
@@ -69,26 +83,26 @@ function Navbar() {
             Home
           </Link>
 
-          <Link
-            to="/"
+          <a
+            href="/#metodo"
             className="mx-4 hover:underline decoration-2 decoration-green-400 underline-offset-4 hover:text-green-400"
           >
             Sobre
-          </Link>
+          </a>
 
-          <Link
-            to="/Feedback"
+          <a
+            href="/#feedback"
             className="mx-4 hover:underline decoration-2 decoration-green-400 underline-offset-4 hover:text-green-400"
           >
             Feedback
-          </Link>
+          </a>
 
-          <Link
-            to="/"
+          <a
+            href="/#contato"
             className="mx-4 hover:underline decoration-2 decoration-green-400 underline-offset-4 hover:text-green-400"
           >
             Contatos
-          </Link>
+          </a>
         </div>
 
         {/* LADO DIREITO: BOTÕES (DESKTOP) E MENU DO USUÁRIO */}
@@ -149,98 +163,81 @@ function Navbar() {
 
         {/* PAINEL MOBILE: APARECE APENAS QUANDO O MENU ESTÁ ABERTO EM TELAS PEQUENAS */}
         {menuAberto && (
-          <div className="absolute top-20 left-0 w-full bg-emerald-950 flex flex-col md:hidden text-white shadow-2xl p-5 gap-4 z-50 border-t border-emerald-800 animate-in fade-in slide-in-from-top-5 duration-200">
-            <Link
-              to="/"
-              onClick={() => setMenuAberto(false)}
-              className="text-lg hover:text-green-400 py-1 border-b border-emerald-900"
-            >
-              Home
-            </Link>
-
-            <Link
-              to="/"
-              onClick={() => setMenuAberto(false)}
-              className="text-lg hover:text-green-400 py-1 border-b border-emerald-900"
-            >
-              Sobre
-            </Link>
-
-            <Link
-              to="/Feedback"
-              onClick={() => setMenuAberto(false)}
-              className="text-lg hover:text-green-400 py-1 border-b border-emerald-900"
-            >
-              Feedback
-            </Link>
-
-            <Link
-              to="/"
-              onClick={() => setMenuAberto(false)}
-              className="text-lg hover:text-green-400 py-1 border-b border-emerald-900"
-            >
-              Contatos
-            </Link>
-
-            {/* Botões mobile adaptados para ocupar 100% da largura horizontal */}
-            {!usuario ? (
-              <div className="flex flex-col gap-3 mt-2">
-                <Link to="/CadPa" onClick={() => setMenuAberto(false)}>
-                  <button className="w-full bg-[#2fa84a] py-3 rounded-full text-base font-bold text-white shadow-md">
-                    Criar Conta
-                  </button>
+          <div className="absolute left-0 top-20 z-50 flex max-h-[calc(100dvh-5rem)] w-full flex-col gap-5 overflow-y-auto rounded-b-3xl border-t border-white/10 bg-[#f3f0e9] px-5 py-6 text-emerald-950 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-200 md:hidden">
+            <div>
+              <p className="mb-3 px-3 font-sans text-xs font-semibold uppercase tracking-[0.22em] text-emerald-800/70">
+                Navegação
+              </p>
+              <nav className="flex flex-col gap-1" aria-label="Navegação principal">
+                <Link
+                  to="/"
+                  onClick={() => setMenuAberto(false)}
+                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                >
+                  Home
                 </Link>
+                <a
+                  href="/#metodo"
+                  onClick={() => setMenuAberto(false)}
+                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                >
+                  Sobre
+                </a>
+                <a
+                  href="/#feedback"
+                  onClick={() => setMenuAberto(false)}
+                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                >
+                  Feedback
+                </a>
+                <a
+                  href="/#contato"
+                  onClick={() => setMenuAberto(false)}
+                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                >
+                  Contatos
+                </a>
+              </nav>
+            </div>
 
+            {!usuario ? (
+              <div className="flex flex-col gap-3 border-t border-emerald-900/10 pt-5">
+                <Link to="/CadPa" onClick={() => setMenuAberto(false)}>
+                  <span className="block w-full rounded-full bg-green-700 py-3 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-800">
+                    Criar conta
+                  </span>
+                </Link>
                 <Link to="/LoginPa" onClick={() => setMenuAberto(false)}>
-                  <button className="w-full bg-transparent border-2 border-white py-3 rounded-full text-base font-bold text-white">
+                  <span className="block w-full rounded-full border border-emerald-900 px-4 py-3 text-center text-sm font-semibold text-emerald-950 transition-colors hover:bg-emerald-900/5">
                     Entrar
-                  </button>
+                  </span>
                 </Link>
               </div>
             ) : (
-              /* Menu do usuário no mobile */
-              <div className="flex flex-col gap-2 mt-2">
+              <div className="flex flex-col gap-1 border-t border-emerald-900/10 pt-5">
                 <Link
                   to="/User"
                   onClick={() => setMenuAberto(false)}
-                  className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
+                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
                 >
-                  PERFIL
+                  Perfil
                 </Link>
-
                 <Link
-                  to="/User"
+                  to="/User/Agendamentos"
                   onClick={() => setMenuAberto(false)}
-                  className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
+                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
                 >
-                  AGENDAMENTO
+                  Meus agendamentos
                 </Link>
-
-                <Link
-                  to="/User"
-                  onClick={() => setMenuAberto(false)}
-                  className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
-                >
-                  AGENDAR CONSULTA
-                </Link>
-
-                <Link
-                  to="/User"
-                  onClick={() => setMenuAberto(false)}
-                  className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
-                >
-                  CONSULTA
-                </Link>
-
                 <button
                   type="button"
                   onClick={() => {
                     setMenuAberto(false);
                     setMostrarLogout(true);
                   }}
-                  className="text-lg text-left hover:text-green-400 py-2"
+                  className="rounded-xl px-3 py-3 text-left text-base font-medium text-emerald-900 transition-colors hover:bg-emerald-900/10"
                 >
-                  SAIR
+                  Sair
                 </button>
               </div>
             )}
