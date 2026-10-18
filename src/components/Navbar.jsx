@@ -38,6 +38,11 @@ function Navbar() {
     navigate("/");
   }
 
+  function abrirAgendamentos() {
+    setMenuAberto(false);
+    navigate(usuario ? "/User/Agendamentos" : "/LoginPa");
+  }
+
   return (
     <>
       {/* NAVBAR */}
@@ -199,6 +204,15 @@ function Navbar() {
                 </a>
               </nav>
             </div>
+
+            <button
+              type="button"
+              onClick={abrirAgendamentos}
+              className="flex w-full items-center justify-between rounded-xl bg-green-800/10 px-4 py-3 text-left text-base font-semibold text-emerald-900 transition-colors hover:bg-green-800/15"
+            >
+              <span>Agendar consulta</span>
+              <span aria-hidden="true" className="text-lg">→</span>
+            </button>
 
             {!usuario ? (
               <div className="flex flex-col gap-3 border-t border-emerald-900/10 pt-5">
