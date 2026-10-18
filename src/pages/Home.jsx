@@ -2,6 +2,54 @@
   /*Chamando o home background para usa-lo como props. */
 }
 import HomeBackground from "../components/HomeBackground";
+import {
+  Activity,
+  ArrowRight,
+  Brain,
+  Droplets,
+  HeartPulse,
+  Ribbon,
+  Stethoscope,
+} from "lucide-react";
+
+const treatments = [
+  {
+    title: "Alzheimer e demências",
+    description:
+      "Acompanhamento nutricional para apoiar a alimentação e o cuidado individualizado.",
+    Icon: Brain,
+  },
+  {
+    title: "Câncer",
+    description:
+      "Orientação alimentar complementar durante as diferentes etapas do tratamento.",
+    Icon: Ribbon,
+  },
+  {
+    title: "Saúde cardiovascular",
+    description:
+      "Estratégias alimentares para apoiar o cuidado com a saúde do coração.",
+    Icon: HeartPulse,
+  },
+  {
+    title: "Diabetes",
+    description:
+      "Planejamento alimentar individualizado para auxiliar no controle glicêmico.",
+    Icon: Droplets,
+  },
+  {
+    title: "Colesterol e triglicerídeos",
+    description:
+      "Ajustes na alimentação para apoiar o cuidado com os níveis de gorduras no sangue.",
+    Icon: Activity,
+  },
+  {
+    title: "Saúde do fígado",
+    description:
+      "Acompanhamento nutricional em condições hepáticas, sempre integrado à equipe de saúde.",
+    Icon: Stethoscope,
+  },
+];
 
 function Home() {
   return (
@@ -23,28 +71,13 @@ function Home() {
         com a praticidade de ser atendido de onde estiver.
       </p>
 
-      <div className="flex flex-wrap justify-end gap-4 -mt-1 mr-1">
+      <div className="mt-7 flex justify-end">
         <a
           href="/agendamento"
-          className="inline-flex flex-col items-center justify-center rounded-full text-center
-          bg-green-700 hover:bg-green-800 text-white font-sans font-semibold
-          text-xs sm:text-xs uppercase tracking-[0.25em] px-13 py-5 shadow-md
-          transition-colors duration-300"
+          className="inline-flex items-center gap-3 font-sans text-base font-semibold uppercase tracking-[0.2em] text-green-900 transition-colors hover:text-green-700 sm:text-lg"
         >
-          Agende sua
-          <br />
-          consulta
-        </a>
-        <a
-          href="#metodo"
-          className="inline-flex flex-col items-center justify-center rounded-full border border-gray-400
-          bg-[#f3eee6] hover:bg-[#eae3d8] text-green-950 font-sans font-semibold text-center
-          text-xs sm:text-xs uppercase tracking-[0.2em] px-13 py-5
-          transition-colors duration-300"
-        >
-          Conheça meu
-          <br />
-          método
+          Agende sua consulta
+          <ArrowRight aria-hidden="true" size={22} strokeWidth={1.8} />
         </a>
       </div>
 
@@ -58,29 +91,66 @@ function Home() {
   />
 </HomeBackground>
 
-      <HomeBackground>
-        <section id="metodo" className="flex justify-center text-center">
-          <img
-            src="/img/lulu2.png"
-            alt=""
-            className="hidden xl:block w-170 max-w-[680px] h-auto"
-          />
-          <div>
-            <h1 className="text-green-950 text-[3vw] font-bold mb-10">
-              CONHEÇA A NUTRICIONISTA
-            </h1>
-            <p className="text-green-950 font-light leading-10 sm:leading-18 sm:text-2xl xl:text-[2vw] mb-5 mx-10">
-              Sou a <span className="font-extrabold">Dra. Luana Teixeira, Nutricionista </span> em São Paulo,
-              atendendo presencialmente e online em todo o Brasil. Especializada
-              em Nutrição Clínica, tenho experiência em ambientes hospitalares e
-              no acompanhamento de doenças crônicas e condições de saúde
-              complexas. Dedico-me a oferecer um{" "}
-              <span className="font-extrabold">atendimento individualizado</span>,
-              com foco em transformar vidas e promover saúde e bem-estar.
-            </p>
+      <section id="metodo" className="bg-[url('/img/bolas.png')] bg-[#faf8f4] px-5 py-16 sm:px-8 sm:py-20">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16">
+          <div className="flex min-h-[360px] items-end justify-center overflow-hidden rounded-[2rem] bg-[#eee8df] sm:min-h-[460px] md:h-[520px]">
+            <img
+              src="/img/lula.png"
+              alt="Nutricionista Luana Teixeira"
+              className="h-full max-h-[520px] w-full object-contain object-bottom"
+            />
           </div>
-        </section>
-      </HomeBackground>
+          <div className="py-4 md:py-0">
+
+            <h2 className="font-display mb-6 text-4xl font-medium leading-tight text-green-950 sm:text-5xl">
+              Nutricionista Luana Teixeira
+            </h2>
+            <div className="mb-5 h-px w-12 bg-[#c7a38c]" />
+            <p className="font-delicate text-lg leading-relaxed text-gray-600 sm:text-xl">
+              Sou a <span className="font-semibold text-green-950">Dra. Luana Teixeira</span>,
+              nutricionista em São Paulo, com atendimento presencial e online em todo o Brasil.
+              Especializada em Nutrição Clínica, tenho experiência em ambientes hospitalares e
+              no acompanhamento de doenças crônicas e condições de saúde complexas. Meu foco é
+              oferecer um atendimento individualizado e promover saúde e bem-estar.
+            </p>
+            <a
+              href="/agendamento"
+              className="mt-7 mr-1s inline-flex items-center gap-2 font-sans text-xs font-semibold uppercase tracking-[0.2em] text-green-900 transition-colors hover:text-green-700"
+            >
+              Mais sobre mim <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="tratamentos" className="mt-16 bg-[url('/img/bolas.png')] bg-white px-5 py-16 sm:mt-20 sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-6xl">
+          <p className="mb-3 text-center font-sans text-sm font-semibold uppercase tracking-[0.2em] text-green-800">
+            Nossas especialidades
+          </p>
+          <h2 className="font-display mb-12 text-center text-3xl font-medium text-green-950 sm:text-4xl">
+            Nutrição para diferentes necessidades
+          </h2>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {treatments.map(({ title, description, Icon }) => (
+              <article
+                key={title}
+                className="flex h-full flex-col items-start rounded-2xl border border-gray-100 bg-[#faf8f4] p-6 shadow-sm transition-shadow hover:shadow-md"
+              >
+                <Icon aria-hidden="true" className="mb-5 h-10 w-10 text-lime-700/70" strokeWidth={1.8} />
+                <div>
+                  <h3 className="mb-2 font-sans text-lg font-semibold text-gray-800">
+                    {title}
+                  </h3>
+                  <p className="font-delicate leading-relaxed text-gray-600">
+                    {description}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
