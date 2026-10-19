@@ -95,7 +95,6 @@ router.post("/login", async (req, res) => {
         id: usuario._id,
         nome: usuario.nome,
         email: usuario.email,
-        fotoPerfil: usuario.fotoPerfil || "",
       },
     });
   } catch (error) {
