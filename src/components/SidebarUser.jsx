@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import HamburguerMenu from "./ADMH_Menu";
-import { Menu } from "lucide-react";
+import { List } from "lucide-react";
 import { useState, useEffect } from "react";
 
 function SidebarUser() {
@@ -76,7 +76,7 @@ function SidebarUser() {
       </div>
 
       <HamburguerMenu
-        icone={<Menu size={26} aria-hidden="true" />}
+        icone={<List size={40} color="white" className="cursor-pointer" />}
       >
         <section className="flex flex-col text-center text-white bg-green-950 rounded-xl w-full font-bold">
           <Link className="hover:bg-green-700 p-8 rounded-xl">PERFIL</Link>

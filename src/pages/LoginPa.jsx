@@ -39,8 +39,8 @@ function LoginUs() {
       // que existe um usuário logado.
       localStorage.setItem("usuario", JSON.stringify(dados.usuario));
 
-      // Após o login, mantém o usuário na página inicial.
-      navigate("/");
+      // Depois do login, manda o usuário para o perfil.
+      navigate("/User");
     } catch (error) {
       console.error("Erro ao realizar login:", error);
       setErro("Não foi possível conectar ao servidor.");
