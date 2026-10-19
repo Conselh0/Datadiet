@@ -1,5 +1,6 @@
 import {
   CalendarDays,
+  CalendarRange,
   ChartNoAxesCombined,
   ChevronRight,
   ClipboardList,
@@ -15,6 +16,11 @@ import { NavLink } from "react-router-dom";
 const links = [
   { to: "/Admin", label: "Dashboard", icon: ChartNoAxesCombined, end: true },
   { to: "/Admin/Perfil", label: "Meu perfil", icon: UserRound },
+  {
+    to: "/Admin/Agenda",
+    label: "Agenda",
+    icon: CalendarRange,
+  },
   { to: "/Admin/Pacientes", label: "Pacientes", icon: UsersRound },
   { to: "/Admin/Agendamentos", label: "Agendamentos", icon: CalendarDays },
   { to: "/Admin/Historico", label: "Histórico", icon: ClipboardList },

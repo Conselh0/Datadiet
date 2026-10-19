@@ -10,6 +10,7 @@ import Home from "./pages/Home.jsx";
 import AdminDashboard from "./layouts/AdminDashboard.jsx";
 import AdminHome from "./pages/AdminHome.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
+import Calendario from "./pages/Calendario.jsx";
 import Historico from "./pages/Historico.jsx";
 import AgendamentosAdmin from "./pages/AgendamentosAdmin.jsx";
 import LoginPa from "./pages/LoginPa.jsx";
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: "/Admin/Perfil",
         element: <AdminHome />,
+      },
+      {
+        path: "/Admin/Agenda",
+        element: <Calendario />,
       },
       {
         path: "/Admin/Historico",
