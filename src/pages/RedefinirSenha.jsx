@@ -40,21 +40,29 @@ function RedefinirSenha() {
   }
 
   return (
-    <main className="bg-orange-50/50 flex items-center bg-[url('./img/bolas.png')] min-h-screen p-4">
-      <section className="w-full max-w-md mx-auto p-6 rounded-2xl bg-taupe-50/70 shadow-2xl">
-        <Link to="/LoginPa" aria-label="Voltar para o login">
-          <CircleArrowLeft
-            color="#ffffff"
-            className="cursor-pointer absolute size-10 p-1.5 bg-green-700 rounded-2xl"/>
-        </Link>
-        <h2 className="text-3xl mb-2">Redefinir senha</h2>
-        <p className="text-gray-600 mb-6">
+    <main className="flex min-h-screen items-center justify-center bg-orange-50/50 bg-[url('./img/bolas.png')] bg-cover bg-center p-4">
+      <section className="mx-auto w-full max-w-md rounded-2xl border border-white/70 bg-white/85 p-6 shadow-2xl backdrop-blur-sm sm:p-8">
+        <div className="mb-5 flex items-center gap-3">
+          <Link
+            to="/LoginPa"
+            aria-label="Voltar para o login"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-700 text-white transition hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"
+          >
+            <CircleArrowLeft size={24} aria-hidden="true" />
+          </Link>
+          <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl">
+            Redefinir senha
+          </h1>
+        </div>
+        <p className="mb-6 text-sm leading-relaxed text-gray-600 sm:text-base">
           Informe seu e-mail para receber um link. Você poderá escolher uma nova
           senha depois de acessá-lo.
         </p>
 
         <form onSubmit={redefinir} className="flex flex-col gap-3">
-          <label htmlFor="email">E-mail</label>
+          <label htmlFor="email" className="text-sm font-medium text-gray-800">
+            E-mail
+          </label>
           <input
             id="email"
             name="email"
@@ -62,13 +70,26 @@ function RedefinirSenha() {
             required
             value={formulario.email}
             onChange={atualizarCampo}
-            className="bg-white shadow-md rounded-lg h-10 px-3"/>
+            autoComplete="email"
+            className="h-11 rounded-lg border border-gray-300 bg-white px-3 text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:border-green-700 focus:ring-2 focus:ring-green-700/20"
+          />
 
-          {erro && <p className="text-red-700 text-sm">{erro}</p>}
-          {mensagem && <p className="text-green-800 text-sm">{mensagem}</p>}
+          {erro && (
+            <p role="alert" className="text-sm text-red-700">
+              {erro}
+            </p>
+          )}
+          {mensagem && (
+            <p role="status" className="text-sm text-green-800">
+              {mensagem}
+            </p>
+          )}
           <button
             type="submit"
-            className="cursor-pointer bg-green-700 shadow-md rounded-lg h-10 text-white mt-3">Enviar link</button>
+            className="mt-3 h-11 cursor-pointer rounded-lg bg-green-700 font-medium text-white shadow-md transition hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2"
+          >
+            Enviar link
+          </button>
         </form>
       </section>
     </main>
