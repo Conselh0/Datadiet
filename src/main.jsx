@@ -3,13 +3,14 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./layouts/App.jsx";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
 //Rotas que devem ser importadas
 import Home from "./pages/Home.jsx";
 import AdminDashboard from "./layouts/AdminDashboard.jsx";
-import Feedback from "./pages/Feedback.jsx";
 import AdminHome from "./pages/AdminHome.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import Calendario from "./pages/Calendario.jsx";
 import Historico from "./pages/Historico.jsx";
 import AgendamentosAdmin from "./pages/AgendamentosAdmin.jsx";
 import LoginPa from "./pages/LoginPa.jsx";
@@ -36,7 +37,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/feedback",
-        element: <Feedback />,
+        element: <Navigate to="/#feedback" replace />,
       },
     ],
   },
@@ -47,7 +48,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/Admin",
+        element: <Dashboard />,
+      },
+      {
+        path: "/Admin/Perfil",
         element: <AdminHome />,
+      },
+      {
+        path: "/Admin/Agenda",
+        element: <Calendario />,
       },
       {
         path: "/Admin/Historico",

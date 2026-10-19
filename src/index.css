@@ -3,7 +3,21 @@
 @import url('https://googleapis.com');
 
 * {
-  font-family: "popins", sans-serif;
+  font-family: "Poppins", sans-serif;
+}
+
+.font-display {
+  font-family: "Playfair Display", serif;
+}
+
+.font-delicate {
+  font-family: "Lato", sans-serif;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 @keyframes abrirModal {
