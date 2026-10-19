@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import HamburguerMenu from "./ADMH_Menu";
-import { List } from "lucide-react";
+import { Menu } from "lucide-react";
 
 function Sidebar() {
   return (
@@ -17,11 +17,7 @@ function Sidebar() {
         ID: 001 {/*Colocar com props o id dinâmico aqui */}
       </p>
 
-      <button>
-        {/*Chamando o menu hambuerguer */}
-        <HamburguerMenu
-          icone={<List className="cursor-pointer" color="white" size={40} />}
-        >
+      <HamburguerMenu icone={<Menu size={26} aria-hidden="true" />}>
           <section className="bg-gray-400 rounded-xl">
             <Link
               to="/Admin"
@@ -55,8 +51,7 @@ function Sidebar() {
               SAIR
             </Link>
           </section>
-        </HamburguerMenu>
-      </button>
+      </HamburguerMenu>
     </div>
   );
 }

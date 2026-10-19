@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { CircleUserRoundIcon, Menu, X, LogOut } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, LogOut, CalendarDays, ChevronRight } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import USERH_Menu from "./USERH_Menu";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [menuAberto, setMenuAberto] = useState(false);
 
@@ -14,19 +15,80 @@ function Navbar() {
   // Controla o popup de logout
   const [mostrarLogout, setMostrarLogout] = useState(false);
 
-  // Verifica se existe usuário salvo no localStorage
+  // Mantém os dados de login e a foto do perfil sincronizados.
   useEffect(() => {
-    const usuarioSalvo = localStorage.getItem("usuario");
+    function sincronizarUsuario() {
+      const usuarioSalvo = localStorage.getItem("usuario");
 
-    if (usuarioSalvo) {
+      if (!usuarioSalvo) {
+        setUsuario(null);
+        return;
+      }
+
       try {
-        setUsuario(JSON.parse(usuarioSalvo));
+        const usuarioAtual = JSON.parse(usuarioSalvo);
+        setUsuario(usuarioAtual);
+
+        if (usuarioAtual.id) {
+          fetch(`http://localhost:8080/perfil/${usuarioAtual.id}`)
+            .then((resposta) => {
+              if (!resposta.ok) {
+                throw new Error("Não foi possível carregar a foto do perfil.");
+              }
+
+              return resposta.json();
+            })
+            .then((perfil) => {
+              const fotoPerfil = perfil.fotoPerfil || "";
+              const usuarioSalvoAtualizado = JSON.parse(
+                localStorage.getItem("usuario") || "null",
+              );
+
+              if (usuarioSalvoAtualizado?.id === usuarioAtual.id) {
+                localStorage.setItem(
+                  "usuario",
+                  JSON.stringify({ ...usuarioSalvoAtualizado, fotoPerfil }),
+                );
+              }
+
+              setUsuario((usuarioMaisRecente) => {
+                if (!usuarioMaisRecente || usuarioMaisRecente.id !== usuarioAtual.id) {
+                  return usuarioMaisRecente;
+                }
+
+                return { ...usuarioMaisRecente, fotoPerfil };
+              });
+            })
+            .catch((error) => {
+              console.error("Erro ao carregar foto do perfil:", error);
+            });
+        }
       } catch (error) {
         console.error("Erro ao ler usuário:", error);
         localStorage.removeItem("usuario");
+        setUsuario(null);
       }
     }
-  }, []);
+
+    function sincronizarFotoPerfil(evento) {
+      const novaFoto = evento?.detail?.fotoPerfil;
+
+      if (typeof novaFoto === "string") {
+        setUsuario((usuarioAtual) =>
+          usuarioAtual ? { ...usuarioAtual, fotoPerfil: novaFoto } : usuarioAtual,
+        );
+      }
+    }
+
+    sincronizarUsuario();
+    window.addEventListener("storage", sincronizarUsuario);
+    window.addEventListener("perfil-atualizado", sincronizarFotoPerfil);
+
+    return () => {
+      window.removeEventListener("storage", sincronizarUsuario);
+      window.removeEventListener("perfil-atualizado", sincronizarFotoPerfil);
+    };
+  }, [location.pathname]);
 
   // Faz o logout
   function confirmarSaida() {
@@ -46,7 +108,7 @@ function Navbar() {
   return (
     <>
       {/* NAVBAR */}
-      <div className="font-poppins w-full bg-emerald-900 p-3 flex items-center justify-between relative shadow-md h-20">
+      <div className="font-poppins w-full bg-emerald-900 p-3 flex items-center justify-between relative shadow-md h-[4.5rem]">
         {/* LADO ESQUERDO: LOGO E BOTÃO HAMBÚRGUER MOBILE */}
         <div className="z-10 flex items-center gap-2 pl-2">
           {/* Botão de abrir/fechar menu apenas visível em telas menores que 'md' */}
@@ -55,9 +117,13 @@ function Navbar() {
             type="button"
             aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
             aria-expanded={menuAberto}
-            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none md:hidden"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none md:hidden"
           >
-            {menuAberto ? <X size={28} /> : <Menu size={28} />}
+            {menuAberto ? (
+              <X size={28} />
+            ) : (
+              <Menu size={28} />
+            )}
           </button>
 
           <Link to="/" aria-label="Voltar para a página inicial">
@@ -128,47 +194,86 @@ function Navbar() {
               </Link>
             </div>
           ) : (
-            /* Menu Dropdown do Perfil permanece sempre visível na ponta */
-            <USERH_Menu
-              icone={
-                <CircleUserRoundIcon
-                  className="cursor-pointer hover:opacity-80 transition-opacity"
-                  color="white"
-                  size={40}
-                />
-              }
-            >
-              <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
-                PERFIL
-              </Link>
-
-              <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
-                AGENDAMENTO
-              </Link>
-
-              <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
-                AGENDAR CONSULTA
-              </Link>
-
-              <Link to="/User" className="p-5 hover:bg-slate-200 rounded-xl">
-                CONSULTA
-              </Link>
-
-              {/* Botão de sair abre o popup de confirmação */}
-              <button
-                type="button"
-                onClick={() => setMostrarLogout(true)}
-                className="p-5 flex justify-center hover:bg-slate-200 rounded-xl w-full text-left cursor-pointer"
-              >
-                SAIR
-              </button>
-            </USERH_Menu>
+            <>
+              <div className="hidden md:block">
+                <USERH_Menu
+                  icone={
+                    <img
+                      src={usuario.fotoPerfil || "/img/avatar.png"}
+                      alt="Abrir menu do perfil"
+                      className="h-10 w-10 rounded-full border-2 border-white object-cover transition-opacity hover:opacity-80"
+                    />
+                  }
+                >
+                  <Link
+                    to="/User"
+                    className="mb-1 flex items-center gap-3 rounded-xl bg-white p-3 transition-colors hover:bg-emerald-50"
+                  >
+                    <img
+                      src={usuario.fotoPerfil || "/img/avatar.png"}
+                      alt=""
+                      className="h-12 w-12 rounded-full border-2 border-emerald-100 object-cover"
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-700/70">
+                        Conta
+                      </span>
+                      <span className="block truncate text-base font-bold text-emerald-950">
+                        {usuario.nome || "Meu perfil"}
+                      </span>
+                    </span>
+                    <ChevronRight size={18} className="text-emerald-700" aria-hidden="true" />
+                  </Link>
+                  <Link
+                    to="/User/Agendamentos"
+                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors hover:bg-white"
+                  >
+                    <CalendarDays size={18} className="text-emerald-800" aria-hidden="true" />
+                    <span className="flex-1">Meus agendamentos</span>
+                    <ChevronRight size={16} className="text-emerald-700/60" aria-hidden="true" />
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setMostrarLogout(true)}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-emerald-900 transition-colors hover:bg-white"
+                  >
+                    <LogOut size={18} className="text-emerald-800" aria-hidden="true" />
+                    <span className="flex-1">Sair</span>
+                  </button>
+                </USERH_Menu>
+              </div>
+            </>
           )}
         </div>
 
         {/* PAINEL MOBILE: APARECE APENAS QUANDO O MENU ESTÁ ABERTO EM TELAS PEQUENAS */}
         {menuAberto && (
-          <div className="absolute left-0 top-20 z-50 flex max-h-[calc(100dvh-5rem)] w-full flex-col gap-5 overflow-y-auto rounded-b-3xl border-t border-white/10 bg-[#f3f0e9] px-5 py-6 text-emerald-950 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-200 md:hidden">
+          <div className="absolute left-0 top-[4.5rem] z-50 flex max-h-[calc(100dvh-4.5rem)] w-full flex-col gap-4 overflow-y-auto rounded-b-3xl border-t border-white/10 bg-[#f7f5ee] px-4 py-5 text-emerald-950 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-200 md:hidden">
+            {usuario && (
+              <Link
+                to="/User"
+                onClick={() => setMenuAberto(false)}
+                className="flex items-center gap-4 rounded-2xl bg-white p-3.5 shadow-sm transition-colors hover:bg-emerald-50"
+              >
+                <img
+                  src={usuario.fotoPerfil || "/img/avatar.png"}
+                  alt=""
+                  className="h-12 w-12 rounded-full border-2 border-emerald-100 object-cover"
+                />
+                <span className="min-w-0">
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-emerald-700/70">
+                    Bem-vindo(a)
+                  </span>
+                  <span className="mt-1 block truncate text-lg font-bold text-emerald-950">
+                    {usuario.nome || "Minha conta"}
+                  </span>
+                  <span className="text-sm font-medium text-emerald-700">
+                    Ver meu perfil
+                  </span>
+                </span>
+              </Link>
+            )}
+
             <div>
               <p className="mb-3 px-3 font-sans text-xs font-semibold uppercase tracking-[0.22em] text-emerald-800/70">
                 Navegação
@@ -177,28 +282,28 @@ function Navbar() {
                 <Link
                   to="/"
                   onClick={() => setMenuAberto(false)}
-                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
                 >
                   Home
                 </Link>
                 <a
                   href="/#metodo"
                   onClick={() => setMenuAberto(false)}
-                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
                 >
                   Sobre
                 </a>
                 <a
                   href="/#feedback"
                   onClick={() => setMenuAberto(false)}
-                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
                 >
                   Feedback
                 </a>
                 <a
                   href="/#contato"
                   onClick={() => setMenuAberto(false)}
-                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
                 >
                   Contatos
                 </a>
@@ -208,7 +313,7 @@ function Navbar() {
             <button
               type="button"
               onClick={abrirAgendamentos}
-              className="flex w-full items-center justify-between rounded-xl bg-green-800/10 px-4 py-3 text-left text-base font-semibold text-emerald-900 transition-colors hover:bg-green-800/15"
+              className="flex w-full items-center justify-between rounded-xl bg-emerald-900 px-3 py-3 text-left text-base font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800"
             >
               <span>Agendar consulta</span>
               <span aria-hidden="true" className="text-lg">→</span>
@@ -230,16 +335,9 @@ function Navbar() {
             ) : (
               <div className="flex flex-col gap-1 border-t border-emerald-900/10 pt-5">
                 <Link
-                  to="/User"
-                  onClick={() => setMenuAberto(false)}
-                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
-                >
-                  Perfil
-                </Link>
-                <Link
                   to="/User/Agendamentos"
                   onClick={() => setMenuAberto(false)}
-                  className="rounded-xl px-3 py-3 text-base font-medium transition-colors hover:bg-emerald-900/10"
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
                 >
                   Meus agendamentos
                 </Link>
@@ -249,7 +347,7 @@ function Navbar() {
                     setMenuAberto(false);
                     setMostrarLogout(true);
                   }}
-                  className="rounded-xl px-3 py-3 text-left text-base font-medium text-emerald-900 transition-colors hover:bg-emerald-900/10"
+                  className="rounded-xl px-3 py-2.5 text-left text-base font-semibold text-emerald-900 transition-colors hover:bg-white"
                 >
                   Sair
                 </button>
