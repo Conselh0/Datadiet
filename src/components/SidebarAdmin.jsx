@@ -39,7 +39,7 @@ function Sidebar() {
 
       {/* HamburguerMenu sem a tag <button> externa para limpar o HTML */}
       <HamburguerMenu
-        icone={<List className="cursor-pointer" color="white" size={40} />}
+        icone={<List className="cursor-pointer" color="white" size={40} aria-hidden="true" />}
       >
         <section className="bg-gray-400 rounded-xl">
           <Link to="/Admin" className={estiloLink}>
@@ -55,7 +55,6 @@ function Sidebar() {
             CADASTRO NUTRI
           </Link>
 
-          {/* Alterado: Agora é um Link direto para a Home, sem interceptação ou modais */}
           <Link to="/" className={estiloLink}>
             SAIR
           </Link>

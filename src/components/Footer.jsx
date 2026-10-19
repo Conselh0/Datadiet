@@ -5,7 +5,7 @@ function Footer() {
   const mapaUrl = "https://www.google.com/maps/place/R.+Ezequiel+Freire,+55+-+Santana,+S%C3%A3o+Paulo+-+SP,+02034-000/data=!4m2!3m1!1s0x94cef628277f7583:0xdfd4b6e7e3189487?sa=X&ved=1t:242&ictx=111";
 
   return (
-    <footer className="w-full bg-emerald-950 text-white pt-8 pb-6 px-6 md:px-16 lg:px-24">
+    <footer id="contato" className="w-full bg-emerald-950 text-white pt-8 pb-6 px-6 md:px-16 lg:px-24">
       {/* Linha Principal: Conteúdo Organizado */}
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-10 pb-8 border-b border-emerald-800/50">
         
@@ -63,7 +63,7 @@ function Footer() {
         <div className="flex items-center justify-center gap-5 md:order-2">
           {/* Link do WhatsApp Corrigido e Valido */}
           <a 
-            href="https://wa.me" 
+            href="https://wa.me/5511971172735"
             target="_blank" 
             rel="noopener noreferrer" 
             className="inline-block cursor-pointer z-50"
@@ -73,7 +73,7 @@ function Footer() {
 
           {/* Link do Instagram */}
           <a 
-            href="https://instagram.com" 
+            href="https://www.instagram.com/nutriluanateixeira/"
             target="_blank" 
             rel="noopener noreferrer" 
             className="inline-block cursor-pointer z-50"
@@ -99,14 +99,6 @@ function Footer() {
             <img src="/img/call.png" alt="Telefone" className="w-5 h-5 opacity-80 hover:opacity-100 transition-opacity" />
           </a>
         </div>
-
-        {/* Coluna 3: Link de acesso à direita */}
-        <div className="md:text-right md:order-3">
-          <Link to={"/Admin"} className="hover:text-white hover:underline transition-colors">
-            Área da Nutricionista
-          </Link>
-        </div>
-
       </div>
     </footer>
   );

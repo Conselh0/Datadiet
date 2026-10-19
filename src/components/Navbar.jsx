@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { CircleUserRoundIcon, Menu, X, LogOut } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Menu, X, LogOut, CalendarDays, ChevronRight } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import USERH_Menu from "./USERH_Menu";
 import { getSessao, sair } from "../utils/sessao";
 
@@ -19,6 +19,7 @@ const MENU_NUTRICIONISTA = [
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [menuAberto, setMenuAberto] = useState(false);
 
@@ -28,10 +29,77 @@ function Navbar() {
   // Controla o popup de logout
   const [mostrarLogout, setMostrarLogout] = useState(false);
 
-  // Verifica se existe usuário salvo no localStorage
+  // Mantém os dados de login e a foto do perfil sincronizados.
   useEffect(() => {
-    setUsuario(getSessao());
-  }, []);
+    let ativo = true;
+
+    function sincronizarUsuario() {
+      const usuarioAtual = getSessao();
+      setUsuario(usuarioAtual);
+
+      if (usuarioAtual?.tipo === "paciente" && usuarioAtual.id) {
+        fetch(`http://localhost:8080/perfil/${usuarioAtual.id}`)
+          .then((resposta) => {
+            if (!resposta.ok) {
+              throw new Error("Não foi possível carregar a foto do perfil.");
+            }
+
+            return resposta.json();
+          })
+          .then((perfil) => {
+            if (!ativo) return;
+
+            const fotoPerfil = perfil.fotoPerfil || "";
+            const usuarioSalvoAtualizado = getSessao();
+
+            if (
+              usuarioSalvoAtualizado?.id === usuarioAtual.id &&
+              usuarioSalvoAtualizado.tipo === "paciente"
+            ) {
+              localStorage.setItem(
+                "usuario",
+                JSON.stringify({ ...usuarioSalvoAtualizado, fotoPerfil }),
+              );
+            }
+
+            setUsuario((usuarioMaisRecente) => {
+              if (
+                !usuarioMaisRecente ||
+                usuarioMaisRecente.id !== usuarioAtual.id ||
+                usuarioMaisRecente.tipo !== "paciente"
+              ) {
+                return usuarioMaisRecente;
+              }
+
+              return { ...usuarioMaisRecente, fotoPerfil };
+            });
+          })
+          .catch((error) => {
+            if (ativo) console.error("Erro ao carregar foto do perfil:", error);
+          });
+      }
+    }
+
+    function sincronizarFotoPerfil(evento) {
+      const novaFoto = evento?.detail?.fotoPerfil;
+
+      if (typeof novaFoto === "string" && ativo) {
+        setUsuario((usuarioAtual) =>
+          usuarioAtual ? { ...usuarioAtual, fotoPerfil: novaFoto } : usuarioAtual,
+        );
+      }
+    }
+
+    sincronizarUsuario();
+    window.addEventListener("storage", sincronizarUsuario);
+    window.addEventListener("perfil-atualizado", sincronizarFotoPerfil);
+
+    return () => {
+      ativo = false;
+      window.removeEventListener("storage", sincronizarUsuario);
+      window.removeEventListener("perfil-atualizado", sincronizarFotoPerfil);
+    };
+  }, [location.pathname]);
 
   const itensMenu = usuario?.tipo === "nutricionista" ? MENU_NUTRICIONISTA : MENU_PACIENTE;
 
@@ -45,26 +113,55 @@ function Navbar() {
     navigate("/");
   }
 
+  function abrirAgendamentos() {
+    setMenuAberto(false);
+    navigate(
+      usuario?.tipo === "nutricionista"
+        ? "/Admin"
+        : usuario
+          ? "/User/Agendamentos"
+          : "/LoginPa",
+    );
+  }
+
   return (
     <>
       {/* NAVBAR */}
-      <div className="font-poppins w-full bg-emerald-900 p-3 flex items-center justify-between relative shadow-md h-20">
+      <div className="font-poppins w-full bg-emerald-900 p-3 flex items-center justify-between relative shadow-md h-[4.5rem]">
         {/* LADO ESQUERDO: LOGO E BOTÃO HAMBÚRGUER MOBILE */}
         <div className="z-10 flex items-center gap-2 pl-2">
           {/* Botão de abrir/fechar menu apenas visível em telas menores que 'md' */}
           <button
             onClick={() => setMenuAberto(!menuAberto)}
-            className="text-white hover:bg-emerald-800 p-2 rounded-lg md:hidden focus:outline-none cursor-pointer"
+            type="button"
+            aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={menuAberto}
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none md:hidden"
           >
-            {menuAberto ? <X size={28} /> : <Menu size={28} />}
+            {menuAberto ? (
+              <X size={28} />
+            ) : (
+              <Menu size={28} />
+            )}
           </button>
 
-          <img
-            src="/img/logo 2.png"
-            alt="logoLuana"
-            className="hidden sm:block w-[50px] h-[50px] object-contain"
-          />
+          <Link to="/" aria-label="Voltar para a página inicial">
+            <img
+              src="/img/logo 2.png"
+              alt="Luana Teixeira - página inicial"
+              className="block h-10 w-10 object-contain sm:h-[50px] sm:w-[50px]"
+            />
+          </Link>
         </div>
+
+        {!usuario && (
+          <Link
+            to="/LoginPa"
+            className="absolute right-5 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-green-200 hover:underline md:hidden"
+          >
+            Entrar / Criar Conta
+          </Link>
+        )}
 
         {/* LINKS DO MEIO: CENTRALIZADOS ABSOLUTAMENTE NO DESKTOP */}
         {/* O hidden md:flex faz desaparecer no mobile para não amassar a tela */}
@@ -76,26 +173,26 @@ function Navbar() {
             Home
           </Link>
 
-          <Link
-            to="/"
+          <a
+            href="/#metodo"
             className="mx-4 hover:underline decoration-2 decoration-green-400 underline-offset-4 hover:text-green-400"
           >
             Sobre
-          </Link>
+          </a>
 
-          <Link
-            to="/Feedback"
+          <a
+            href="/#feedback"
             className="mx-4 hover:underline decoration-2 decoration-green-400 underline-offset-4 hover:text-green-400"
           >
             Feedback
-          </Link>
+          </a>
 
-          <Link
-            to="/"
+          <a
+            href="/#contato"
             className="mx-4 hover:underline decoration-2 decoration-green-400 underline-offset-4 hover:text-green-400"
           >
             Contatos
-          </Link>
+          </a>
         </div>
 
         {/* LADO DIREITO: BOTÕES (DESKTOP) E MENU DO USUÁRIO */}
@@ -116,107 +213,172 @@ function Navbar() {
               </Link>
             </div>
           ) : (
-            /* Menu Dropdown do Perfil permanece sempre visível na ponta */
-            <USERH_Menu
-              icone={
-                <CircleUserRoundIcon
-                  className="cursor-pointer hover:opacity-80 transition-opacity"
-                  color="white"
-                  size={40}
-                />
-              }
-            >
-              {itensMenu.map(([texto, rota]) => (
-                <Link key={texto} to={rota} className="p-5 hover:bg-slate-200 rounded-xl">
-                  {texto}
-                </Link>
-              ))}
-
-              {/* Botão de sair abre o popup de confirmação */}
-              <button
-                type="button"
-                onClick={() => setMostrarLogout(true)}
-                className="p-5 flex justify-center hover:bg-slate-200 rounded-xl w-full text-left cursor-pointer"
-              >
-                SAIR
-              </button>
-            </USERH_Menu>
+            <>
+              <div className="hidden md:block">
+                <USERH_Menu
+                  icone={
+                    <img
+                      src={usuario.fotoPerfil || usuario.foto || "/img/avatar.png"}
+                      alt="Abrir menu do perfil"
+                      className="h-10 w-10 rounded-full border-2 border-white object-cover transition-opacity hover:opacity-80"
+                    />
+                  }
+                >
+                  <Link
+                    to={usuario.tipo === "nutricionista" ? "/Admin" : "/User"}
+                    className="mb-1 flex items-center gap-3 rounded-xl bg-white p-3 transition-colors hover:bg-emerald-50"
+                  >
+                    <img
+                      src={usuario.fotoPerfil || usuario.foto || "/img/avatar.png"}
+                      alt=""
+                      className="h-12 w-12 rounded-full border-2 border-emerald-100 object-cover"
+                    />
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[11px] font-semibold uppercase tracking-wider text-emerald-700/70">
+                        Conta
+                      </span>
+                      <span className="block truncate text-base font-bold text-emerald-950">
+                        {usuario.nome || "Meu perfil"}
+                      </span>
+                    </span>
+                    <ChevronRight size={18} className="text-emerald-700" aria-hidden="true" />
+                  </Link>
+                  {itensMenu.slice(1).map(([texto, rota]) => (
+                    <Link
+                      key={rota}
+                      to={rota}
+                      className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors hover:bg-white"
+                    >
+                      {rota === "/User/Agendamentos" ? (
+                        <CalendarDays size={18} className="text-emerald-800" aria-hidden="true" />
+                      ) : (
+                        <ChevronRight size={18} className="text-emerald-700" aria-hidden="true" />
+                      )}
+                      <span className="flex-1">{texto}</span>
+                      <ChevronRight size={16} className="text-emerald-700/60" aria-hidden="true" />
+                    </Link>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setMostrarLogout(true)}
+                    className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-emerald-900 transition-colors hover:bg-white"
+                  >
+                    <LogOut size={18} className="text-emerald-800" aria-hidden="true" />
+                    <span className="flex-1">Sair</span>
+                  </button>
+                </USERH_Menu>
+              </div>
+            </>
           )}
         </div>
 
         {/* PAINEL MOBILE: APARECE APENAS QUANDO O MENU ESTÁ ABERTO EM TELAS PEQUENAS */}
         {menuAberto && (
-          <div className="absolute top-20 left-0 w-full bg-emerald-950 flex flex-col md:hidden text-white shadow-2xl p-5 gap-4 z-50 border-t border-emerald-800 animate-in fade-in slide-in-from-top-5 duration-200">
-            <Link
-              to="/"
-              onClick={() => setMenuAberto(false)}
-              className="text-lg hover:text-green-400 py-1 border-b border-emerald-900"
-            >
-              Home
-            </Link>
+          <div className="absolute left-0 top-[4.5rem] z-50 flex max-h-[calc(100dvh-4.5rem)] w-full flex-col gap-4 overflow-y-auto rounded-b-3xl border-t border-white/10 bg-[#f7f5ee] px-4 py-5 text-emerald-950 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-200 md:hidden">
+            {usuario && (
+              <Link
+                to={usuario.tipo === "nutricionista" ? "/Admin" : "/User"}
+                onClick={() => setMenuAberto(false)}
+                className="flex items-center gap-4 rounded-2xl bg-white p-3.5 shadow-sm transition-colors hover:bg-emerald-50"
+              >
+                <img
+                  src={usuario.fotoPerfil || usuario.foto || "/img/avatar.png"}
+                  alt=""
+                  className="h-12 w-12 rounded-full border-2 border-emerald-100 object-cover"
+                />
+                <span className="min-w-0">
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-emerald-700/70">
+                    Bem-vindo(a)
+                  </span>
+                  <span className="mt-1 block truncate text-lg font-bold text-emerald-950">
+                    {usuario.nome || "Minha conta"}
+                  </span>
+                  <span className="text-sm font-medium text-emerald-700">
+                    Ver meu perfil
+                  </span>
+                </span>
+              </Link>
+            )}
 
-            <Link
-              to="/"
-              onClick={() => setMenuAberto(false)}
-              className="text-lg hover:text-green-400 py-1 border-b border-emerald-900"
-            >
-              Sobre
-            </Link>
-
-            <Link
-              to="/Feedback"
-              onClick={() => setMenuAberto(false)}
-              className="text-lg hover:text-green-400 py-1 border-b border-emerald-900"
-            >
-              Feedback
-            </Link>
-
-            <Link
-              to="/"
-              onClick={() => setMenuAberto(false)}
-              className="text-lg hover:text-green-400 py-1 border-b border-emerald-900"
-            >
-              Contatos
-            </Link>
-
-            {/* Botões mobile adaptados para ocupar 100% da largura horizontal */}
-            {!usuario ? (
-              <div className="flex flex-col gap-3 mt-2">
-                <Link to="/CadPa" onClick={() => setMenuAberto(false)}>
-                  <button className="w-full bg-[#2fa84a] py-3 rounded-full text-base font-bold text-white shadow-md">
-                    Criar Conta
-                  </button>
+            <div>
+              <p className="mb-3 px-3 font-sans text-xs font-semibold uppercase tracking-[0.22em] text-emerald-800/70">
+                Navegação
+              </p>
+              <nav className="flex flex-col gap-1" aria-label="Navegação principal">
+                <Link
+                  to="/"
+                  onClick={() => setMenuAberto(false)}
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
+                >
+                  Home
                 </Link>
+                <a
+                  href="/#metodo"
+                  onClick={() => setMenuAberto(false)}
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
+                >
+                  Sobre
+                </a>
+                <a
+                  href="/#feedback"
+                  onClick={() => setMenuAberto(false)}
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
+                >
+                  Feedback
+                </a>
+                <a
+                  href="/#contato"
+                  onClick={() => setMenuAberto(false)}
+                  className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
+                >
+                  Contatos
+                </a>
+              </nav>
+            </div>
 
+            <button
+              type="button"
+              onClick={abrirAgendamentos}
+              className="flex w-full items-center justify-between rounded-xl bg-emerald-900 px-3 py-3 text-left text-base font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800"
+            >
+              <span>Agendar consulta</span>
+              <span aria-hidden="true" className="text-lg">→</span>
+            </button>
+
+            {!usuario ? (
+              <div className="flex flex-col gap-3 border-t border-emerald-900/10 pt-5">
+                <Link to="/CadPa" onClick={() => setMenuAberto(false)}>
+                  <span className="block w-full rounded-full bg-green-700 py-3 text-center text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-800">
+                    Criar conta
+                  </span>
+                </Link>
                 <Link to="/LoginPa" onClick={() => setMenuAberto(false)}>
-                  <button className="w-full bg-transparent border-2 border-white py-3 rounded-full text-base font-bold text-white">
+                  <span className="block w-full rounded-full border border-emerald-900 px-4 py-3 text-center text-sm font-semibold text-emerald-950 transition-colors hover:bg-emerald-900/5">
                     Entrar
-                  </button>
+                  </span>
                 </Link>
               </div>
             ) : (
-              /* Menu do usuário no mobile */
-              <div className="flex flex-col gap-2 mt-2">
-                {itensMenu.map(([texto, rota]) => (
+              <div className="flex flex-col gap-1 border-t border-emerald-900/10 pt-5">
+                {itensMenu.slice(1).map(([texto, rota]) => (
                   <Link
-                    key={texto}
+                    key={rota}
                     to={rota}
                     onClick={() => setMenuAberto(false)}
-                    className="text-lg hover:text-green-400 py-2 border-b border-emerald-900"
+                    className="rounded-xl px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white"
                   >
                     {texto}
                   </Link>
                 ))}
-
                 <button
                   type="button"
                   onClick={() => {
                     setMenuAberto(false);
                     setMostrarLogout(true);
                   }}
-                  className="text-lg text-left hover:text-green-400 py-2"
+                  className="rounded-xl px-3 py-2.5 text-left text-base font-semibold text-emerald-900 transition-colors hover:bg-white"
                 >
-                  SAIR
+                  Sair
                 </button>
               </div>
             )}

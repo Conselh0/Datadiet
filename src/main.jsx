@@ -3,12 +3,11 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./layouts/App.jsx";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 
 //Rotas que devem ser importadas
 import Home from "./pages/Home.jsx";
 import AdminDashboard from "./layouts/AdminDashboard.jsx";
-import Feedback from "./pages/Feedback.jsx";
 import AdminHome from "./pages/AdminHome.jsx";
 import Historico from "./pages/Historico.jsx";
 import AgendamentosAdmin from "./pages/AgendamentosAdmin.jsx";
@@ -36,7 +35,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/feedback",
-        element: <Feedback />,
+        element: <Navigate to="/#feedback" replace />,
       },
     ],
   },
