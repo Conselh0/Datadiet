@@ -2,6 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import AgendamentoModel, { STATUS } from "../models/agendamento.model.js";
 import NutricionistaModel from "../models/nutricionista.model.js";
+import UserModel from "../models/user.model.js";
+import AnamneseModel from "../models/anamnese.model.js";
+import { salvarAnamneseDoAgendamento } from "./anamnese.js";
 import { agora, gerarHorarios, diaDaSemana } from "../../utils/horarios.js";
 
 const router = express.Router();
@@ -43,38 +46,23 @@ async function validarSlot({ nutricionistaId, data, horario, ignorarId }) {
   return { nutri };
 }
 
-function validarAnamnese(a) {
-  if (!a || typeof a !== "object") return "Preencha a ficha de anamnese.";
-  const textos = ["pesoCorporal", "altura", "pesoIdeal", "aguaLitros"];
-  if (textos.some((c) => !String(a[c] || "").trim())) {
-    return "Preencha peso, altura, peso ideal e consumo de água na ficha de anamnese.";
-  }
-  const simNao = ["bebidaAlcoolica", "fuma", "atividadeFisica", "desconfortoIntestinal", "cansaco"];
-  if (simNao.some((c) => !["Sim", "Não"].includes(a[c]))) {
-    return "Responda todas as perguntas de Sim/Não da ficha de anamnese.";
-  }
-  if (!["Regular", "Irregular"].includes(a.funcionamentoIntestinal)) {
-    return "Informe o funcionamento intestinal na ficha de anamnese.";
-  }
-  return null;
-}
-
 const enviarErro = (res, r) => res.status(r.status).json({ erro: r.erro });
 
 // POST /agendamento  -> cria uma consulta (com a ficha de anamnese)
 router.post("/agendamento", async (req, res) => {
   try {
-    const { paciente, pacienteId, nutricionistaId, data, horario, anamnese } = req.body;
+    const { pacienteId, nutricionistaId, data, horario, anamnese, tipoAnamnese, anamneseId } = req.body;
 
-    if (!paciente || !pacienteId) {
+    if (!pacienteId || !mongoose.isValidObjectId(pacienteId) || !(await UserModel.exists({ _id: pacienteId }))) {
       return res.status(400).json({ erro: "Não foi possível identificar o paciente." });
     }
     if (!nutricionistaId || !data || !horario) {
       return res.status(400).json({ erro: "Preencha todos os campos do agendamento." });
     }
 
-    const erroFicha = validarAnamnese(anamnese);
-    if (erroFicha) return res.status(400).json({ erro: erroFicha });
+    if ((!anamnese && !anamneseId) || !["inicial", "acompanhamento"].includes(tipoAnamnese)) {
+      return res.status(400).json({ erro: "Preencha a ficha de anamnese antes de agendar." });
+    }
 
     // Só marca outra consulta depois de concluir (ou cancelar, com aprovação) a atual
     if (await AgendamentoModel.exists({ pacienteId, status: { $in: ATIVOS } })) {
@@ -86,17 +74,34 @@ router.post("/agendamento", async (req, res) => {
     const slot = await validarSlot({ nutricionistaId, data, horario });
     if (slot.erro) return enviarErro(res, slot);
 
+    const usuario = await UserModel.findById(pacienteId).select("nome");
     const novo = await AgendamentoModel.create({
-      paciente,
+      paciente: usuario.nome,
       pacienteId,
       nutricionista: slot.nutri.nome,
       nutricionistaId,
       data,
       horario,
-      anamnese,
     });
 
-    res.status(201).json({ mensagem: "Consulta agendada com sucesso!", agendamento: novo });
+    let ficha;
+    try {
+      ficha = await salvarAnamneseDoAgendamento({
+        pacienteId,
+        tipo: tipoAnamnese,
+        dados: anamnese,
+        agendamentoId: novo._id,
+        anamneseId,
+      });
+      novo.anamneseId = ficha._id;
+      await novo.save();
+    } catch (errorFicha) {
+      await AnamneseModel.deleteOne({ agendamentoId: novo._id });
+      await AgendamentoModel.deleteOne({ _id: novo._id });
+      return res.status(400).json({ erro: errorFicha.message });
+    }
+
+    res.status(201).json({ mensagem: "Consulta agendada com sucesso!", agendamento: novo, anamnese: ficha });
   } catch (error) {
     console.error("ERRO NO AGENDAMENTO:", error);
     res.status(500).json({ erro: error.message });

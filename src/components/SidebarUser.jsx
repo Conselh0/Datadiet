@@ -60,44 +60,44 @@ function SidebarUser() {
   }, []);
 
   return (
-    <div className="bg-green-900 flex flex-row justify-between lg:justify-evenly lg:flex-col min-h-10  lg:min-h-screen w-autolg:w-60 items-center">
-      <div className="p-5">
+    <aside className="flex w-full shrink-0 flex-row items-center justify-between bg-green-900 lg:min-h-screen lg:w-64 lg:flex-col lg:justify-between lg:overflow-hidden">
+      <div className="p-5 lg:w-full">
         <img
           src={fotoPerfil || "/img/avatar.png"}
           alt="Foto de perfil do usuário"
-          className="w-32 h-32 object-cover rounded-full border-2 m-auto"
+          className="m-auto h-24 w-24 rounded-full border-2 border-white/60 object-cover lg:h-28 lg:w-28"
         />
-        <p className="lg:block hidden text-white text-center text-4xl font-bold">
-          {nomeUsuario} <br />
+        <p className="hidden text-center text-2xl font-bold text-white lg:block">
+          {nomeUsuario}
         </p>
-        <p className="lg:block hidden text-white text-center">
-          ID:...{/*Colocar com props o id dinâmico aqui */}
+        <p className="hidden text-center text-sm text-green-100/80 lg:block">
+          Paciente
         </p>
       </div>
 
       <HamburguerMenu
         icone={<Menu size={26} aria-hidden="true" />}
       >
-        <section className="flex flex-col text-center text-white bg-green-950 rounded-xl w-full font-bold">
-          <Link className="hover:bg-green-700 p-8 rounded-xl">PERFIL</Link>
+        <section className="flex w-full flex-col rounded-xl bg-green-950 text-center font-bold text-white">
+          <Link className="rounded-xl p-4 text-sm hover:bg-green-700 lg:p-5">PERFIL</Link>
           <Link
             to="/User/Historico"
-            className="hover:bg-green-700 p-8 rounded-xl"
+            className="rounded-xl p-4 text-sm hover:bg-green-700 lg:p-5"
           >
             HISTÓRICO DE CONSULTAS
           </Link>
           <Link
             to="/User/Agendamentos"
-            className="hover:bg-green-700 p-8 rounded-xl"
+            className="rounded-xl p-4 text-sm hover:bg-green-700 lg:p-5"
           >
             AGENDAR
           </Link>
-          <Link to="/" className="hover:bg-green-700 p-8 rounded-xl">
+          <Link to="/" className="rounded-xl p-4 text-sm hover:bg-green-700 lg:p-5">
             SAIR
           </Link>
         </section>
       </HamburguerMenu>
-    </div>
+    </aside>
   );
 }
 

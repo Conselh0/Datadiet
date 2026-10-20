@@ -5,8 +5,10 @@ import agendamentoRoutes from "./routes/agendamento.js"; //Caminho do
 import perfilRouter from "./routes/perfilUsuario.js"
 import authRoutes from "./routes/auth.js";
 import nutricionistaRoutes from "./routes/nutricionista.js";
+import anamneseRoutes from "./routes/anamnese.js";
 
 app.use(agendamentoRoutes); //Verificar essa linha se der erro no agendamento
+app.use(anamneseRoutes);
 app.use(perfilRouter)
 app.use(authRoutes);
 app.use("/", nutricionistaRoutes);

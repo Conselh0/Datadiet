@@ -70,6 +70,7 @@ const AgendamentoSchema = new mongoose.Schema(
     },
     status: { type: String, enum: STATUS, default: "Pendente" },
     solicitacao: SolicitacaoSchema,
+    anamneseId: { type: mongoose.Schema.Types.ObjectId, ref: "Anamnese", default: null },
     // select:false => não sai nas listagens; só quando pedida de propósito
     anamnese: { type: AnamneseSchema, select: false },
   },

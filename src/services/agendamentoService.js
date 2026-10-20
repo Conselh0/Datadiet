@@ -54,6 +54,9 @@ export const listarAgendamentos = (filtros = {}) =>
 export const buscarProximaConsulta = (pacienteId) =>
   request(`/agendamentos/proximo?${qs({ pacienteId })}`);
 
+export const buscarStatusAnamnese = (pacienteId) =>
+  request(`/pacientes/${pacienteId}/anamneses/status`);
+
 export const atualizarStatus = (id, status) =>
   request(`/agendamento/${id}/status`, {
     method: "PATCH",

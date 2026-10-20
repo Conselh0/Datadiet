@@ -10,6 +10,7 @@ import {
   listarAgendamentos,
   getUsuario,
   getUsuarioId,
+  buscarStatusAnamnese,
 } from "../services/agendamentoService";
 import { formatarData } from "../utils/formatters";
 
@@ -82,6 +83,7 @@ function Agendamentos() {
   // Regra: só agenda outra consulta quando não houver uma em andamento
   const [verificando, setVerificando] = useState(true);
   const [emAndamento, setEmAndamento] = useState(null);
+  const [statusAnamnese, setStatusAnamnese] = useState(null);
 
   const [nutricionistas, setNutricionistas] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -93,6 +95,7 @@ function Agendamentos() {
   const [carregandoHorarios, setCarregandoHorarios] = useState(false);
   const [horario, setHorario] = useState("");
   const [anamnese, setAnamnese] = useState(null);
+  const [anamneseId, setAnamneseId] = useState(null);
 
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState("");
@@ -108,7 +111,10 @@ function Agendamentos() {
     if (!id) return setVerificando(false);
     listarAgendamentos({ pacienteId: id })
       .then((l) => setEmAndamento(l.find((a) => ATIVOS.includes(a.status)) || null))
-      .catch(() => {})
+      .catch((e) => setErro(e.message));
+    buscarStatusAnamnese(id)
+      .then(setStatusAnamnese)
+      .catch((e) => setErro(e.message))
       .finally(() => setVerificando(false));
   }, []);
 
@@ -147,7 +153,15 @@ function Agendamentos() {
   const escolherHorario = (h) => {
     setHorario(h);
     setErro("");
-    setPasso(4);
+    if (statusAnamnese?.fichaAtual && !statusAnamnese.atualizacaoNecessaria) {
+      setAnamnese({});
+      setAnamneseId(statusAnamnese.fichaAtual._id);
+      setPasso(5);
+    } else {
+      setAnamnese(null);
+      setAnamneseId(null);
+      setPasso(4);
+    }
   };
 
   const guardarFicha = (ficha) => {
@@ -162,7 +176,8 @@ function Agendamentos() {
     }
     try {
       setEnviando(true);
-      await criarAgendamento({ nutricionistaId: selecionado._id, data, horario, anamnese });
+      const tipoAnamnese = statusAnamnese?.tipoNecessario || statusAnamnese?.fichaAtual?.tipo || "inicial";
+      await criarAgendamento({ nutricionistaId: selecionado._id, data, horario, anamnese, tipoAnamnese, anamneseId });
       setSucesso({ nutricionista: selecionado.nome, data, horario });
     } catch (e) {
       setErro(e.message);
@@ -178,11 +193,13 @@ function Agendamentos() {
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center bg-[url('/img/bolas.png')] bg-green-400/20 p-4 pb-16 text-center">
+    <div className="flex min-h-screen w-full min-w-0 flex-col items-center bg-[url('/img/bolas.png')] bg-green-400/20 p-4 pb-16 text-center">
       <h1 className="my-8 text-3xl font-bold text-green-700 md:text-5xl">AGENDE SUA CONSULTA</h1>
 
       {verificando ? (
         <p className="text-gray-600">Verificando suas consultas...</p>
+      ) : erro && !emAndamento && !sucesso ? (
+        <p className="max-w-md rounded-md bg-red-100 p-3 font-semibold text-red-700">{erro}</p>
       ) : sucesso ? (
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
           <p className="text-2xl font-bold text-green-800">Consulta agendada!</p>
@@ -191,7 +208,7 @@ function Agendamentos() {
           </p>
           <p className="text-slate-600">com {sucesso.nutricionista}</p>
           <p className="mt-4 text-sm text-gray-500">
-            Sua ficha de anamnese foi enviada. O nutricionista vai confirmar o atendimento.
+            Sua ficha de anamnese foi registrada e vinculada a esta consulta. O nutricionista vai confirmar o atendimento.
           </p>
           <Link
             to="/User/Historico"
@@ -262,7 +279,7 @@ function Agendamentos() {
 
           {/* Etapa 3: horário */}
           {passo === 3 && selecionado && data && (
-            <section className="flex w-full max-w-2xl flex-col items-center">
+            <section className="flex w-full min-w-0 max-w-2xl flex-col items-center">
               <Titulo texto="Escolha o horário" detalhe={`${selecionado.nome} · ${formatarData(data)}`} />
               <div className="w-full rounded-2xl bg-white p-5 shadow-lg">
                 {carregandoHorarios ? (
@@ -295,14 +312,23 @@ function Agendamentos() {
             </section>
           )}
 
-          {/* Etapa 4: ficha de anamnese (uma por consulta) */}
+          {/* Etapa 4: ficha inicial ou atualização de acompanhamento */}
           {passo === 4 && selecionado && data && horario && (
-            <section className="flex w-full max-w-2xl flex-col items-center">
+            <section className="flex w-full min-w-0 max-w-3xl flex-col items-center px-1">
               <Titulo
-                texto="Ficha de anamnese"
-                detalhe={`Consulta em ${formatarData(data)} às ${horario}`}
+                texto={statusAnamnese?.tipoNecessario === "acompanhamento" ? "Atualização para acompanhamento" : "Avaliação nutricional inicial"}
+                detalhe={
+                  statusAnamnese?.tipoNecessario === "acompanhamento"
+                    ? `Ficha de atualização • a cada 2 consultas concluídas • ${formatarData(data)} às ${horario}`
+                    : `Consulta em ${formatarData(data)} às ${horario}`
+                }
               />
-              <FormAnamnese inicial={anamnese} onContinuar={guardarFicha} />
+              <FormAnamnese
+                key={statusAnamnese?.tipoNecessario || "inicial"}
+                tipo={statusAnamnese?.tipoNecessario || "inicial"}
+                inicial={anamnese}
+                onContinuar={guardarFicha}
+              />
               <Voltar onClick={() => setPasso(3)} />
             </section>
           )}

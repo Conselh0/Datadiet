@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import NutricionistaModel from "../models/nutricionista.model.js";
 import AgendamentoModel from "../models/agendamento.model.js";
+import AnamneseModel from "../models/anamnese.model.js";
 import { agora, gerarHorarios, diaDaSemana } from "../../utils/horarios.js";
 import { hashSenha, verificarSenha } from "../../utils/senha.js";
 
@@ -162,19 +163,24 @@ router.get("/nutricionistas/:id/pacientes/:pacienteId/anamneses", async (req, re
     const consultas = await AgendamentoModel.find({
       nutricionistaId: id,
       pacienteId,
-      anamnese: { $exists: true },
     })
       .select("+anamnese")
       .sort({ data: -1, horario: -1 });
 
+    const fichasNovas = await AnamneseModel.find({
+      _id: { $in: consultas.map((a) => a.anamneseId).filter(Boolean) },
+    });
+    const porId = new Map(fichasNovas.map((f) => [String(f._id), f]));
+
     res.json(
-      consultas.map((a) => ({
+      consultas.filter((a) => a.anamnese || porId.has(String(a.anamneseId))).map((a) => ({
         _id: a._id,
         numero: a.numero,
         data: a.data,
         horario: a.horario,
         status: a.status,
-        anamnese: a.anamnese,
+        anamnese: a.anamnese || porId.get(String(a.anamneseId))?.dados,
+        tipoAnamnese: porId.get(String(a.anamneseId))?.tipo || "legada",
       }))
     );
   } catch (error) {
