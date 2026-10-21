@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { UsersRound } from "lucide-react";
+import { Link } from "react-router-dom";
 import ModalPaciente from "../components/ModalPaciente";
 import { getSessao } from "../utils/sessao";
 
@@ -74,67 +76,74 @@ function Pacientes() {
 
   return (
     <div className="min-h-screen w-full bg-gray-100">
-      <div className="w-full p-4 lg:p-10">
-        <div className="mb-8 max-w-5xl">
-          <h1 className="text-4xl font-bold text-gray-800 lg:text-5xl">
+      <div className="mx-auto w-full max-w-6xl p-4 sm:p-6 lg:p-10">
+        <header className="mb-8">
+          <div className="mb-3 flex items-center gap-3 text-gray-700">
+            <UsersRound className="size-8 shrink-0" aria-hidden="true" />
+            <span className="text-sm font-semibold uppercase tracking-wider">
+              Área administrativa
+            </span>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-800 sm:text-4xl">
             Pacientes
           </h1>
-        </div>
+          <p className="mt-2 text-gray-500">
+            Consulte seus pacientes e acesse os detalhes de cada cadastro.
+          </p>
+        </header>
 
-        <div className="mb-6 max-w-5xl">
-          <div className="rounded-3xl bg-gray-500 p-5 shadow-xl/20 lg:p-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-end">
-              <div className="flex-1">
-                <label
-                  htmlFor="buscarPaciente"
-                  className="mb-2 block font-semibold text-white"
-                >
-                  Buscar paciente
-                </label>
-                <input
-                  id="buscarPaciente"
-                  type="search"
-                  placeholder="Digite o ID ou nome do paciente"
-                  className="h-11 w-full rounded-xl bg-gray-100 px-4 text-gray-700 shadow-md outline-none focus:ring-2 focus:ring-gray-300"
-                  value={busca}
-                  onChange={(event) => setBusca(event.target.value)}
-                />
-              </div>
-              <button
-                type="button"
-                className="h-11 cursor-pointer whitespace-nowrap rounded-xl bg-gray-700 px-5 font-semibold text-white transition hover:bg-gray-800 active:scale-95"
+        <div className="mb-5 rounded-3xl bg-white p-5 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-4 md:flex-row md:items-end">
+            <div className="flex-1">
+              <label
+                htmlFor="buscarPaciente"
+                className="mb-2 block font-semibold text-gray-700"
               >
-                + Cadastrar novo paciente
-              </button>
+                Buscar paciente
+              </label>
+              <input
+                id="buscarPaciente"
+                type="search"
+                placeholder="Digite o ID ou nome do paciente"
+                className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-gray-700 outline-none transition focus:border-gray-400 focus:ring-2 focus:ring-gray-200"
+                value={busca}
+                onChange={(event) => setBusca(event.target.value)}
+              />
             </div>
+            <Link
+              to="/CadPa"
+              className="inline-flex h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-xl bg-gray-700 px-5 text-center font-semibold text-white transition hover:bg-gray-800 active:scale-95"
+            >
+              + Cadastrar novo paciente
+            </Link>
           </div>
         </div>
 
         {erro && (
-          <p className="mb-4 max-w-5xl rounded-xl bg-red-100 p-4 text-red-700">
+          <p className="mb-4 rounded-xl bg-red-100 p-4 text-red-700">
             {erro}
           </p>
         )}
-        <div className="max-w-5xl overflow-hidden rounded-3xl bg-white shadow-xl/20">
+        <div className="overflow-hidden rounded-3xl bg-white shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-center">
-              <thead>
-                <tr className="bg-gray-500 text-white">
-                  <th className="p-4 font-semibold">ID</th>
-                  <th className="p-4 font-semibold">PACIENTE</th>
-                  <th className="p-4 font-semibold">ÚLTIMA CONSULTA</th>
+            <table className="w-full min-w-[600px] border-collapse text-left">
+              <thead className="bg-gray-50 text-xs uppercase tracking-wider text-gray-500">
+                <tr>
+                  <th className="px-6 py-4 font-semibold">ID</th>
+                  <th className="px-6 py-4 font-semibold">Paciente</th>
+                  <th className="px-6 py-4 font-semibold">Última consulta</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200">
                 {carregando ? (
                   <tr>
-                    <td colSpan="3" className="p-8 text-gray-500">
+                    <td colSpan="3" className="p-8 text-center text-gray-500">
                       Carregando pacientes...
                     </td>
                   </tr>
                 ) : pacientesFiltrados.length === 0 ? (
                   <tr>
-                    <td colSpan="3" className="p-8 text-gray-500">
+                    <td colSpan="3" className="p-8 text-center text-gray-500">
                       Nenhum paciente encontrado.
                     </td>
                   </tr>
@@ -142,27 +151,31 @@ function Pacientes() {
                   <tr
                     key={paciente.id}
                     onClick={() => setPacienteSelecionado(paciente)}
-                    className="cursor-pointer border-b border-gray-200 transition hover:bg-gray-100"
+                    className="cursor-pointer transition hover:bg-gray-50"
                   >
-                    <td className="p-4 font-semibold text-gray-700">
+                    <td className="px-6 py-4 font-semibold text-gray-700">
                       #{paciente.idVisual}
                     </td>
-                    <td className="p-4">
-                      <div className="mx-auto flex w-64 items-center gap-3 text-left">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-500 font-bold text-white">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-600">
                           {iniciais(paciente.nome)}
                         </div>
-                        <span className="font-semibold text-gray-700">
+                        <span className="font-medium text-gray-700">
                           {paciente.nome}
                         </span>
                       </div>
                     </td>
-                    <td className="p-4">
+                    <td className="px-6 py-4">
                       <div className="flex flex-col">
                         <span className="font-semibold text-gray-700">
                           {formatarData(paciente.data)}
                         </span>
-                        <span className="text-gray-400">{paciente.hora}</span>
+                        {paciente.hora && (
+                          <span className="text-sm text-gray-400">
+                            {paciente.hora}
+                          </span>
+                        )}
                       </div>
                     </td>
                   </tr>

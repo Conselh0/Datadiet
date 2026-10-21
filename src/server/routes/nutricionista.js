@@ -10,6 +10,13 @@ import { hashSenha, verificarSenha } from "../../utils/senha.js";
 const router = express.Router();
 
 const GENEROS = ["Feminino", "Masculino", "Outro", "Prefiro não responder"];
+const TIPOS_MIME_IMAGEM = [
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "image/gif",
+];
+const TAMANHO_MAXIMO_FOTO_BYTES = 2 * 1024 * 1024;
 
 function cpfValido(cpf) {
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -217,7 +224,13 @@ router.post("/login/nutricionista", async (req, res) => {
       return res.status(401).json({ erro: "E-mail ou senha inválidos." });
     }
 
-    res.json({ nutricionista: { id: nutri._id, nome: nutri.nome } });
+    res.json({
+      nutricionista: {
+        id: nutri._id,
+        nome: nutri.nome,
+        foto: nutri.foto || "",
+      },
+    });
   } catch (error) {
     res.status(500).json({ erro: error.message });
   }
@@ -236,6 +249,165 @@ router.get("/nutricionista/:id", async (req, res) => {
     if (!nutri) return res.status(404).json({ erro: "Nutricionista não encontrado." });
     res.json(nutri);
   } catch (error) {
+    res.status(500).json({ erro: error.message });
+  }
+});
+
+// PATCH /nutricionista/:id -> atualiza perfil, agenda e, opcionalmente, senha
+router.patch("/nutricionista/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(404).json({ erro: "Nutricionista não encontrado." });
+    }
+
+    const {
+      nome,
+      email,
+      crn,
+      especialidade,
+      foto,
+      genero,
+      nascimento,
+      telefone,
+      diasAtendimento,
+      horaInicio,
+      horaFim,
+      duracao,
+      senhaAtual,
+      novaSenha,
+      confirmarNovaSenha,
+    } = req.body;
+
+    const erro = (mensagem) => res.status(400).json({ erro: mensagem });
+    const nomeNormalizado = typeof nome === "string" ? nome.trim() : "";
+    const emailNormalizado =
+      typeof email === "string" ? email.trim().toLowerCase() : "";
+    const crnNormalizado = typeof crn === "string" ? crn.trim() : "";
+    const telefoneNormalizado =
+      typeof telefone === "string" ? telefone.replace(/\D/g, "") : "";
+    const fotoNormalizada = typeof foto === "string" ? foto.trim() : "";
+
+    if (!nomeNormalizado) return erro("Informe o nome completo.");
+    if (!/^\S+@\S+\.\S+$/.test(emailNormalizado)) return erro("E-mail inválido.");
+    if (!GENEROS.includes(genero)) return erro("Selecione o gênero.");
+    if (typeof especialidade !== "string" || !especialidade.trim()) {
+      return erro("Selecione a especialização.");
+    }
+    if (!crnNormalizado) return erro("Informe o CRN.");
+
+    const adulto = maiorDeIdade(nascimento);
+    if (adulto === null) return erro("Data de nascimento inválida.");
+    if (!adulto) return erro("É necessário ter 18 anos ou mais.");
+
+    if (
+      !Array.isArray(diasAtendimento) ||
+      diasAtendimento.length === 0 ||
+      new Set(diasAtendimento).size !== diasAtendimento.length ||
+      !diasAtendimento.every((dia) => Number.isInteger(dia) && dia >= 0 && dia <= 6)
+    ) {
+      return erro("Escolha ao menos um dia de atendimento.");
+    }
+    if (
+      !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(horaInicio || "") ||
+      !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(horaFim || "") ||
+      horaInicio >= horaFim
+    ) {
+      return erro("O horário final deve ser depois do inicial.");
+    }
+
+    const duracaoNumerica = Number(duracao);
+    if (
+      !Number.isInteger(duracaoNumerica) ||
+      duracaoNumerica < 15 ||
+      duracaoNumerica > 120
+    ) {
+      return erro("A duração deve ser entre 15 e 120 minutos.");
+    }
+    if (telefoneNormalizado && ![10, 11].includes(telefoneNormalizado.length)) {
+      return erro("Telefone inválido.");
+    }
+    if (fotoNormalizada.startsWith("data:")) {
+      const imagem = /^data:(image\/[a-z0-9.+-]+);base64,([a-z0-9+/=]+)$/i.exec(
+        fotoNormalizada,
+      );
+      if (!imagem || !TIPOS_MIME_IMAGEM.includes(imagem[1].toLowerCase())) {
+        return erro("Formato de imagem não suportado.");
+      }
+      if (Buffer.from(imagem[2], "base64").length > TAMANHO_MAXIMO_FOTO_BYTES) {
+        return erro("A imagem deve ter no máximo 2 MB.");
+      }
+    } else if (
+      fotoNormalizada &&
+      (fotoNormalizada.length > 2048 ||
+        !/^https?:\/\/\S+$/i.test(fotoNormalizada))
+    ) {
+      return erro("Informe uma URL de imagem válida.");
+    }
+
+    if (
+      await NutricionistaModel.exists({
+        email: emailNormalizado,
+        _id: { $ne: id },
+      })
+    ) {
+      return res.status(409).json({ erro: "Já existe uma conta com este e-mail." });
+    }
+    if (
+      crnNormalizado &&
+      (await NutricionistaModel.exists({
+        crn: crnNormalizado,
+        _id: { $ne: id },
+      }))
+    ) {
+      return res.status(409).json({ erro: "Já existe uma conta com este CRN." });
+    }
+
+    const alterandoSenha = Boolean(senhaAtual || novaSenha || confirmarNovaSenha);
+    const nutricionista = await NutricionistaModel.findById(id).select("+senha");
+    if (!nutricionista) {
+      return res.status(404).json({ erro: "Nutricionista não encontrado." });
+    }
+
+    if (alterandoSenha) {
+      if (!senhaAtual || !novaSenha || !confirmarNovaSenha) {
+        return erro("Informe a senha atual e preencha os dois campos da nova senha.");
+      }
+      if (!verificarSenha(senhaAtual, nutricionista.senha)) {
+        return res.status(401).json({ erro: "A senha atual está incorreta." });
+      }
+      if (novaSenha.length < 6) {
+        return erro("A nova senha deve ter ao menos 6 caracteres.");
+      }
+      if (novaSenha !== confirmarNovaSenha) {
+        return erro("A confirmação da nova senha não confere.");
+      }
+      nutricionista.senha = hashSenha(novaSenha);
+    }
+
+    nutricionista.nome = nomeNormalizado;
+    nutricionista.email = emailNormalizado;
+    nutricionista.crn = crnNormalizado;
+    nutricionista.especialidade = especialidade.trim();
+    nutricionista.foto = fotoNormalizada;
+    nutricionista.genero = genero;
+    nutricionista.nascimento = nascimento;
+    nutricionista.telefone = telefoneNormalizado;
+    nutricionista.diasAtendimento = diasAtendimento;
+    nutricionista.horaInicio = horaInicio;
+    nutricionista.horaFim = horaFim;
+    nutricionista.duracao = duracaoNumerica;
+    await nutricionista.save();
+
+    const dadosNutricionista = nutricionista.toObject();
+    delete dadosNutricionista.senha;
+    delete dadosNutricionista.cpf;
+    res.json({
+      mensagem: "Perfil atualizado com sucesso.",
+      nutricionista: dadosNutricionista,
+    });
+  } catch (error) {
+    console.error("ERRO AO ATUALIZAR PERFIL DO NUTRICIONISTA:", error);
     res.status(500).json({ erro: error.message });
   }
 });

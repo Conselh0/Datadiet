@@ -6,7 +6,7 @@ import { cpfValido, limparCpf } from "../../utils/cpf.js";
 
 const app = express();
 app.use(cors()); //middleware para sempre usarmos o cors
-app.use(express.json()); // vai ler o vody do post/put
+app.use(express.json({ limit: "3mb" })); // permite uploads de imagem base64 de até 2 MB
 
 //Cadastro do paciente
 app.post("/cadastro", async (req, res) => {

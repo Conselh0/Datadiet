@@ -38,7 +38,7 @@ function LoginUs() {
         // Salva os dados do usuário para a Navbar reconhecer
         // que existe um usuário logado.
         iniciarSessao("paciente", paciente.dados.usuario);
-        navigate("/User");
+        navigate("/");
         return;
       }
 

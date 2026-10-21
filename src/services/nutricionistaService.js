@@ -12,6 +12,12 @@ export const buscarHorarios = (nutricionistaId, data) =>
 // Perfil completo (para a home do próprio nutricionista)
 export const buscarNutricionista = (id) => request(`/nutricionista/${id}`);
 
+export const atualizarNutricionista = (id, dados) =>
+  request(`/nutricionista/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(dados),
+  });
+
 // Pacientes que já agendaram com o nutricionista
 export const listarPacientes = (nutricionistaId) =>
   request(`/nutricionistas/${nutricionistaId}/pacientes`);

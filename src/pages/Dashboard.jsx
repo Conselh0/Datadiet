@@ -11,6 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CalendarioConsultas from "../components/CalendarioConsultas";
+import StatusBadge from "../components/StatusBadge";
 import { getSessao } from "../utils/sessao";
 
 const API = "http://localhost:8080";
@@ -158,7 +159,8 @@ function Dashboard() {
     (paciente) => !pacientesComRetorno.has(paciente.id),
   );
   const proximaConsulta = proximasConsultas[0];
-  const consultasRecentes = [...consultas]
+  const consultasRecentes = consultas
+    .filter((consulta) => consulta.status === "Concluído")
     .sort((a, b) => timestampDaConsulta(b) - timestampDaConsulta(a))
     .slice(0, 8);
   const distribuicaoStatus = calcularDistribuicaoStatus(consultas);
@@ -606,7 +608,7 @@ function Dashboard() {
                 Histórico de consultas
               </h2>
               <p className="mt-1 text-sm text-gray-500">
-                Últimas consultas registradas dos seus pacientes.
+                Últimas consultas concluídas dos seus pacientes.
               </p>
             </div>
             <Link
@@ -656,13 +658,13 @@ function Dashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <span className="text-sm text-gray-500">{consulta.status}</span>
+                        <StatusBadge status={consulta.status} />
                       </td>
                     </tr>
                   )) : (
                     <tr>
                       <td colSpan="4" className="px-6 py-8 text-center text-sm text-gray-500">
-                        Nenhuma consulta registrada.
+                        Nenhuma consulta concluída.
                       </td>
                     </tr>
                   )}

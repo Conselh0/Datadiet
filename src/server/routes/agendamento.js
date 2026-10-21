@@ -148,12 +148,47 @@ router.patch("/agendamento/:id/status", async (req, res) => {
     const { status } = req.body;
     if (!STATUS.includes(status)) return res.status(400).json({ erro: "Status inválido." });
 
-    const atualizado = await AgendamentoModel.findByIdAndUpdate(
-      req.params.id,
+    const filtro = { _id: req.params.id };
+    if (status === "Concluído") {
+      const consulta = await AgendamentoModel.findById(req.params.id);
+      if (!consulta) return res.status(404).json({ erro: "Consulta não encontrada." });
+
+      const [ano, mes, dia] = consulta.data.split("-").map(Number);
+      const [hora, minuto] = consulta.horario.split(":").map(Number);
+      const dataConsulta = new Date(ano, mes - 1, dia, hora, minuto);
+      const agora = new Date();
+      const dataHoje = [
+        agora.getFullYear(),
+        String(agora.getMonth() + 1).padStart(2, "0"),
+        String(agora.getDate()).padStart(2, "0"),
+      ].join("-");
+
+      if (
+        consulta.status !== "Confirmado" ||
+        consulta.data !== dataHoje ||
+        Number.isNaN(dataConsulta.getTime()) ||
+        agora.getTime() <= dataConsulta.getTime()
+      ) {
+        return res.status(400).json({
+          erro: "A consulta só pode ser concluída no dia marcado e após o horário.",
+        });
+      }
+
+      filtro.status = "Confirmado";
+    }
+
+    const atualizado = await AgendamentoModel.findOneAndUpdate(
+      filtro,
       { status, $unset: { solicitacao: "" } }, // qualquer pedido pendente perde o sentido
       { new: true }
     );
-    if (!atualizado) return res.status(404).json({ erro: "Consulta não encontrada." });
+    if (!atualizado) {
+      return res.status(404).json({
+        erro: status === "Concluído"
+          ? "A consulta não está mais confirmada."
+          : "Consulta não encontrada.",
+      });
+    }
     res.json(atualizado);
   } catch (error) {
     res.status(500).json({ erro: error.message });

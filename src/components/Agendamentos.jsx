@@ -17,8 +17,30 @@ const descricao = (sol) =>
     ? "pediu o cancelamento"
     : `pediu para reagendar para ${formatarData(sol.novaData)} às ${sol.novoHorario}`;
 
+function podeConcluirConsulta(item, agora) {
+  const [ano, mes, dia] = item.data.split("-").map(Number);
+  const [hora, minuto] = item.horario.split(":").map(Number);
+  const dataConsulta = new Date(ano, mes - 1, dia, hora, minuto);
+
+  return (
+    item.status === "Confirmado" &&
+    !Number.isNaN(dataConsulta.getTime()) &&
+    dataConsulta.getFullYear() === agora.getFullYear() &&
+    dataConsulta.getMonth() === agora.getMonth() &&
+    dataConsulta.getDate() === agora.getDate() &&
+    agora.getTime() > dataConsulta.getTime()
+  );
+}
+
+function timestampAgendamento(agendamento) {
+  const [ano, mes, dia] = agendamento.data.split("-").map(Number);
+  const [hora, minuto] = agendamento.horario.split(":").map(Number);
+  return new Date(ano, mes - 1, dia, hora, minuto).getTime();
+}
+
 function Acoes({
   item,
+  agora,
   ocupado,
   onStatus,
   onReagendar,
@@ -87,7 +109,7 @@ function Acoes({
           Confirmar
         </button>
       )}
-      {item.status === "Confirmado" && (
+      {podeConcluirConsulta(item, agora) && (
         <button
           disabled={ocupado}
           onClick={() => onStatus(item._id, "Concluído")}
@@ -121,6 +143,7 @@ function Agendamentos({
   status = "Todas",
   busca = "",
 }) {
+  const [agora, setAgora] = useState(() => new Date());
   const [lista, setLista] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [ocupado, setOcupado] = useState(false);
@@ -143,6 +166,11 @@ function Agendamentos({
     Promise.resolve().then(carregar);
   }, [carregar]);
 
+  useEffect(() => {
+    const intervalo = window.setInterval(() => setAgora(new Date()), 15000);
+    return () => window.clearInterval(intervalo);
+  }, []);
+
   async function executar(acao) {
     setErroAcao("");
     try {
@@ -163,13 +191,25 @@ function Agendamentos({
     executar(() => retirarSolicitacao(id, "nutricionista"));
 
   const termo = busca.trim().toLowerCase();
-  const visiveis = lista.filter(
-    (a) =>
-      (status === "Todas" || a.status === status) &&
+  const visiveis = lista
+    .filter(
+      (a) =>
+      (status === "Todas" ||
+        (Array.isArray(status) ? status.includes(a.status) : a.status === status)) &&
       (!termo ||
         (a.paciente || "").toLowerCase().includes(termo) ||
         String(a.numero).includes(termo)),
-  );
+    )
+    .sort((a, b) => {
+      const dataA = timestampAgendamento(a);
+      const dataB = timestampAgendamento(b);
+      const futuroA = dataA >= agora.getTime();
+      const futuroB = dataB >= agora.getTime();
+
+      if (futuroA !== futuroB) return futuroA ? -1 : 1;
+      if (dataA !== dataB) return futuroA ? dataA - dataB : dataB - dataA;
+      return Number(a.numero) - Number(b.numero);
+    });
 
   if (erro)
     return (
@@ -188,6 +228,7 @@ function Agendamentos({
   const acoes = (a) => (
     <Acoes
       item={a}
+      agora={agora}
       ocupado={ocupado}
       onStatus={mudarStatus}
       onReagendar={setReagendando}

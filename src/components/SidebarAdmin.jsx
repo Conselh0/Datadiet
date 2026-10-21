@@ -6,12 +6,14 @@ import {
   ClipboardList,
   LogOut,
   Menu,
+  UserPlus,
   UserRound,
   UsersRound,
   X,
 } from "lucide-react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import useNutricionista from "../hooks/useNutricionista";
 
 const links = [
   { to: "/Admin", label: "Dashboard", icon: ChartNoAxesCombined, end: true },
@@ -24,10 +26,18 @@ const links = [
   { to: "/Admin/Pacientes", label: "Pacientes", icon: UsersRound },
   { to: "/Admin/Agendamentos", label: "Agendamentos", icon: CalendarDays },
   { to: "/Admin/Historico", label: "Histórico", icon: ClipboardList },
+  { to: "/CadNu", label: "Cadastrar nutricionista", icon: UserPlus },
 ];
 
 function SidebarAdmin() {
   const [menuAberto, setMenuAberto] = useState(false);
+  const { nutricionista } = useNutricionista();
+  const iniciais = (nutricionista?.nome || "Nutricionista")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((parte) => parte[0].toUpperCase())
+    .join("");
 
   return (
     <aside className="relative z-30 w-full shrink-0 bg-gray-800 text-white lg:sticky lg:top-0 lg:h-screen lg:w-72">
@@ -63,14 +73,27 @@ function SidebarAdmin() {
 
       <div className="hidden px-5 pt-3 lg:block">
         <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-          <img
-            src="/img/luana.png"
-            alt="Foto de Luana Teixeira"
-            className="h-12 w-12 rounded-full border-2 border-gray-400 object-cover"
-          />
+          {nutricionista?.foto ? (
+            <img
+              src={nutricionista.foto}
+              alt={`Foto de ${nutricionista.nome}`}
+              className="h-12 w-12 rounded-full border-2 border-gray-400 object-cover"
+            />
+          ) : (
+            <div
+              aria-hidden="true"
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-gray-400 bg-gray-700 text-sm font-bold"
+            >
+              {iniciais}
+            </div>
+          )}
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold">Luana Teixeira</p>
-            <p className="mt-0.5 text-xs text-gray-400">Nutricionista · ID 001</p>
+            <p className="truncate text-sm font-semibold">
+              {nutricionista?.nome || "Nutricionista"}
+            </p>
+            <p className="mt-0.5 truncate text-xs text-gray-400">
+              {nutricionista?.especialidade || "Painel profissional"}
+            </p>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Menu, X, LogOut, CalendarDays, ChevronRight } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import USERH_Menu from "./USERH_Menu";
 import { getSessao, sair } from "../utils/sessao";
+import { buscarNutricionista } from "../services/nutricionistaService";
 
 // Itens do menu do usuário: cada tipo de conta tem os seus
 const MENU_PACIENTE = [
@@ -78,6 +79,36 @@ function Navbar() {
             if (ativo) console.error("Erro ao carregar foto do perfil:", error);
           });
       }
+
+      if (
+        usuarioAtual?.tipo === "nutricionista" &&
+        (usuarioAtual.id || usuarioAtual._id)
+      ) {
+        const idNutricionista = usuarioAtual.id || usuarioAtual._id;
+        buscarNutricionista(idNutricionista)
+          .then((perfil) => {
+            if (!ativo) return;
+
+            const sessaoAtual = getSessao();
+            if (
+              sessaoAtual?.tipo === "nutricionista" &&
+              (sessaoAtual.id || sessaoAtual._id) === idNutricionista
+            ) {
+              const sessaoAtualizada = {
+                ...sessaoAtual,
+                nome: perfil.nome,
+                foto: perfil.foto || "",
+              };
+              localStorage.setItem("usuario", JSON.stringify(sessaoAtualizada));
+              setUsuario(sessaoAtualizada);
+            }
+          })
+          .catch((error) => {
+            if (ativo) {
+              console.error("Erro ao carregar a foto da nutricionista:", error);
+            }
+          });
+      }
     }
 
     function sincronizarFotoPerfil(evento) {
@@ -90,14 +121,41 @@ function Navbar() {
       }
     }
 
+    function sincronizarPerfilNutricionista(evento) {
+      const perfil = evento?.detail;
+      if (
+        !perfil ||
+        getSessao()?.tipo !== "nutricionista" ||
+        (getSessao()?.id || getSessao()?._id) !== perfil._id
+      ) {
+        return;
+      }
+
+      const sessaoAtualizada = {
+        ...getSessao(),
+        nome: perfil.nome,
+        foto: perfil.foto || "",
+      };
+      localStorage.setItem("usuario", JSON.stringify(sessaoAtualizada));
+      setUsuario(sessaoAtualizada);
+    }
+
     sincronizarUsuario();
     window.addEventListener("storage", sincronizarUsuario);
     window.addEventListener("perfil-atualizado", sincronizarFotoPerfil);
+    window.addEventListener(
+      "nutricionista-atualizado",
+      sincronizarPerfilNutricionista,
+    );
 
     return () => {
       ativo = false;
       window.removeEventListener("storage", sincronizarUsuario);
       window.removeEventListener("perfil-atualizado", sincronizarFotoPerfil);
+      window.removeEventListener(
+        "nutricionista-atualizado",
+        sincronizarPerfilNutricionista,
+      );
     };
   }, [location.pathname]);
 
