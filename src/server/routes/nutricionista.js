@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import NutricionistaModel from "../models/nutricionista.model.js";
 import AgendamentoModel from "../models/agendamento.model.js";
 import AnamneseModel from "../models/anamnese.model.js";
+import UserModel from "../models/user.model.js";
 import { agora, gerarHorarios, diaDaSemana } from "../../utils/horarios.js";
 import { hashSenha, verificarSenha } from "../../utils/senha.js";
 
@@ -124,15 +125,29 @@ router.get("/nutricionistas/:id/pacientes", async (req, res) => {
 
     const agoraTexto = agora();
     const mapa = new Map();
+    const pacientesCadastrados = await UserModel.find({
+    _id: { $in: [...new Set(consultas.map((consulta) => consulta.pacienteId))] },
+    }).select("nome sobrenome nascimento email telefone genero fotoPerfil");
+    const dadosPorId = new Map(
+    pacientesCadastrados.map((paciente) => [String(paciente._id), paciente]),
+    );
 
     for (const a of consultas) {
-      const p = mapa.get(a.pacienteId) || {
-        pacienteId: a.pacienteId,
-        paciente: a.paciente,
-        total: 0,
-        ultima: null,
-        proxima: null,
-      };
+    const dadosPaciente = dadosPorId.get(String(a.pacienteId));
+    const p = mapa.get(a.pacienteId) || {
+      pacienteId: a.pacienteId,
+      paciente: a.paciente,
+      nome: dadosPaciente?.nome || a.paciente,
+      sobrenome: dadosPaciente?.sobrenome || "",
+      nascimento: dadosPaciente?.nascimento || null,
+      email: dadosPaciente?.email || "",
+      telefone: dadosPaciente?.telefone || "",
+      genero: dadosPaciente?.genero || "",
+      fotoPerfil: dadosPaciente?.fotoPerfil || "",
+      total: 0,
+      ultima: null,
+      proxima: null,
+    };
       p.paciente = a.paciente;
       p.total++;
 

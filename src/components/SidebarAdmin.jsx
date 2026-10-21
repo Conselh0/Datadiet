@@ -1,67 +1,129 @@
+import {
+  CalendarDays,
+  CalendarRange,
+  ChartNoAxesCombined,
+  ChevronRight,
+  ClipboardList,
+  LogOut,
+  Menu,
+  UserRound,
+  UsersRound,
+  X,
+} from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import HamburguerMenu from "./ADMH_Menu";
-import useNutricionista from "../hooks/useNutricionista";
-import { iniciais } from "../utils/formatters";
-import { List } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
-const estiloLink =
-  "flex items-center w-full justify-center text-center rounded-xl text-sm p-5 lg:p-10 hover:bg-gray-600 transition-colors duration-200";
+const links = [
+  { to: "/Admin", label: "Dashboard", icon: ChartNoAxesCombined, end: true },
+  { to: "/Admin/Perfil", label: "Meu perfil", icon: UserRound },
+  {
+    to: "/Admin/Agenda",
+    label: "Agenda",
+    icon: CalendarRange,
+  },
+  { to: "/Admin/Pacientes", label: "Pacientes", icon: UsersRound },
+  { to: "/Admin/Agendamentos", label: "Agendamentos", icon: CalendarDays },
+  { to: "/Admin/Historico", label: "Histórico", icon: ClipboardList },
+];
 
-function Sidebar() {
-  const { nutricionista, carregando } = useNutricionista();
-  const [fotoQuebrada, setFotoQuebrada] = useState(false);
-
-  const nome = carregando ? "Carregando..." : nutricionista?.nome || "Nutricionista";
+function SidebarAdmin() {
+  const [menuAberto, setMenuAberto] = useState(false);
 
   return (
-    <div className="flex flex-row relative justify-between lg:flex-col lg:w-fit lg:min-h-screen lg:w-70 bg-gray-500">
-      {/* Foto do nutricionista (ou as iniciais, se não tiver foto) */}
-      {nutricionista?.foto && !fotoQuebrada ? (
-        <img
-          src={nutricionista.foto}
-          alt={nutricionista.nome}
-          onError={() => setFotoQuebrada(true)}
-          className="rounded-[300px] border-2 w-20 lg:w-50 aspect-square object-cover lg:m-auto"
-        />
-      ) : (
-        <div className="rounded-[300px] border-2 w-20 lg:w-50 aspect-square lg:m-auto bg-gray-400 flex items-center justify-center text-white text-3xl lg:text-7xl font-bold">
-          {nutricionista ? iniciais(nutricionista.nome) : ""}
+    <aside className="relative z-30 w-full shrink-0 bg-gray-800 text-white lg:sticky lg:top-0 lg:h-screen lg:w-72">
+      <div className="flex min-h-20 items-center justify-between border-b border-white/10 px-5 lg:min-h-0 lg:flex-col lg:items-stretch lg:border-0 lg:px-5 lg:pb-5 lg:pt-8">
+        <div className="flex items-center gap-3">
+          <img
+            src="/img/DataDiet.png"
+            alt="DataDiet"
+            className="h-10 w-10 rounded-xl bg-white object-contain p-1"
+          />
+          <div>
+            <p className="text-lg font-bold leading-tight tracking-wide">
+              DataDiet
+            </p>
+            <p className="text-xs text-gray-400">Painel profissional</p>
+          </div>
         </div>
-      )}
 
-      <p className="hidden lg:block lg:text-white lg:text-center lg:text-4xl lg:font-bold">
-        {nome} <br />
-      </p>
-      <p className="hidden lg:block lg:text-white lg:text-center">
-        {nutricionista && `ID: ${nutricionista._id.slice(-6).toUpperCase()}`}
-      </p>
+        <button
+          type="button"
+          onClick={() => setMenuAberto((aberto) => !aberto)}
+          aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={menuAberto}
+          className="rounded-xl p-2 text-gray-300 transition hover:bg-white/10 hover:text-white lg:hidden"
+        >
+          {menuAberto ? (
+            <X size={23} aria-hidden="true" />
+          ) : (
+            <Menu size={23} aria-hidden="true" />
+          )}
+        </button>
+      </div>
 
-      {/* HamburguerMenu sem a tag <button> externa para limpar o HTML */}
-      <HamburguerMenu
-        icone={<List className="cursor-pointer" color="white" size={40} aria-hidden="true" />}
+      <div className="hidden px-5 pt-3 lg:block">
+        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+          <img
+            src="/img/luana.png"
+            alt="Foto de Luana Teixeira"
+            className="h-12 w-12 rounded-full border-2 border-gray-400 object-cover"
+          />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">Luana Teixeira</p>
+            <p className="mt-0.5 text-xs text-gray-400">Nutricionista · ID 001</p>
+          </div>
+        </div>
+      </div>
+
+      <nav
+        aria-label="Navegação administrativa"
+        className={`${menuAberto ? "block" : "hidden"} absolute left-0 right-0 top-full border-t border-white/10 bg-gray-800 px-3 pb-4 pt-3 lg:static lg:block lg:border-0 lg:px-3 lg:pb-5 lg:pt-8`}
       >
-        <section className="bg-gray-400 rounded-xl">
-          <Link to="/Admin" className={estiloLink}>
-            PERFIL
-          </Link>
-          <Link to="/Admin/Historico" className={estiloLink}>
-            HISTÓRICO DE CONSULTAS
-          </Link>
-          <Link to="/Admin/Pacientes" className={estiloLink}>
-            PACIENTES
-          </Link>
-          <Link to="/CadNu" className={estiloLink}>
-            CADASTRO NUTRI
-          </Link>
+        <p className="px-3 pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-gray-400">
+          Menu principal
+        </p>
+        <ul className="space-y-1.5">
+          {links.map(({ to, label, icon: Icon, end }) => (
+            <li key={to}>
+              <NavLink
+                to={to}
+                end={end}
+                onClick={() => setMenuAberto(false)}
+                className={({ isActive }) =>
+                  `group flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition ${
+                    isActive
+                      ? "bg-white text-gray-800 shadow-lg shadow-black/10"
+                      : "text-gray-300 hover:bg-white/[0.08] hover:text-white"
+                  }`
+                }
+              >
+                {({ isActive }) => (
+                  <>
+                    <Icon size={19} strokeWidth={1.9} aria-hidden="true" />
+                    <span className="flex-1">{label}</span>
+                    {isActive && (
+                      <ChevronRight size={16} aria-hidden="true" />
+                    )}
+                  </>
+                )}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
 
-          <Link to="/" className={estiloLink}>
-            SAIR
-          </Link>
-        </section>
-      </HamburguerMenu>
-    </div>
+        <div className="mt-6 border-t border-white/10 pt-4">
+          <NavLink
+            to="/"
+            onClick={() => setMenuAberto(false)}
+            className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-400 transition hover:bg-white/[0.08] hover:text-white"
+          >
+            <LogOut size={19} strokeWidth={1.9} aria-hidden="true" />
+            Sair da conta
+          </NavLink>
+        </div>
+      </nav>
+    </aside>
   );
 }
 
-export default Sidebar;
+export default SidebarAdmin;

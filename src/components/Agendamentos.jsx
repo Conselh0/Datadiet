@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import StatusBadge, { PedidoBadge } from "./StatusBadge";
 import ReagendarModal from "./ReagendarModal";
 import {
@@ -128,7 +128,7 @@ function Agendamentos({
   const [erroAcao, setErroAcao] = useState("");
   const [reagendando, setReagendando] = useState(null);
 
-  const carregar = async () => {
+  const carregar = useCallback(async () => {
     try {
       setErro("");
       setLista(await listarAgendamentos({ nutricionista, nutricionistaId }));
@@ -137,11 +137,11 @@ function Agendamentos({
     } finally {
       setCarregando(false);
     }
-  };
+  }, [nutricionista, nutricionistaId]);
 
   useEffect(() => {
-    carregar();
-  }, [nutricionista, nutricionistaId]);
+    Promise.resolve().then(carregar);
+  }, [carregar]);
 
   async function executar(acao) {
     setErroAcao("");
@@ -205,42 +205,40 @@ function Agendamentos({
       )}
 
       {/* Tabela: telas médias e grandes */}
-      <div className="hidden overflow-hidden rounded-xl bg-white shadow-lg md:block">
-        <table className="w-full text-center">
-          <thead>
-            <tr className="bg-gray-600 text-sm text-white lg:text-base">
-              <th className="p-3">NÚMERO DO ATENDIMENTO</th>
-              <th className="p-3">NOME DO PACIENTE</th>
-              <th className="p-3">DATA DO AGENDAMENTO</th>
-              <th className="p-3">STATUS</th>
-              <th className="p-3">AÇÕES</th>
+      <div className="hidden overflow-hidden rounded-3xl bg-white shadow-sm md:block">
+        <table className="w-full min-w-[760px] text-left">
+          <thead className="bg-gray-50 text-xs uppercase tracking-wider text-gray-500">
+            <tr>
+              <th className="px-6 py-4 font-semibold">Atendimento</th>
+              <th className="px-6 py-4 font-semibold">Paciente</th>
+              <th className="px-6 py-4 font-semibold">Data e horário</th>
+              <th className="px-6 py-4 font-semibold">Status</th>
+              <th className="px-6 py-4 text-right font-semibold">Ações</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {visiveis.map((a) => (
-              <tr key={a._id} className={a.solicitacao}>
-                <td className="p-3 font-bold text-slate-700">{a.numero}</td>
-                <td className="p-3">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-xs font-bold text-slate-700">
+              <tr key={a._id} className={`transition hover:bg-gray-50 ${a.solicitacao ? "bg-orange-50/40" : ""}`}>
+                <td className="px-6 py-4 font-semibold text-gray-700">#{a.numero}</td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-600">
                       {iniciais(a.paciente)}
                     </span>
-                    {a.paciente}
+                    <span className="font-medium text-gray-700">{a.paciente}</span>
                   </div>
                 </td>
-                <td className="p-3">
-                  <p className="font-bold text-slate-800">
-                    {formatarData(a.data)}
-                  </p>
-                  <p className="text-sm text-gray-500">{a.horario}</p>
+                <td className="px-6 py-4 text-gray-600">
+                  <span className="font-medium">{formatarData(a.data)}</span>
+                  <span className="ml-2 text-sm text-gray-400">{a.horario}</span>
                 </td>
-                <td className="p-3">
+                <td className="px-6 py-4">
                   <div className="flex flex-col items-center gap-1">
                     <StatusBadge status={a.status} />
                     <PedidoBadge solicitacao={a.solicitacao} />
                   </div>
                 </td>
-                <td className="p-3">{acoes(a)}</td>
+                <td className="px-6 py-4 text-right">{acoes(a)}</td>
               </tr>
             ))}
           </tbody>

@@ -111,7 +111,7 @@ function ModalPaciente({ paciente, aberto, fechar }) {
 
                 <h2 className="text-2xl font-bold">{paciente.nome}</h2>
 
-                <p className="text-gray-300">ID: {paciente.id}</p>
+                <p className="text-gray-300">ID: {paciente.idVisual}</p>
               </div>
               <button className="cursor-pointer bg-gray-600 hover:bg-gray-700 p-3 rounded-xl text-lg text-white w-70 font-semibold transition ml-25">
               Acessar Ficha de anamnese
@@ -164,7 +164,7 @@ function ModalPaciente({ paciente, aberto, fechar }) {
                 <p className="text-sm text-gray-400">ID do paciente</p>
 
                 <p className="text-lg font-semibold text-gray-700 mt-1">
-                  #{paciente.id}
+                  #{paciente.idVisual}
                 </p>
               </div>
 

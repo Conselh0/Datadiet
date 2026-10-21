@@ -9,6 +9,8 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 import Home from "./pages/Home.jsx";
 import AdminDashboard from "./layouts/AdminDashboard.jsx";
 import AdminHome from "./pages/AdminHome.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import Calendario from "./pages/Calendario.jsx";
 import Historico from "./pages/Historico.jsx";
 import AgendamentosAdmin from "./pages/AgendamentosAdmin.jsx";
 import LoginPa from "./pages/LoginPa.jsx";
@@ -46,7 +48,15 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/Admin",
+        element: <Dashboard />,
+      },
+      {
+        path: "/Admin/Perfil",
         element: <AdminHome />,
+      },
+      {
+        path: "/Admin/Agenda",
+        element: <Calendario />,
       },
       {
         path: "/Admin/Historico",
@@ -103,10 +113,6 @@ const router = createBrowserRouter([
   {
     path: "/CadNu",
     element: <CadNu />,
-  },
-  {
-    path: "/Admin/CadNutricionista",
-    element: <CadNu />, // Se o arquivo correto for o CadNutricionista, troque aqui para <CadNutricionista /> e importe-o no topo do arquivo
   },
 ]);
 

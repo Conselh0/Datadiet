@@ -1,285 +1,186 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import useNutricionista from "../hooks/useNutricionista";
-import {
-  listarPacientes,
-  listarAnamneses,
-} from "../services/nutricionistaService";
-import AnamneseView from "../components/AnamneseView";
-import { formatarData, iniciais } from "../utils/formatters";
+import { useEffect, useMemo, useState } from "react";
+import ModalPaciente from "../components/ModalPaciente";
+import { getSessao } from "../utils/sessao";
 
-const idCurto = (id = "") => id.slice(-6).toUpperCase();
+const API = "http://localhost:8080";
 
-function Quando({ valor }) {
-  if (!valor) return <span className="text-gray-400">—</span>;
-  return (
-    <>
-      <p className="font-bold text-slate-800">{formatarData(valor.data)}</p>
-      <p className="text-sm text-gray-400">{valor.horario}</p>
-    </>
-  );
+function formatarData(data) {
+  if (!data) return "Não informado";
+  const dataFormatada = new Date(data);
+  return Number.isNaN(dataFormatada.getTime())
+    ? data
+    : dataFormatada.toLocaleDateString("pt-BR");
+}
+
+function formatarIdVisual(numero) {
+  return String(numero).padStart(3, "0");
 }
 
 function Pacientes() {
-  const { nutricionista, carregando } = useNutricionista();
   const [pacientes, setPacientes] = useState([]);
-  const [buscando, setBuscando] = useState(false);
-  const [erro, setErro] = useState("");
+  const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
   const [busca, setBusca] = useState("");
-  const [aberto, setAberto] = useState(null);
-
-  // Ficha de anamnese do paciente aberto
-  const [fichas, setFichas] = useState(null); // null = ainda não carregou
-  const [fichaSel, setFichaSel] = useState(0);
-  const [carregandoFichas, setCarregandoFichas] = useState(false);
-  const [erroFicha, setErroFicha] = useState("");
-
-  function abrir(p) {
-    setAberto(p);
-    setFichas(null);
-    setFichaSel(0);
-    setErroFicha("");
-  }
-
-  async function carregarFichas() {
-    try {
-      setCarregandoFichas(true);
-      setErroFicha("");
-      setFichas(await listarAnamneses(nutricionista._id, aberto.pacienteId));
-    } catch (e) {
-      setErroFicha(e.message);
-    } finally {
-      setCarregandoFichas(false);
-    }
-  }
-
-  useEffect(() => {
-    if (!nutricionista) return;
-    setBuscando(true);
-    listarPacientes(nutricionista._id)
-      .then(setPacientes)
-      .catch((e) => setErro(e.message))
-      .finally(() => setBuscando(false));
-  }, [nutricionista]);
-
-  const termo = busca.trim().toLowerCase().replace("#", "");
-  const visiveis = pacientes.filter(
-    (p) =>
-      !termo ||
-      p.paciente.toLowerCase().includes(termo) ||
-      idCurto(p.pacienteId).toLowerCase().includes(termo),
+  const [carregando, setCarregando] = useState(() => Boolean(getSessao()?.id));
+  const [erro, setErro] = useState(() =>
+    getSessao()?.id ? "" : "Não foi possível identificar o nutricionista logado.",
   );
 
+  useEffect(() => {
+    const sessao = getSessao();
+    if (!sessao?.id) {
+      return;
+    }
+
+    fetch(`${API}/nutricionistas/${sessao.id}/pacientes`)
+      .then(async (resposta) => {
+        const dados = await resposta.json().catch(() => ({}));
+        if (!resposta.ok) throw new Error(dados.erro || "Falha ao carregar pacientes.");
+        return dados;
+      })
+      .then((dados) => {
+        setPacientes(
+          dados.map((paciente, indice) => ({
+            ...paciente,
+            id: paciente.pacienteId,
+            idVisual: formatarIdVisual(indice + 1),
+            nome: [paciente.nome, paciente.sobrenome].filter(Boolean).join(" "),
+            data: paciente.ultima?.data || paciente.proxima?.data,
+            hora: paciente.ultima?.horario || paciente.proxima?.horario,
+          })),
+        );
+      })
+      .catch((error) => setErro(error.message))
+      .finally(() => setCarregando(false));
+  }, []);
+
+  const pacientesFiltrados = useMemo(() => {
+    const termo = busca.trim().toLocaleLowerCase("pt-BR");
+    if (!termo) return pacientes;
+    return pacientes.filter(
+      (paciente) =>
+        paciente.nome.toLocaleLowerCase("pt-BR").includes(termo) ||
+        String(paciente.id).toLocaleLowerCase("pt-BR").includes(termo),
+    );
+  }, [busca, pacientes]);
+
+  function iniciais(nome) {
+    return nome
+      .split(" ")
+      .map((parte) => parte[0])
+      .slice(0, 2)
+      .join("")
+      .toUpperCase();
+  }
+
   return (
-    <div className="w-full min-h-screen bg-gray-100">
+    <div className="min-h-screen w-full bg-gray-100">
       <div className="w-full p-4 lg:p-10">
-        <div className="max-w-auto">
-          <h1 className="mb-8 text-4xl text-center font-bold text-gray-800 lg:text-5xl">
+        <div className="mb-8 max-w-5xl">
+          <h1 className="text-4xl font-bold text-gray-800 lg:text-5xl">
             Pacientes
           </h1>
+        </div>
 
-          {!carregando && !nutricionista && (
-            <div className="rounded-2xl bg-yellow-100 p-4 text-yellow-900">
-              Nenhum nutricionista identificado.{" "}
-              <Link to="/LoginPa" className="font-bold underline">
-                Entrar
-              </Link>
-            </div>
-          )}
-
-          {nutricionista && (
-            <>
-              {/* Busca */}
-              <div className="mb-6 rounded-2xl bg-gray-500 p-5 shadow-xl">
+        <div className="mb-6 max-w-5xl">
+          <div className="rounded-3xl bg-gray-500 p-5 shadow-xl/20 lg:p-6">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end">
+              <div className="flex-1">
                 <label
-                  htmlFor="busca"
-                  className="text-sm font-semibold text-white"
+                  htmlFor="buscarPaciente"
+                  className="mb-2 block font-semibold text-white"
                 >
                   Buscar paciente
                 </label>
-                <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-                  <input
-                    id="busca"
-                    value={busca}
-                    onChange={(e) => setBusca(e.target.value)}
-                    placeholder="Digite o ID ou nome do paciente"
-                    className="h-10 flex-1 rounded-lg bg-gray-100 px-3"
-                  />
-                  <Link
-                    to="/CadPa"
-                    className="flex h-10 items-center justify-center rounded-lg bg-slate-700 px-4 text-sm font-semibold text-white hover:bg-slate-800"
-                  >
-                    + Cadastrar novo paciente
-                  </Link>
-                </div>
+                <input
+                  id="buscarPaciente"
+                  type="search"
+                  placeholder="Digite o ID ou nome do paciente"
+                  className="h-11 w-full rounded-xl bg-gray-100 px-4 text-gray-700 shadow-md outline-none focus:ring-2 focus:ring-gray-300"
+                  value={busca}
+                  onChange={(event) => setBusca(event.target.value)}
+                />
               </div>
-
-              {erro && (
-                <p className="mb-4 rounded-md bg-red-100 p-3 text-red-700">
-                  {erro}
-                </p>
-              )}
-              {buscando && (
-                <p className="text-gray-600">Carregando pacientes...</p>
-              )}
-
-              {!buscando && !erro && visiveis.length === 0 && (
-                <p className="rounded-2xl bg-white p-8 text-center text-gray-600 shadow">
-                  {pacientes.length === 0
-                    ? "Nenhum paciente agendou com você ainda."
-                    : "Nenhum paciente encontrado."}
-                </p>
-              )}
-
-              {visiveis.length > 0 && (
-                <div className="overflow-hidden rounded-2xl bg-white shadow-xl">
-                  <table className="w-full text-center">
-                    <thead>
-                      <tr className="bg-gray-500 text-sm text-white lg:text-base">
-                        <th className="hidden p-4 sm:table-cell">ID</th>
-                        <th className="p-4">PACIENTE</th>
-                        <th className="p-4">ÚLTIMA CONSULTA</th>
-                        <th className="p-4">PRÓXIMA CONSULTA</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {visiveis.map((p) => (
-                        <tr
-                          key={p.pacienteId}
-                          onClick={() => abrir(p)}
-                          className="cursor-pointer hover:bg-gray-50"
-                        >
-                          <td className="hidden p-4 font-bold text-slate-700 sm:table-cell">
-                            #{idCurto(p.pacienteId)}
-                          </td>
-                          <td className="p-4">
-                            <div className="flex items-center justify-center gap-3">
-                              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-500 text-xs font-bold text-white">
-                                {iniciais(p.paciente)}
-                              </span>
-                              <span className="font-semibold text-slate-800">
-                                {p.paciente}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <Quando valor={p.ultima} />
-                          </td>
-                          <td className="p-4">
-                            <Quando valor={p.proxima} />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-
-              {visiveis.length > 0 && (
-                <p className="mt-3 text-gray-500">
-                  Clique no paciente para ver mais informações.
-                </p>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Detalhes do paciente */}
-      {aberto && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
-          onClick={() => setAberto(null)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 text-center shadow-2xl"
-          >
-            <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gray-500 text-xl font-bold text-white">
-              {iniciais(aberto.paciente)}
-            </span>
-            <h2 className="mt-3 text-2xl font-bold text-gray-800">
-              {aberto.paciente}
-            </h2>
-            <p className="text-sm text-gray-500">
-              ID #{idCurto(aberto.pacienteId)}
-            </p>
-
-            <div className="mt-5 space-y-2 text-left">
-              <div className="rounded-xl bg-gray-100 p-3">
-                <p className="text-xs text-gray-500">Consultas com você</p>
-                <p className="font-bold text-gray-800">{aberto.total}</p>
-              </div>
-              <div className="rounded-xl bg-gray-100 p-3">
-                <p className="text-xs text-gray-500">Última consulta</p>
-                <p className="font-bold text-gray-800">
-                  {aberto.ultima
-                    ? `${formatarData(aberto.ultima.data)} às ${aberto.ultima.horario}`
-                    : "—"}
-                </p>
-              </div>
-              <div className="rounded-xl bg-gray-100 p-3">
-                <p className="text-xs text-gray-500">Próxima consulta</p>
-                <p className="font-bold text-gray-800">
-                  {aberto.proxima
-                    ? `${formatarData(aberto.proxima.data)} às ${aberto.proxima.horario}`
-                    : "—"}
-                </p>
-              </div>
+              <button
+                type="button"
+                className="h-11 cursor-pointer whitespace-nowrap rounded-xl bg-gray-700 px-5 font-semibold text-white transition hover:bg-gray-800 active:scale-95"
+              >
+                + Cadastrar novo paciente
+              </button>
             </div>
-
-            {/* Ficha de anamnese */}
-            <div className="mt-5 text-left">
-              {fichas === null ? (
-                <button
-                  onClick={carregarFichas}
-                  disabled={carregandoFichas}
-                  className="w-full cursor-pointer rounded-lg border border-gray-500 py-2 font-semibold text-gray-700 hover:bg-gray-100 disabled:opacity-60"
-                >
-                  {carregandoFichas
-                    ? "Carregando ficha..."
-                    : "Ver ficha de anamnese"}
-                </button>
-              ) : fichas.length === 0 ? (
-                <p className="rounded-xl bg-gray-100 p-3 text-center text-sm text-gray-600">
-                  Este paciente ainda não preencheu a ficha de anamnese.
-                </p>
-              ) : (
-                <>
-                  <label className="mb-2 block text-sm font-semibold text-gray-700">
-                    Ficha da consulta
-                    <select
-                      value={fichaSel}
-                      onChange={(e) => setFichaSel(Number(e.target.value))}
-                      className="mt-1 h-10 w-full rounded-lg bg-gray-100 px-3 font-normal"
-                    >
-                      {fichas.map((f, i) => (
-                        <option key={f._id} value={i}>
-                          #{f.numero} · {formatarData(f.data)} às {f.horario} ·{" "}
-                          {f.status}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <AnamneseView anamnese={fichas[fichaSel].anamnese} />
-                </>
-              )}
-              {erroFicha && (
-                <p className="mt-2 rounded-md bg-red-100 p-2 text-sm text-red-700">
-                  {erroFicha}
-                </p>
-              )}
-            </div>
-
-            <button
-              onClick={() => setAberto(null)}
-              className="mt-6 w-full cursor-pointer rounded-lg bg-gray-500 py-2 font-semibold text-white hover:bg-gray-600"
-            >
-              Fechar
-            </button>
           </div>
         </div>
-      )}
+
+        {erro && (
+          <p className="mb-4 max-w-5xl rounded-xl bg-red-100 p-4 text-red-700">
+            {erro}
+          </p>
+        )}
+        <div className="max-w-5xl overflow-hidden rounded-3xl bg-white shadow-xl/20">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-center">
+              <thead>
+                <tr className="bg-gray-500 text-white">
+                  <th className="p-4 font-semibold">ID</th>
+                  <th className="p-4 font-semibold">PACIENTE</th>
+                  <th className="p-4 font-semibold">ÚLTIMA CONSULTA</th>
+                </tr>
+              </thead>
+              <tbody>
+                {carregando ? (
+                  <tr>
+                    <td colSpan="3" className="p-8 text-gray-500">
+                      Carregando pacientes...
+                    </td>
+                  </tr>
+                ) : pacientesFiltrados.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="p-8 text-gray-500">
+                      Nenhum paciente encontrado.
+                    </td>
+                  </tr>
+                ) : pacientesFiltrados.map((paciente) => (
+                  <tr
+                    key={paciente.id}
+                    onClick={() => setPacienteSelecionado(paciente)}
+                    className="cursor-pointer border-b border-gray-200 transition hover:bg-gray-100"
+                  >
+                    <td className="p-4 font-semibold text-gray-700">
+                      #{paciente.idVisual}
+                    </td>
+                    <td className="p-4">
+                      <div className="mx-auto flex w-64 items-center gap-3 text-left">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-500 font-bold text-white">
+                          {iniciais(paciente.nome)}
+                        </div>
+                        <span className="font-semibold text-gray-700">
+                          {paciente.nome}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex flex-col">
+                        <span className="font-semibold text-gray-700">
+                          {formatarData(paciente.data)}
+                        </span>
+                        <span className="text-gray-400">{paciente.hora}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <ModalPaciente
+          paciente={pacienteSelecionado}
+          aberto={pacienteSelecionado !== null}
+          fechar={() => setPacienteSelecionado(null)}
+        />
+        <p className="ml-1 mt-5 text-lg text-gray-500">
+          Clique no paciente para ver mais informações.
+        </p>
+      </div>
     </div>
   );
 }
