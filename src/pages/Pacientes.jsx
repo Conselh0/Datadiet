@@ -23,7 +23,7 @@ function Quando({ valor }) {
 function Pacientes() {
   const { nutricionista, carregando } = useNutricionista();
   const [pacientes, setPacientes] = useState([]);
-  const [buscando, setBuscando] = useState(true);
+  const [buscando, setBuscando] = useState(false);
   const [erro, setErro] = useState("");
   const [busca, setBusca] = useState("");
   const [aberto, setAberto] = useState(null);
@@ -55,6 +55,7 @@ function Pacientes() {
 
   useEffect(() => {
     if (!nutricionista) return;
+    setBuscando(true);
     listarPacientes(nutricionista._id)
       .then(setPacientes)
       .catch((e) => setErro(e.message))
@@ -70,7 +71,7 @@ function Pacientes() {
   );
 
   return (
-    <div className="min-h-screen w-full bg-gray-100">
+    <div className="w-full min-h-screen bg-gray-100">
       <div className="w-full p-4 lg:p-10">
         <div className="max-w-auto">
           <h1 className="mb-8 text-4xl text-center font-bold text-gray-800 lg:text-5xl">
