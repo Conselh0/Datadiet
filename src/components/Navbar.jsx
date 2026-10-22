@@ -345,7 +345,7 @@ function Navbar() {
 
         {/* PAINEL MOBILE: APARECE APENAS QUANDO O MENU ESTÁ ABERTO EM TELAS PEQUENAS */}
         {menuAberto && (
-          <div className="absolute left-0 top-[4.5rem] z-50 flex max-h-[calc(100dvh-4.5rem)] w-full flex-col gap-4 overflow-y-auto rounded-b-3xl border-t border-white/10 bg-[#f7f5ee] px-4 py-5 text-emerald-950 shadow-2xl animate-in fade-in slide-in-from-top-3 duration-200 md:hidden">
+          <div className="nav-dropdown-enter absolute left-0 top-[4.5rem] z-50 flex max-h-[calc(100dvh-4.5rem)] w-full flex-col gap-4 overflow-y-auto rounded-b-3xl border-t border-white/10 bg-[#f7f5ee] px-4 py-5 text-emerald-950 shadow-2xl md:hidden">
             {usuario && (
               <Link
                 to={usuario.tipo === "nutricionista" ? "/Admin" : "/User"}

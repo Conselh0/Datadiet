@@ -3,7 +3,6 @@
 }
 import HomeBackground from "../components/HomeBackground";
 import { useNavigate } from "react-router-dom";
-import { getSessao } from "../utils/sessao";
 import {
   Activity,
   ArrowRight,
@@ -76,14 +75,8 @@ function Home() {
   const navigate = useNavigate();
 
   function abrirAgendamentos() {
-    const usuarioLogado = getSessao();
-    navigate(
-      usuarioLogado?.tipo === "nutricionista"
-        ? "/Admin"
-        : usuarioLogado
-          ? "/User/Agendamentos"
-          : "/LoginPa",
-    );
+    const usuarioLogado = localStorage.getItem("usuario");
+    navigate(usuarioLogado ? "/User/Agendamentos" : "/LoginPa");
   }
 
   return (
@@ -96,18 +89,17 @@ function Home() {
           className="block w-[88%] max-w-[340px] object-contain sm:hidden"
         />
 
-        <div className="my-auto w-full sm:w-[58%]">
+        <main className="my-auto w-full sm:w-[58%]">
           <div className="w-full px-2 text-left text-green-950 sm:ml-4 sm:px-0">
             <h1 className="mb-5 font-display text-3xl font-semibold leading-snug tracking-normal sm:text-4xl sm:leading-tight xl:text-5xl">
-              Alcance equilíbrio, bem-estar e resultados duradouros com
-              orientação nutricional personalizada{" "}
-              <span className="font-display">presencial e online</span>
+              Alcance o equilíbrio, o bem-estar e resultados duradouros com atendimento nutricional{" "}
+              <span className="font-display">100% online</span>{" "}
             </h1>
 
             <p className="mb-7 font-delicate text-base font-light leading-relaxed tracking-normal sm:text-xl xl:text-2xl">
-              Protocolos personalizados para emagrecer com saúde, corrigir
-              deficiências nutricionais e aumentar sua energia, com a
-              praticidade de ser atendido de onde estiver.
+              Protocolos individualizados para emagrecer com saúde,
+              corrigir deficiências nutricionais e aumentar sua energia,
+              com a praticidade de ser atendido de onde estiver.
             </p>
 
             <div className="mt-7 flex justify-end">
@@ -121,12 +113,12 @@ function Home() {
               </button>
             </div>
           </div>
-        </div>
+        </main>
 
         <img
           src="/img/LTfixed.png"
           alt="Nutricionista Luana Teixeira"
-          className="hidden w-[42%] h-auto max-w-xl sm:block"
+          className="hidden sm:block w-[42%] h-auto max-w-xl"
         />
       </HomeBackground>
 
@@ -146,16 +138,11 @@ function Home() {
             </h2>
             <div className="mb-5 h-px w-12 bg-[#c7a38c]" />
             <p className="font-delicate text-lg leading-relaxed text-gray-600 sm:text-xl">
-              Sou a{" "}
-              <span className="font-semibold text-green-950">
-                Dra. Luana Teixeira, Nutricionista
-              </span>
-              , em São Paulo, atendendo presencialmente e online em todo o Brasil.
-              Especializada em Nutrição Clínica, tenho experiência em ambientes
-              hospitalares e no acompanhamento de doenças crônicas e condições
-              de saúde complexas. Dedico-me a oferecer um atendimento
-              individualizado, com foco em transformar vidas e promover saúde e
-              bem-estar.
+              Sou a <span className="font-semibold text-green-950">Dra. Luana Teixeira</span>,
+              nutricionista em São Paulo, com atendimento presencial e online em todo o Brasil.
+              Especializada em Nutrição Clínica, tenho experiência em ambientes hospitalares e
+              no acompanhamento de doenças crônicas e condições de saúde complexas. Meu foco é
+              oferecer um atendimento individualizado e promover saúde e bem-estar.
             </p>
             <a
               href="#contato"

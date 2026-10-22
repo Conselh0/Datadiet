@@ -1,11 +1,9 @@
-import { Link } from "react-router-dom";
-
 function Footer() {
   // Link de redirecionamento oficial para quando o usuário clicar no mapa
   const mapaUrl = "https://www.google.com/maps/place/R.+Ezequiel+Freire,+55+-+Santana,+S%C3%A3o+Paulo+-+SP,+02034-000/data=!4m2!3m1!1s0x94cef628277f7583:0xdfd4b6e7e3189487?sa=X&ved=1t:242&ictx=111";
 
   return (
-    <footer className="w-full bg-emerald-950 text-white pt-8 pb-6 px-6 md:px-16 lg:px-24">
+    <footer id="contato" className="w-full scroll-mt-4 bg-emerald-950 text-white pt-8 pb-6 px-6 md:px-16 lg:px-24">
       {/* Linha Principal: Conteúdo Organizado */}
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-10 pb-8 border-b border-emerald-800/50">
         

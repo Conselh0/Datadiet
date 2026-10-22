@@ -5,6 +5,37 @@
   font-family: "popins", sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+.nav-dropdown-enter {
+  animation: nav-descer 220ms ease-out both;
+  transform-origin: top;
+}
+
+@keyframes nav-descer {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .nav-dropdown-enter {
+    animation: none;
+  }
+}
+
 @keyframes abrirModal {
   from {
     opacity: 0;
