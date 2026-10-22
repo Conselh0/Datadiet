@@ -6,6 +6,7 @@ import UserModel from "../models/user.model.js";
 import AnamneseModel from "../models/anamnese.model.js";
 import { salvarAnamneseDoAgendamento } from "./anamnese.js";
 import { agora, gerarHorarios, diaDaSemana } from "../../utils/horarios.js";
+import { enviarEmailResend } from "../utils/email.js";
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ async function validarSlot({ nutricionistaId, data, horario, ignorarId }) {
   if (!mongoose.isValidObjectId(nutricionistaId)) {
     return { status: 404, erro: "Nutricionista não encontrado." };
   }
-  const nutri = await NutricionistaModel.findById(nutricionistaId);
+  const nutri = await NutricionistaModel.findById(nutricionistaId).select("+email");
   if (!nutri) return { status: 404, erro: "Nutricionista não encontrado." };
 
   if (!/^\d{4}-\d{2}-\d{2}$/.test(data || "")) return { status: 400, erro: "Data inválida." };
@@ -48,6 +49,21 @@ async function validarSlot({ nutricionistaId, data, horario, ignorarId }) {
 
 const enviarErro = (res, r) => res.status(r.status).json({ erro: r.erro });
 
+function escaparHtml(texto) {
+  return String(texto).replace(/[&<>"']/g, (caractere) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[caractere]);
+}
+
+function formatarData(data) {
+  const [ano, mes, dia] = data.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
 // POST /agendamento  -> cria uma consulta (com a ficha de anamnese)
 router.post("/agendamento", async (req, res) => {
   try {
@@ -74,7 +90,7 @@ router.post("/agendamento", async (req, res) => {
     const slot = await validarSlot({ nutricionistaId, data, horario });
     if (slot.erro) return enviarErro(res, slot);
 
-    const usuario = await UserModel.findById(pacienteId).select("nome");
+    const usuario = await UserModel.findById(pacienteId).select("nome sobrenome email");
     const novo = await AgendamentoModel.create({
       paciente: usuario.nome,
       pacienteId,
@@ -101,7 +117,51 @@ router.post("/agendamento", async (req, res) => {
       return res.status(400).json({ erro: errorFicha.message });
     }
 
-    res.status(201).json({ mensagem: "Consulta agendada com sucesso!", agendamento: novo, anamnese: ficha });
+    let notificacoes = { paciente: false, nutricionista: false };
+    try {
+      const nomePaciente = escaparHtml(novo.paciente);
+      const nomeNutricionista = escaparHtml(novo.nutricionista);
+      const dataFormatada = formatarData(novo.data);
+      const detalhes = `Data: ${dataFormatada}\nHorário: ${novo.horario}`;
+      const resultados = await Promise.allSettled([
+        enviarEmailResend({
+          to: usuario.email,
+          subject: "Consulta agendada - Datadiet",
+          text: `Olá, ${novo.paciente}! Sua consulta com ${novo.nutricionista} foi agendada para ${detalhes}. A consulta está pendente de confirmação pela nutricionista.`,
+          html: `<p>Olá, ${nomePaciente}!</p><p>Sua consulta com <strong>${nomeNutricionista}</strong> foi agendada.</p><p>${detalhes.replace("\n", "<br>")}</p><p>A consulta está pendente de confirmação pela nutricionista.</p>`,
+        }),
+        enviarEmailResend({
+          to: slot.nutri.email,
+          subject: "Nova consulta agendada - Datadiet",
+          text: `Olá, ${slot.nutri.nome}! ${novo.paciente} agendou uma consulta para ${detalhes}. Acesse o Datadiet para consultar os detalhes.`,
+          html: `<p>Olá, ${nomeNutricionista}!</p><p><strong>${nomePaciente}</strong> agendou uma nova consulta.</p><p>${detalhes.replace("\n", "<br>")}</p><p>Acesse o Datadiet para consultar os detalhes.</p>`,
+        }),
+      ]);
+      notificacoes = {
+        paciente: resultados[0].status === "fulfilled",
+        nutricionista: resultados[1].status === "fulfilled",
+      };
+      resultados.forEach((resultado, indice) => {
+        if (resultado.status === "rejected") {
+          console.error(
+            `ERRO AO ENVIAR EMAIL DE AGENDAMENTO (${indice === 0 ? "paciente" : "nutricionista"}):`,
+            resultado.reason,
+          );
+        }
+      });
+    } catch (emailError) {
+      console.error("ERRO AO CONFIGURAR EMAIL DE AGENDAMENTO:", emailError);
+    }
+
+    const emailsEnviados = notificacoes.paciente && notificacoes.nutricionista;
+    res.status(201).json({
+      mensagem: emailsEnviados
+        ? "Consulta agendada com sucesso! Os e-mails foram enviados."
+        : "Consulta agendada, mas não foi possível enviar todos os e-mails de notificação.",
+      notificacoes,
+      agendamento: novo,
+      anamnese: ficha,
+    });
   } catch (error) {
     console.error("ERRO NO AGENDAMENTO:", error);
     res.status(500).json({ erro: error.message });

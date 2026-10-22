@@ -187,8 +187,13 @@ function Agendamentos() {
     try {
       setEnviando(true);
       const tipoAnamnese = statusAnamnese?.tipoNecessario || statusAnamnese?.fichaAtual?.tipo || "inicial";
-      await criarAgendamento({ nutricionistaId: selecionado._id, data, horario, anamnese, tipoAnamnese, anamneseId });
-      setSucesso({ nutricionista: selecionado.nome, data, horario });
+      const resultado = await criarAgendamento({ nutricionistaId: selecionado._id, data, horario, anamnese, tipoAnamnese, anamneseId });
+      setSucesso({
+        nutricionista: selecionado.nome,
+        data,
+        horario,
+        notificacoes: resultado.notificacoes,
+      });
     } catch (e) {
       setErro(e.message);
       // Horário tomado por outra pessoa: volta para escolher outro
@@ -237,6 +242,15 @@ function Agendamentos() {
           <p className="mt-4 text-sm text-gray-500">
             Sua ficha de anamnese foi registrada e vinculada a esta consulta. O nutricionista vai confirmar o atendimento.
           </p>
+          {sucesso.notificacoes?.paciente && sucesso.notificacoes?.nutricionista ? (
+            <p className="mt-3 text-sm text-green-700">
+              Enviamos um e-mail para você e para a nutricionista.
+            </p>
+          ) : (
+            <p role="status" className="mt-3 text-sm text-amber-700">
+              Não foi possível enviar todos os e-mails de notificação. A consulta está agendada; entre em contato com a equipe para verificar o envio.
+            </p>
+          )}
           <Link
             to="/User/Historico"
             className="mt-6 block w-full rounded-lg bg-green-600 py-2 font-bold text-white hover:bg-green-700"

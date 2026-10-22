@@ -2,9 +2,9 @@ import express from "express";
 import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
 import mongoose from "mongoose";
-import nodemailer from "nodemailer";
 import UserModel from "../models/user.model.js";
 import PasswordResetModel from "../models/password-reset.model.js";
+import { enviarEmailResend } from "../utils/email.js";
 
 const router = express.Router();
 
@@ -18,26 +18,6 @@ function gerarToken() {
 
 function criarHashToken(token) {
   return crypto.createHash("sha256").update(token).digest("hex");
-}
-
-function criarTransportadorEmail() {
-  const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD } = process.env;
-
-  if (!SMTP_HOST || !SMTP_PORT || !SMTP_USER || !SMTP_PASSWORD) {
-    throw new Error(
-      "Configure SMTP_HOST, SMTP_PORT, SMTP_USER e SMTP_PASSWORD para enviar e-mails.",
-    );
-  }
-
-  return nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: Number(SMTP_PORT),
-    secure: process.env.SMTP_SECURE === "true",
-    auth: {
-      user: SMTP_USER.trim(),
-      pass: SMTP_PASSWORD.replace(/\s/g, ""),
-    },
-  });
 }
 
 function urlImagemValida(url) {
@@ -133,14 +113,12 @@ router.post("/redefinir-senha", async (req, res) => {
     });
 
     try {
-      const transportador = criarTransportadorEmail();
       const urlAplicacao = (
         process.env.APP_URL || "http://localhost:5173"
       ).replace(/\/$/, "");
       const linkConfirmacao = `${urlAplicacao}/ConfirmarRedefinicaoSenha?token=${token}`;
 
-      await transportador.sendMail({
-        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      await enviarEmailResend({
         to: usuario.email,
         subject: "Redefina sua senha - Datadiet",
         text: `Recebemos uma solicitação para redefinir sua senha. Acesse ${linkConfirmacao} para escolher uma nova senha. Este link expira em 1 hora. Se você não solicitou a alteração, ignore este e-mail.`,
@@ -163,9 +141,9 @@ router.post("/redefinir-senha", async (req, res) => {
   } catch (error) {
     console.error("ERRO AO SOLICITAR REDEFINIÇÃO DE SENHA:", error);
 
-    if (error.message?.startsWith("Configure SMTP")) {
+    if (error.message?.startsWith("Configure RESEND")) {
       return res.status(500).json({
-        erro: "O envio de e-mail não está configurado. Preencha as variáveis SMTP no arquivo .env e reinicie o servidor.",
+        erro: "O envio de e-mail não está configurado. Preencha RESEND_API_KEY e RESEND_FROM_EMAIL no arquivo .env e reinicie o servidor.",
       });
     }
 
