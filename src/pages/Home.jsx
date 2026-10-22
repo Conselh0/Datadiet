@@ -80,7 +80,7 @@ function Home() {
   }
 
   return (
-    <main>
+    <main className="font-poppins">
       {/*Estamos basicamete chamando a prop de fundo que já tem o estilo pré-definido*/}
       <HomeBackground>
         <img
