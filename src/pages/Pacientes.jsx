@@ -74,6 +74,27 @@ function Pacientes() {
       .toUpperCase();
   }
 
+  function atualizarPaciente(usuario) {
+    const atualizado = {
+      ...usuario,
+      id: usuario._id,
+      nome: [usuario.nome, usuario.sobrenome].filter(Boolean).join(" "),
+    };
+    setPacientes((atuais) =>
+      atuais.map((paciente) =>
+        paciente.id === atualizado.id ? { ...paciente, ...atualizado } : paciente,
+      ),
+    );
+    setPacienteSelecionado((atual) =>
+      atual?.id === atualizado.id ? { ...atual, ...atualizado } : atual,
+    );
+  }
+
+  function removerPaciente(id) {
+    setPacientes((atuais) => atuais.filter((paciente) => paciente.id !== id));
+    setPacienteSelecionado(null);
+  }
+
   return (
     <div className="min-h-screen w-full bg-gray-100">
       <div className="mx-auto w-full max-w-6xl p-4 sm:p-6 lg:p-10">
@@ -186,9 +207,12 @@ function Pacientes() {
         </div>
 
         <ModalPaciente
+          key={pacienteSelecionado?.id || "sem-paciente"}
           paciente={pacienteSelecionado}
           aberto={pacienteSelecionado !== null}
           fechar={() => setPacienteSelecionado(null)}
+          onAtualizado={atualizarPaciente}
+          onExcluido={removerPaciente}
         />
         <p className="ml-1 mt-5 text-lg text-gray-500">
           Clique no paciente para ver mais informações.

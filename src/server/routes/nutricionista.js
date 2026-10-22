@@ -141,6 +141,7 @@ router.get("/nutricionistas/:id/pacientes", async (req, res) => {
 
     for (const a of consultas) {
     const dadosPaciente = dadosPorId.get(String(a.pacienteId));
+    if (!dadosPaciente) continue;
     const p = mapa.get(a.pacienteId) || {
       pacienteId: a.pacienteId,
       paciente: a.paciente,

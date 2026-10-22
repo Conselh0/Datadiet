@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check } from "lucide-react";
+import { CalendarDays, Check } from "lucide-react";
 import NutricionistaCard from "../components/NutricionistaCard";
 import Calendario from "../components/Calendario";
 import FormAnamnese from "../components/FormAnamnese";
@@ -20,33 +20,43 @@ const ATIVOS = ["Pendente", "Confirmado"];
 // Barra de progresso: etapas já feitas podem ser clicadas para voltar
 function Etapas({ passo, onIr }) {
   return (
-    <ol className="mb-8 flex w-full max-w-xl items-start justify-between">
+    <ol
+      aria-label="Etapas do agendamento"
+      className="mb-8 flex w-full max-w-3xl items-start justify-between rounded-2xl border border-gray-200 bg-white px-3 py-4 shadow-sm sm:px-6 sm:py-5"
+    >
       {ETAPAS.map((nome, i) => {
         const n = i + 1;
         const feita = n < passo;
         const atual = n === passo;
         return (
-          <li key={nome} className="flex flex-1 flex-col items-center">
+          <li key={nome} className="flex min-w-0 flex-1 flex-col items-center">
             <div className="flex w-full items-center">
-              <span className={`h-1 flex-1 ${i === 0 ? "invisible" : feita || atual ? "bg-green-600" : "bg-green-200"}`} />
+              <span
+                aria-hidden="true"
+                className={`h-0.5 flex-1 ${i === 0 ? "invisible" : feita || atual ? "bg-emerald-700" : "bg-gray-200"}`}
+              />
               <button
                 type="button"
                 disabled={!feita}
                 onClick={() => onIr(n)}
                 aria-label={`Etapa ${n}: ${nome}`}
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition ${
+                aria-current={atual ? "step" : undefined}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition sm:h-10 sm:w-10 ${
                   feita
-                    ? "cursor-pointer bg-green-600 text-white hover:bg-green-700"
+                    ? "cursor-pointer border-emerald-700 bg-emerald-700 text-white shadow-sm hover:bg-emerald-800"
                     : atual
-                    ? "bg-green-700 text-white ring-4 ring-green-300"
-                    : "bg-white text-gray-400"
+                    ? "border-emerald-700 bg-white text-emerald-800 ring-4 ring-emerald-100"
+                    : "border-gray-200 bg-gray-50 text-gray-400"
                 }`}
               >
                 {feita ? <Check size={18} /> : n}
               </button>
-              <span className={`h-1 flex-1 ${i === ETAPAS.length - 1 ? "invisible" : feita ? "bg-green-600" : "bg-green-200"}`} />
+              <span
+                aria-hidden="true"
+                className={`h-0.5 flex-1 ${i === ETAPAS.length - 1 ? "invisible" : feita ? "bg-emerald-700" : "bg-gray-200"}`}
+              />
             </div>
-            <span className={`mt-1 hidden text-xs font-semibold sm:block ${atual ? "text-green-800" : "text-green-700/60"}`}>
+            <span className={`mt-2 hidden text-xs font-semibold sm:block ${atual ? "text-emerald-900" : feita ? "text-emerald-800" : "text-gray-400"}`}>
               {nome}
             </span>
           </li>
@@ -58,9 +68,9 @@ function Etapas({ passo, onIr }) {
 
 function Titulo({ texto, detalhe }) {
   return (
-    <div className="mb-5 text-center">
-      <h2 className="text-2xl font-bold text-green-800 md:text-3xl">{texto}</h2>
-      {detalhe && <p className="mt-1 text-green-900/70">{detalhe}</p>}
+    <div className="mb-6 text-center">
+      <h2 className="text-2xl font-bold tracking-tight text-gray-900 md:text-3xl">{texto}</h2>
+      {detalhe && <p className="mt-2 text-sm text-gray-600 sm:text-base">{detalhe}</p>}
     </div>
   );
 }
@@ -70,9 +80,9 @@ function Voltar({ onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="mt-6 cursor-pointer font-semibold text-green-800 underline-offset-4 hover:underline"
+      className="mt-6 cursor-pointer rounded-lg px-4 py-2 font-semibold text-emerald-800 transition hover:bg-emerald-50 hover:text-emerald-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-700"
     >
-      ← Voltar
+      Voltar
     </button>
   );
 }
@@ -193,8 +203,25 @@ function Agendamentos() {
   };
 
   return (
-    <div className="flex min-h-screen w-full min-w-0 flex-col items-center bg-[url('/img/bolas.png')] bg-green-400/20 p-4 pb-16 text-center">
-      <h1 className="my-8 text-3xl font-bold text-green-700 md:text-5xl">AGENDE SUA CONSULTA</h1>
+    <div className="relative isolate min-h-screen w-full min-w-0 overflow-hidden bg-gradient-to-br from-emerald-950 via-green-900 to-emerald-800 px-4 py-8 pb-16 sm:px-6 sm:py-10">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <span className="absolute -left-28 -top-32 h-80 w-80 rounded-full border-[36px] border-white/[0.07]" />
+        <span className="absolute -right-24 top-24 h-72 w-72 rounded-full bg-green-400/[0.08] blur-2xl" />
+        <span className="absolute -bottom-40 left-[18%] h-96 w-96 rounded-full border-[48px] border-white/[0.06]" />
+        <span className="absolute -bottom-32 -right-24 h-80 w-80 rounded-full bg-emerald-400/[0.08] blur-3xl" />
+      </div>
+      <main className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center rounded-3xl border border-white/70 bg-white/95 p-5 text-center shadow-2xl shadow-emerald-950/20 backdrop-blur-sm sm:p-8">
+        <header className="mb-8 max-w-2xl">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-800">
+            Cuidado feito para você
+          </p>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl">
+            Agende sua consulta
+          </h1>
+          <p className="mt-3 text-sm leading-6 text-gray-600 sm:text-base">
+            Siga as etapas para escolher o profissional, o horário e confirmar seu atendimento.
+          </p>
+        </header>
 
       {verificando ? (
         <p className="text-gray-600">Verificando suas consultas...</p>
@@ -218,23 +245,46 @@ function Agendamentos() {
           </Link>
         </div>
       ) : emAndamento ? (
-        <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-          <p className="text-2xl font-bold text-green-800">Você já tem uma consulta em andamento</p>
-          <p className="mt-4 text-lg text-slate-700">
-            {formatarData(emAndamento.data)} às {emAndamento.horario}
-          </p>
-          <p className="text-slate-600">com {emAndamento.nutricionista}</p>
-          <p className="mt-4 text-sm text-gray-500">
-            Você poderá agendar outra depois que ela for concluída ou o cancelamento for confirmado
-            pelo nutricionista. Para mudar o horário, peça o reagendamento no histórico.
-          </p>
-          <Link
-            to="/User/Historico"
-            className="mt-6 block w-full rounded-lg bg-green-600 py-2 font-bold text-white hover:bg-green-700"
-          >
-            Ver minhas consultas
-          </Link>
-        </div>
+        <section
+          className="w-full max-w-2xl overflow-hidden rounded-3xl border border-green-200 bg-gray-50 text-left shadow-lg shadow-gray-900/10"
+          aria-labelledby="consulta-andamento-titulo"
+        >
+          <div className="flex items-start gap-4 border-b border-green-100 bg-green-50/80 p-5 sm:p-7">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-green-800 text-white shadow-sm">
+              <CalendarDays size={23} strokeWidth={1.8} aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-green-800">
+                Acompanhamento
+              </p>
+              <h2
+                id="consulta-andamento-titulo"
+                className="mt-1 text-xl font-bold tracking-tight text-gray-900 sm:text-2xl"
+              >
+                Você já tem uma consulta agendada
+              </h2>
+            </div>
+          </div>
+          <div className="p-5 sm:p-7">
+            <p className="max-w-xl text-sm leading-6 text-gray-600 sm:text-base">
+              Para agendar outra consulta, aguarde a conclusão da atual ou a confirmação do
+              cancelamento. Se precisar alterar o horário, você pode solicitar o reagendamento
+              na sua consulta.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 border-t border-gray-200 pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm font-medium text-gray-500">
+                Acesse os detalhes e as opções da consulta.
+              </p>
+              <Link
+                to="/User/MinhaConsulta"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-green-800 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2"
+              >
+                Ver minha consulta
+                <CalendarDays size={17} aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        </section>
       ) : (
         <>
           <Etapas passo={passo} onIr={setPasso} />
@@ -256,6 +306,7 @@ function Agendamentos() {
                     key={n._id}
                     nutricionista={n}
                     selecionado={selecionado?._id === n._id}
+                    temaPaciente
                     onClick={() => escolherNutricionista(n)}
                   />
                 ))}
@@ -336,34 +387,60 @@ function Agendamentos() {
           {/* Etapa 5: confirmação */}
           {passo === 5 && selecionado && data && horario && anamnese && (
             <section className="flex w-full max-w-md flex-col items-center">
-              <Titulo texto="Confirme sua consulta" />
-              <div className="w-full rounded-2xl bg-green-950 p-6 text-white shadow-xl">
-                <p className="text-sm text-green-200">Nutricionista</p>
-                <p className="text-xl font-bold">{selecionado.nome}</p>
-                <p className="text-sm text-green-200">{selecionado.especialidade}</p>
+              <div className="w-full overflow-hidden rounded-3xl border border-gray-200 bg-gray-200 text-left shadow-xl shadow-gray-900/10">
+                <header className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-green-900 to-emerald-800 px-5 py-6 text-white">
+                  <div className="pointer-events-none absolute -right-8 -top-16 h-44 w-44 rounded-full border-[24px] border-white/[0.06]" />
+                  <div className="pointer-events-none absolute -bottom-20 right-28 h-32 w-32 rounded-full bg-white/[0.04]" />
+                  <div className="relative">
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-green-100">
+                      Resumo do agendamento
+                    </p>
+                    <h2 className="mt-1 text-2xl font-bold">Confirme sua consulta</h2>
+                    <p className="mt-2 text-sm text-green-100/80">
+                      Confira os dados antes de confirmar.
+                    </p>
+                  </div>
+                </header>
 
-                <div className="mt-4 grid grid-cols-2 gap-3">
-                  <div className="rounded-xl bg-green-900/60 p-3">
-                    <p className="text-xs text-green-200">Data</p>
-                    <p className="text-lg font-bold">{formatarData(data)}</p>
+                <div className="space-y-4 bg-gray-200 p-5">
+                  <div className="rounded-2xl border border-gray-300 bg-gray-100 p-4 shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+                      Nutricionista
+                    </p>
+                    <p className="mt-1 text-lg font-bold text-gray-900">
+                      {selecionado.nome}
+                    </p>
+                    <p className="text-sm text-gray-600">{selecionado.especialidade}</p>
                   </div>
-                  <div className="rounded-xl bg-green-900/60 p-3">
-                    <p className="text-xs text-green-200">Horário</p>
-                    <p className="text-lg font-bold">{horario}</p>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-2xl border border-gray-300 bg-gray-100 p-4 shadow-sm">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+                        Data
+                      </p>
+                      <p className="mt-1 font-bold text-gray-900">{formatarData(data)}</p>
+                    </div>
+                    <div className="rounded-2xl border border-gray-300 bg-gray-100 p-4 shadow-sm">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-600">
+                        Horário
+                      </p>
+                      <p className="mt-1 font-bold text-gray-900">{horario}</p>
+                    </div>
                   </div>
+
+                  <p className="flex items-center gap-2 rounded-2xl border border-green-200 bg-green-100 px-4 py-3 text-sm font-medium text-green-950">
+                    <Check size={17} className="shrink-0 text-green-800" aria-hidden="true" />
+                    Ficha de anamnese preenchida
+                  </p>
+
+                  <button
+                    onClick={confirmar}
+                    disabled={enviando}
+                    className="w-full cursor-pointer rounded-xl bg-green-800 py-3 font-bold text-white shadow-sm transition hover:bg-green-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {enviando ? "Agendando..." : "Confirmar agendamento"}
+                  </button>
                 </div>
-
-                <p className="mt-4 flex items-center gap-2 text-sm text-green-200">
-                  <Check size={16} /> Ficha de anamnese preenchida
-                </p>
-
-                <button
-                  onClick={confirmar}
-                  disabled={enviando}
-                  className="mt-6 w-full cursor-pointer rounded-lg bg-green-400 py-3 font-bold text-green-950 hover:bg-green-300 disabled:opacity-60"
-                >
-                  {enviando ? "Agendando..." : "Confirmar agendamento"}
-                </button>
               </div>
               <Voltar onClick={() => setPasso(4)} />
             </section>
@@ -374,6 +451,7 @@ function Agendamentos() {
           )}
         </>
       )}
+      </main>
     </div>
   );
 }

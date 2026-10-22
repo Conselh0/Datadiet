@@ -4,7 +4,7 @@ import {
   ChartNoAxesCombined,
   ChevronRight,
   ClipboardList,
-  LogOut,
+  House,
   Menu,
   UserPlus,
   UserRound,
@@ -140,8 +140,8 @@ function SidebarAdmin() {
             onClick={() => setMenuAberto(false)}
             className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-gray-400 transition hover:bg-white/[0.08] hover:text-white"
           >
-            <LogOut size={19} strokeWidth={1.9} aria-hidden="true" />
-            Sair da conta
+            <House size={19} strokeWidth={1.9} aria-hidden="true" />
+            Menu principal
           </NavLink>
         </div>
       </nav>

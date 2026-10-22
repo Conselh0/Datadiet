@@ -1,6 +1,7 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import crypto from "node:crypto";
+import mongoose from "mongoose";
 import nodemailer from "nodemailer";
 import UserModel from "../models/user.model.js";
 import PasswordResetModel from "../models/password-reset.model.js";
@@ -231,19 +232,132 @@ router.post("/redefinir-senha/confirmar", async (req, res) => {
 // O ":id" na URL torna a rota dinâmica
 router.get("/perfil/:id", async (req, res) => {
   try {
-    const idUsuario = req.params.id; // Pega o ID enviado pela URL
-
-    // Procura no banco de dados especificamente por esse ID
-    const usuario = await UserModel.findById(idUsuario);
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(404).json({ erro: "Usuário não encontrado." });
+    }
+    const usuario = await UserModel.findById(req.params.id).select("-senha -cpf");
 
     if (!usuario) {
-      return res.status(404).json({ mensagem: "Usuário não encontrado" });
+      return res.status(404).json({ erro: "Usuário não encontrado." });
     }
 
-    // Retorna apenas os dados do usuário encontrado (como um objeto, não uma lista)
     res.json(usuario);
   } catch (error) {
-    res.status(500).json({ mensagem: "Erro interno no servidor", error });
+    console.error("ERRO AO BUSCAR PERFIL DO PACIENTE:", error);
+    res.status(500).json({ erro: "Não foi possível carregar o perfil." });
+  }
+});
+
+router.patch("/perfil/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      return res.status(404).json({ erro: "Usuário não encontrado." });
+    }
+
+    const {
+      nome,
+      sobrenome,
+      email,
+      nascimento,
+      genero,
+      telefone,
+      senhaAtual,
+      novaSenha,
+      confirmarNovaSenha,
+    } = req.body;
+    const nomeNormalizado = typeof nome === "string" ? nome.trim() : "";
+    const sobrenomeNormalizado =
+      typeof sobrenome === "string" ? sobrenome.trim() : "";
+    const emailNormalizado =
+      typeof email === "string" ? email.trim().toLowerCase() : "";
+    const telefoneNormalizado =
+      typeof telefone === "string" ? telefone.replace(/\D/g, "") : "";
+    const generoNormalizado =
+      typeof genero === "string" ? genero.trim().toLowerCase() : "";
+
+    if (nomeNormalizado.length < 2) {
+      return res.status(400).json({ erro: "Informe seu nome." });
+    }
+    if (!sobrenomeNormalizado) {
+      return res.status(400).json({ erro: "Informe seu sobrenome." });
+    }
+    if (!/^\S+@\S+\.\S+$/.test(emailNormalizado)) {
+      return res.status(400).json({ erro: "E-mail inválido." });
+    }
+    if (!["masculino", "feminino", "outro"].includes(generoNormalizado)) {
+      return res.status(400).json({ erro: "Selecione um gênero válido." });
+    }
+    if (
+      typeof nascimento !== "string" ||
+      !/^\d{4}-\d{2}-\d{2}$/.test(nascimento) ||
+      Number.isNaN(new Date(`${nascimento}T12:00:00Z`).getTime()) ||
+      new Date(`${nascimento}T12:00:00Z`).toISOString().slice(0, 10) !== nascimento
+    ) {
+      return res.status(400).json({ erro: "Data de nascimento inválida." });
+    }
+    if (telefoneNormalizado && ![10, 11].includes(telefoneNormalizado.length)) {
+      return res.status(400).json({ erro: "Telefone inválido." });
+    }
+    if (
+      await UserModel.exists({
+        email: emailNormalizado,
+        _id: { $ne: id },
+      })
+    ) {
+      return res.status(409).json({ erro: "Já existe uma conta com este e-mail." });
+    }
+
+    const usuario = await UserModel.findById(id);
+    if (!usuario) {
+      return res.status(404).json({ erro: "Usuário não encontrado." });
+    }
+
+    const alterandoSenha = Boolean(senhaAtual || novaSenha || confirmarNovaSenha);
+    if (alterandoSenha) {
+      if (!senhaAtual || !novaSenha || !confirmarNovaSenha) {
+        return res.status(400).json({
+          erro: "Para alterar a senha, informe a senha atual e os dois campos da nova senha.",
+        });
+      }
+      const senhaAtualValida = usuario.senha.startsWith("$2")
+        ? await bcrypt.compare(senhaAtual, usuario.senha)
+        : senhaAtual === usuario.senha;
+      if (!senhaAtualValida) {
+        return res.status(401).json({ erro: "A senha atual está incorreta." });
+      }
+      if (novaSenha.length < 8) {
+        return res.status(400).json({
+          erro: "A nova senha deve ter pelo menos 8 caracteres.",
+        });
+      }
+      if (novaSenha !== confirmarNovaSenha) {
+        return res.status(400).json({ erro: "A confirmação da nova senha não confere." });
+      }
+      usuario.senha = await bcrypt.hash(novaSenha, 12);
+    }
+
+    usuario.nome = nomeNormalizado;
+    usuario.sobrenome = sobrenomeNormalizado;
+    usuario.email = emailNormalizado;
+    usuario.nascimento = new Date(`${nascimento}T12:00:00Z`);
+    usuario.genero = generoNormalizado;
+    usuario.telefone = telefoneNormalizado;
+    await usuario.save();
+
+    const dadosUsuario = usuario.toObject();
+    delete dadosUsuario.senha;
+    delete dadosUsuario.cpf;
+    res.json({
+      mensagem: "Perfil atualizado com sucesso.",
+      usuario: dadosUsuario,
+    });
+  } catch (error) {
+    console.error("ERRO AO ATUALIZAR PERFIL DO PACIENTE:", error);
+    if (error?.code === 11000 && error?.keyPattern?.email) {
+      return res.status(409).json({ erro: "Já existe uma conta com este e-mail." });
+    }
+    res.status(500).json({ erro: "Não foi possível atualizar o perfil." });
   }
 });
 

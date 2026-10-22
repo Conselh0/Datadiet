@@ -80,7 +80,7 @@ function HistoricoConsultas() {
 
   return (
     <section className="w-full">
-      <h2 className="mb-4 text-xl font-bold text-green-950 md:text-2xl">Histórico de consultas</h2>
+      <h2 className="mb-4 text-xl font-bold text-green-950 md:text-2xl">Suas consultas</h2>
 
       {temAtiva && (
         <p className="mb-4 rounded-xl bg-green-100 p-3 text-sm text-green-900">
@@ -109,7 +109,7 @@ function HistoricoConsultas() {
       {aviso && <p className="mb-3 rounded-md bg-green-100 p-3 text-green-800">{aviso}</p>}
       {carregando && <p className="text-gray-600">Carregando consultas...</p>}
       {!carregando && visiveis.length === 0 && (
-        <p className="rounded-xl bg-white p-8 text-center text-gray-600 shadow">
+        <p className="rounded-xl border border-green-200 bg-green-50 p-8 text-center text-green-950 shadow-sm">
           Nenhuma consulta encontrada nesse filtro.
         </p>
       )}
@@ -122,7 +122,7 @@ function HistoricoConsultas() {
           const doNutri = sol?.origem === "nutricionista";
 
           return (
-            <li key={a._id} className="rounded-xl bg-white p-4 shadow">
+            <li key={a._id} className="rounded-xl border border-green-200 bg-green-50 p-4 shadow-sm">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-bold text-gray-500">Atendimento #{a.numero}</p>

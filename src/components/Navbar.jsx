@@ -114,9 +114,22 @@ function Navbar() {
     function sincronizarFotoPerfil(evento) {
       const novaFoto = evento?.detail?.fotoPerfil;
 
-      if (typeof novaFoto === "string" && ativo) {
+      if (ativo && evento?.detail) {
         setUsuario((usuarioAtual) =>
-          usuarioAtual ? { ...usuarioAtual, fotoPerfil: novaFoto } : usuarioAtual,
+          usuarioAtual
+            ? {
+                ...usuarioAtual,
+                ...(typeof novaFoto === "string" && { fotoPerfil: novaFoto }),
+                ...(typeof evento.detail.nome === "string" && {
+                  nome: [evento.detail.nome, evento.detail.sobrenome]
+                    .filter(Boolean)
+                    .join(" "),
+                }),
+                ...(typeof evento.detail.email === "string" && {
+                  email: evento.detail.email,
+                }),
+              }
+            : usuarioAtual,
         );
       }
     }
