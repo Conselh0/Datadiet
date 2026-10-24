@@ -126,17 +126,3 @@ createRoot(document.getElementById("root")).render(
     <RouterProvider router={router} />
   </StrictMode>,
 );
-
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  theme: {
-    extend: {
-      // ADICIONE ESTE BLOCO FONTFAMILY AQUI:
-      fontFamily: {
-        poppins: ["Poppins", "sans-serif"],
-      },
-    },
-  },
-  plugins: [],
-};
