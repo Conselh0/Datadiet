@@ -25,7 +25,7 @@ function Navbar() {
   const [menuAberto, setMenuAberto] = useState(false);
 
   // Usuário logado (paciente ou nutricionista)
-  const [usuario, setUsuario] = useState(null);
+  const [usuario, setUsuario] = useState(() => getSessao());
 
   // Controla o popup de logout
   const [mostrarLogout, setMostrarLogout] = useState(false);
@@ -198,7 +198,7 @@ function Navbar() {
   return (
     <>
       {/* NAVBAR */}
-      <div className="font-poppins w-full bg-emerald-900 p-3 flex items-center justify-between relative shadow-md h-[4.5rem]">
+      <div className="font-poppins relative z-50 flex h-[4.5rem] w-full items-center justify-between bg-emerald-900 p-3 shadow-md">
         {/* LADO ESQUERDO: LOGO E BOTÃO HAMBÚRGUER MOBILE */}
         <div className="z-10 flex items-center gap-2 pl-2">
           {/* Botão de abrir/fechar menu apenas visível em telas menores que 'md' */}
@@ -267,10 +267,10 @@ function Navbar() {
         </div>
 
         {/* LADO DIREITO: BOTÕES (DESKTOP) E MENU DO USUÁRIO */}
-        <div className="z-10 flex items-center gap-4 pr-2">
+        <div className="relative z-50 ml-auto flex items-center gap-4 pr-2">
           {/* Botões escondidos no mobile com 'hidden md:flex' */}
           {!usuario ? (
-            <div className="hidden xl:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-3">
               <Link to="/CadPa">
                 <button className="cursor-pointer bg-[#2fa84a] hover:bg-[#278d3e] px-16 py-2 rounded-full text-base font-bold text-white transition-colors shadow-md min-w-[160px]">
                   Criar Conta
@@ -285,13 +285,17 @@ function Navbar() {
             </div>
           ) : (
             <>
-              <div className="hidden md:block">
+              <div className="block">
                 <USERH_Menu
                   icone={
                     <img
                       src={usuario.fotoPerfil || usuario.foto || "/img/avatar.png"}
                       alt="Abrir menu do perfil"
                       className="h-10 w-10 rounded-full border-2 border-white object-cover transition-opacity hover:opacity-80"
+                      onError={(evento) => {
+                        evento.currentTarget.onerror = null;
+                        evento.currentTarget.src = "/img/avatar.png";
+                      }}
                     />
                   }
                 >
