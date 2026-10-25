@@ -39,6 +39,11 @@ o endereço remetente precisa pertencer a um domínio verificado no Resend.
 Se a notificação do agendamento não puder ser enviada, a consulta continua
 agendada e o paciente verá um aviso na tela.
 
+Alterações no status da consulta notificam o paciente. Solicitações de
+reagendamento ou cancelamento notificam a outra parte; quem abriu a solicitação
+recebe também o resultado quando ela é aceita ou recusada. Se uma solicitação
+for retirada, a outra parte recebe um aviso.
+
 ### Configuração do Resend
 
 1. Crie uma conta em [resend.com](https://resend.com/).

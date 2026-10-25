@@ -64,6 +64,61 @@ function formatarData(data) {
   return `${dia}/${mes}/${ano}`;
 }
 
+function detalhesConsulta(agendamento) {
+  return `Data: ${formatarData(agendamento.data)}\nHorário: ${agendamento.horario}`;
+}
+
+async function notificarParticipante(agendamento, participante, { subject, text, html }) {
+  try {
+    const destinatario =
+      participante === "paciente"
+        ? await UserModel.findById(agendamento.pacienteId).select("email")
+        : await NutricionistaModel.findById(agendamento.nutricionistaId).select("+email");
+
+    if (!destinatario?.email) {
+      console.error(`EMAIL DE NOTIFICAÇÃO NÃO ENCONTRADO (${participante}).`);
+      return;
+    }
+
+    await enviarEmailResend({
+      to: destinatario.email,
+      subject,
+      text,
+      html,
+    });
+  } catch (error) {
+    console.error(`ERRO AO ENVIAR EMAIL DE NOTIFICAÇÃO (${participante}):`, error);
+  }
+}
+
+function criarMensagemSolicitacao(agendamento, participante) {
+  const solicitacao = agendamento.solicitacao;
+  const solicitante =
+    solicitacao.origem === "paciente" ? agendamento.paciente : agendamento.nutricionista;
+  const nomeDestinatario =
+    participante === "paciente" ? agendamento.paciente : agendamento.nutricionista;
+  const acao = solicitacao.tipo === "Cancelamento" ? "cancelamento" : "reagendamento";
+  const proposta =
+    solicitacao.tipo === "Reagendamento"
+      ? `\nNova data proposta: ${formatarData(solicitacao.novaData)} às ${solicitacao.novoHorario}.`
+      : "";
+  const motivo = solicitacao.motivo ? `\nMotivo: ${solicitacao.motivo}` : "";
+  const texto = `${solicitante} solicitou ${acao} da consulta.${proposta}${motivo}\nConsulta atual: ${detalhesConsulta(agendamento)}.`;
+  const html = `<p>${escaparHtml(solicitante)} solicitou ${acao} da consulta.</p>${
+    proposta
+      ? `<p>Nova data proposta: ${escaparHtml(formatarData(solicitacao.novaData))} às ${escaparHtml(solicitacao.novoHorario)}.</p>`
+      : ""
+  }${
+    motivo ? `<p>Motivo: ${escaparHtml(solicitacao.motivo)}</p>` : ""
+  }<p>Consulta atual:<br>${escaparHtml(detalhesConsulta(agendamento)).replace("\n", "<br>")}</p><p>Acesse o Datadiet para responder.</p>`;
+
+  return {
+    subject: `Solicitação de ${acao} - Datadiet`,
+    text: `Olá, ${nomeDestinatario}!\n${texto}`,
+    html: `<p>Olá, ${escaparHtml(nomeDestinatario)}!</p>${html}`,
+  };
+}
+
 // POST /agendamento  -> cria uma consulta (com a ficha de anamnese)
 router.post("/agendamento", async (req, res) => {
   try {
@@ -208,13 +263,13 @@ router.patch("/agendamento/:id/status", async (req, res) => {
     const { status } = req.body;
     if (!STATUS.includes(status)) return res.status(400).json({ erro: "Status inválido." });
 
+    const consultaAnterior = await AgendamentoModel.findById(req.params.id);
+    if (!consultaAnterior) return res.status(404).json({ erro: "Consulta não encontrada." });
+
     const filtro = { _id: req.params.id };
     if (status === "Concluído") {
-      const consulta = await AgendamentoModel.findById(req.params.id);
-      if (!consulta) return res.status(404).json({ erro: "Consulta não encontrada." });
-
-      const [ano, mes, dia] = consulta.data.split("-").map(Number);
-      const [hora, minuto] = consulta.horario.split(":").map(Number);
+      const [ano, mes, dia] = consultaAnterior.data.split("-").map(Number);
+      const [hora, minuto] = consultaAnterior.horario.split(":").map(Number);
       const dataConsulta = new Date(ano, mes - 1, dia, hora, minuto);
       const agora = new Date();
       const dataHoje = [
@@ -224,8 +279,8 @@ router.patch("/agendamento/:id/status", async (req, res) => {
       ].join("-");
 
       if (
-        consulta.status !== "Confirmado" ||
-        consulta.data !== dataHoje ||
+        consultaAnterior.status !== "Confirmado" ||
+        consultaAnterior.data !== dataHoje ||
         Number.isNaN(dataConsulta.getTime()) ||
         agora.getTime() <= dataConsulta.getTime()
       ) {
@@ -236,7 +291,6 @@ router.patch("/agendamento/:id/status", async (req, res) => {
 
       filtro.status = "Confirmado";
     }
-
     const atualizado = await AgendamentoModel.findOneAndUpdate(
       filtro,
       { status, $unset: { solicitacao: "" } }, // qualquer pedido pendente perde o sentido
@@ -247,6 +301,14 @@ router.patch("/agendamento/:id/status", async (req, res) => {
         erro: status === "Concluído"
           ? "A consulta não está mais confirmada."
           : "Consulta não encontrada.",
+      });
+    }
+    if (consultaAnterior.status !== atualizado.status) {
+      const texto = `O status da sua consulta com ${atualizado.nutricionista} foi alterado de ${consultaAnterior.status} para ${atualizado.status}.\n${detalhesConsulta(atualizado)}`;
+      await notificarParticipante(atualizado, "paciente", {
+        subject: `Status da consulta: ${atualizado.status} - Datadiet`,
+        text: `Olá, ${atualizado.paciente}!\n${texto}`,
+        html: `<p>Olá, ${escaparHtml(atualizado.paciente)}!</p><p>O status da sua consulta com <strong>${escaparHtml(atualizado.nutricionista)}</strong> foi alterado de <strong>${escaparHtml(consultaAnterior.status)}</strong> para <strong>${escaparHtml(atualizado.status)}</strong>.</p><p>${escaparHtml(detalhesConsulta(atualizado)).replace("\n", "<br>")}</p>`,
       });
     }
     res.json(atualizado);
@@ -303,6 +365,10 @@ router.post("/agendamento/:id/solicitacao", async (req, res) => {
     ag.solicitacao = nova;
     await ag.save();
 
+    const destinatario = origem === "paciente" ? "nutricionista" : "paciente";
+    const mensagem = criarMensagemSolicitacao(ag, destinatario);
+    await notificarParticipante(ag, destinatario, mensagem);
+
     res.status(201).json({
       mensagem:
         origem === "paciente"
@@ -337,6 +403,14 @@ router.post("/agendamento/:id/solicitacao/responder", async (req, res) => {
     if (!aceitar) {
       ag.solicitacao = undefined;
       await ag.save();
+      const destinatario = origem;
+      const papelSolicitante = origem === "paciente" ? "paciente" : "nutricionista";
+      const mensagem = `Sua solicitação de ${tipo.toLowerCase()} foi recusada. A consulta permanece em ${formatarData(ag.data)} às ${ag.horario}.`;
+      await notificarParticipante(ag, destinatario, {
+        subject: `Solicitação recusada - Datadiet`,
+        text: `Olá, ${papelSolicitante === "paciente" ? ag.paciente : ag.nutricionista}!\n${mensagem}`,
+        html: `<p>Olá, ${escaparHtml(papelSolicitante === "paciente" ? ag.paciente : ag.nutricionista)}!</p><p>${escaparHtml(mensagem)}</p>`,
+      });
       return res.json({ mensagem: "Solicitação recusada.", agendamento: ag });
     }
 
@@ -356,6 +430,18 @@ router.post("/agendamento/:id/solicitacao/responder", async (req, res) => {
     }
     ag.solicitacao = undefined;
     await ag.save();
+
+    const destinatario = origem;
+    const nomeDestinatario = origem === "paciente" ? ag.paciente : ag.nutricionista;
+    const texto =
+      tipo === "Cancelamento"
+        ? "O cancelamento da consulta foi confirmado."
+        : `O reagendamento foi confirmado para ${formatarData(ag.data)} às ${ag.horario}.`;
+    await notificarParticipante(ag, destinatario, {
+      subject: `${tipo} confirmado - Datadiet`,
+      text: `Olá, ${nomeDestinatario}!\n${texto}`,
+      html: `<p>Olá, ${escaparHtml(nomeDestinatario)}!</p><p>${escaparHtml(texto)}</p>`,
+    });
 
     res.json({
       mensagem: tipo === "Cancelamento" ? "Cancelamento confirmado." : "Reagendamento confirmado.",
@@ -378,8 +464,18 @@ router.delete("/agendamento/:id/solicitacao", async (req, res) => {
     if (ag.solicitacao.origem !== req.query.por) {
       return res.status(400).json({ erro: "Só quem fez o pedido pode retirá-lo." });
     }
+    const solicitacaoRetirada = ag.solicitacao;
     ag.solicitacao = undefined;
     await ag.save();
+    const destinatario = solicitacaoRetirada.origem === "paciente" ? "nutricionista" : "paciente";
+    const solicitante =
+      solicitacaoRetirada.origem === "paciente" ? ag.paciente : ag.nutricionista;
+    const mensagem = `A solicitação de ${solicitacaoRetirada.tipo.toLowerCase()} feita por ${solicitante} foi retirada.`;
+    await notificarParticipante(ag, destinatario, {
+      subject: "Solicitação retirada - Datadiet",
+      text: mensagem,
+      html: `<p>${escaparHtml(mensagem)}</p>`,
+    });
     res.json({ mensagem: "Solicitação retirada.", agendamento: ag });
   } catch (error) {
     res.status(500).json({ erro: error.message });
