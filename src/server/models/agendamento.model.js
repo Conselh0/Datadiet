@@ -70,12 +70,18 @@ const AgendamentoSchema = new mongoose.Schema(
     },
     status: { type: String, enum: STATUS, default: "Pendente" },
     solicitacao: SolicitacaoSchema,
+    lembrete24hEnviadoEm: { type: Date, select: false },
+    lembrete2hEnviadoEm: { type: Date, select: false },
+    lembrete24hEmProcessamentoEm: { type: Date, select: false },
+    lembrete2hEmProcessamentoEm: { type: Date, select: false },
     anamneseId: { type: mongoose.Schema.Types.ObjectId, ref: "Anamnese", default: null },
     // select:false => não sai nas listagens; só quando pedida de propósito
     anamnese: { type: AnamneseSchema, select: false },
   },
   { timestamps: true }
 );
+
+AgendamentoSchema.index({ status: 1, data: 1 });
 
 AgendamentoSchema.pre("validate", async function () {
   if (this.isNew && !this.numero) {

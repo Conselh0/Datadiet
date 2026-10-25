@@ -427,6 +427,10 @@ router.post("/agendamento/:id/solicitacao/responder", async (req, res) => {
       ag.data = novaData;
       ag.horario = novoHorario;
       ag.status = "Confirmado";
+      ag.lembrete24hEnviadoEm = undefined;
+      ag.lembrete2hEnviadoEm = undefined;
+      ag.lembrete24hEmProcessamentoEm = undefined;
+      ag.lembrete2hEmProcessamentoEm = undefined;
     }
     ag.solicitacao = undefined;
     await ag.save();

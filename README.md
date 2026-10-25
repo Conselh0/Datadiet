@@ -44,6 +44,13 @@ reagendamento ou cancelamento notificam a outra parte; quem abriu a solicitaçã
 recebe também o resultado quando ela é aceita ou recusada. Se uma solicitação
 for retirada, a outra parte recebe um aviso.
 
+O servidor verifica a cada minuto os agendamentos ativos e envia lembretes ao
+paciente aproximadamente 24 horas e 2 horas antes da consulta. Cada aviso é
+enviado uma vez por horário agendado; se a consulta for reagendada, os lembretes
+são programados novamente para a nova data e horário. Para evitar avisos
+atrasados, cada lembrete é enviado somente dentro de uma janela de 15 minutos
+após o horário previsto.
+
 ### Configuração do Resend
 
 1. Crie uma conta em [resend.com](https://resend.com/).
