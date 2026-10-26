@@ -306,9 +306,10 @@ function CadPa() {
                   Selecione uma opção
                 </option>
 
-                <option value="M">Homem</option>
-                <option value="F">Mulher</option>
-                <option value="Outro">Prefiro não responder</option>
+                <option value="masculino">Masculino</option>
+                <option value="feminino">Feminino</option>
+                <option value="outro">Outro</option>
+                <option value="nao-informado">Prefiro não responder</option>
               </select>
             </div>
           </div>
@@ -323,15 +324,6 @@ function CadPa() {
               Cadastrar
             </button>
           </div>
-
-            <div className="mt-4">
-              <Link
-                to="/CadNu"
-                className="text-gray-400 hover:text-gray-600 text-sm sm:text-base hover:underline"
-              >
-                Criar conta de nutricionista
-              </Link>
-            </div>
         </form>
       </section>
     </main>
