@@ -261,7 +261,7 @@ function ProximaConsulta({ refresh }) {
                     }}
                     className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-green-800 bg-green-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Reagendar
+                    Solicitar Reagendamento
                   </button>
                   <button
                     type="button"
@@ -270,9 +270,9 @@ function ProximaConsulta({ refresh }) {
                       setErroAcao("");
                       setCancelando(true);
                     }}
-                    className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:border-red-300 hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-red-300 bg-white px-5 py-2.5 text-sm font-semibold text-red-700 shadow-sm transition-colors hover:border-red-300 hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Cancelar consulta
+                    Solicitar Cancelamento
                   </button>
                 </div>
               )}
@@ -328,7 +328,7 @@ function ProximaConsulta({ refresh }) {
             onClick={(event) => event.stopPropagation()}
             className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
           >
-            <h3 id="cancelar-consulta-titulo" className="text-xl font-bold text-gray-900">
+            <h3 id="cancelar-consulta-titulo" className="text-xl text-center font-bold text-gray-900">
               Solicitar cancelamento
             </h3>
             <p className="mt-2 text-sm text-gray-600">
@@ -338,7 +338,7 @@ function ProximaConsulta({ refresh }) {
             <textarea
               value={motivo}
               onChange={(event) => setMotivo(event.target.value)}
-              maxLength={300}
+              maxLength={80}
               rows={3}
               placeholder="Motivo (opcional)"
               aria-label="Motivo do cancelamento"

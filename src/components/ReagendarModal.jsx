@@ -77,14 +77,14 @@ function ReagendarModal({ agendamento, quem, onFechar, onEnviado }) {
           <X size={20} />
         </button>
 
-        <h2 className="pr-8 text-xl font-bold text-gray-800">
+        <h2 className="pr-8 text-xl text-center ml-8 font-bold text-gray-800">
           {doPaciente ? "Solicitar reagendamento" : "Propor novo horário"}
         </h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-center text-sm text-gray-500">
           Consulta #{agendamento.numero} · atualmente em {formatarData(agendamento.data)} às{" "}
           {agendamento.horario}
         </p>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-center text-gray-500">
           {doPaciente
             ? "O nutricionista precisará aprovar o novo horário."
             : `${agendamento.paciente} precisará confirmar o novo horário.`}
@@ -100,11 +100,11 @@ function ReagendarModal({ agendamento, quem, onFechar, onEnviado }) {
 
         {data && (
           <div className="mt-4">
-            <p className="mb-2 font-semibold text-gray-700">Horário em {formatarData(data)}</p>
+            <p className="mb-2 font-semibold text-center text-gray-800">Horário em {formatarData(data)}</p>
             {carregando ? (
               <p className="text-gray-500">Buscando horários...</p>
             ) : livres === 0 ? (
-              <p className="text-gray-500">Não há horários livres nesse dia. Escolha outra data.</p>
+              <p className="text-center text-gray-500">Não há horários livres nesse dia. Escolha outra data.</p>
             ) : (
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                 {horarios.map(({ hora, livre }) => (

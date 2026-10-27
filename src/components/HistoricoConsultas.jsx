@@ -146,7 +146,7 @@ function HistoricoConsultas() {
                     onClick={() => setReagendando(a)}
                     className={`${botao} border border-green-700 text-green-800 hover:bg-green-50`}
                   >
-                    Reagendar
+                    Solicitar Reagendamento
                   </button>
                   <button
                     disabled={ocupado}
@@ -241,8 +241,8 @@ function HistoricoConsultas() {
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
           >
-            <h3 className="text-xl font-bold text-green-950">Solicitar cancelamento</h3>
-            <p className="mt-2 text-sm text-gray-600">
+            <h3 className="text-xl text-center font-bold text-green-950">Solicitar cancelamento</h3>
+            <p className="mt-2  text-sm text-gray-600">
               Consulta de {formatarData(cancelando.data)} às {cancelando.horario}. O cancelamento só
               vale depois que o nutricionista confirmar.
             </p>
