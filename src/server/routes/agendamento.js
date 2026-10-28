@@ -91,6 +91,19 @@ async function notificarParticipante(agendamento, participante, { subject, text,
   }
 }
 
+async function notificarCancelamentoConsulta(agendamento, origem = "nutricionista") {
+  const texto =
+    origem === "nutricionista"
+      ? `Sua consulta com ${agendamento.nutricionista} foi cancelada pela nutricionista.\n${detalhesConsulta(agendamento)}`
+      : `Sua consulta com ${agendamento.nutricionista} foi cancelada.\n${detalhesConsulta(agendamento)}`;
+
+  await notificarParticipante(agendamento, "paciente", {
+    subject: "Consulta cancelada - Datadiet",
+    text: `Olá, ${agendamento.paciente}!\n${texto}`,
+    html: `<p>Olá, ${escaparHtml(agendamento.paciente)}!</p><p>Sua consulta com <strong>${escaparHtml(agendamento.nutricionista)}</strong> foi cancelada.</p><p>${escaparHtml(detalhesConsulta(agendamento)).replace("\n", "<br>")}</p>`,
+  });
+}
+
 function criarMensagemSolicitacao(agendamento, participante) {
   const solicitacao = agendamento.solicitacao;
   const solicitante =
@@ -305,11 +318,15 @@ router.patch("/agendamento/:id/status", async (req, res) => {
     }
     if (consultaAnterior.status !== atualizado.status) {
       const texto = `O status da sua consulta com ${atualizado.nutricionista} foi alterado de ${consultaAnterior.status} para ${atualizado.status}.\n${detalhesConsulta(atualizado)}`;
-      await notificarParticipante(atualizado, "paciente", {
-        subject: `Status da consulta: ${atualizado.status} - Datadiet`,
-        text: `Olá, ${atualizado.paciente}!\n${texto}`,
-        html: `<p>Olá, ${escaparHtml(atualizado.paciente)}!</p><p>O status da sua consulta com <strong>${escaparHtml(atualizado.nutricionista)}</strong> foi alterado de <strong>${escaparHtml(consultaAnterior.status)}</strong> para <strong>${escaparHtml(atualizado.status)}</strong>.</p><p>${escaparHtml(detalhesConsulta(atualizado)).replace("\n", "<br>")}</p>`,
-      });
+      if (atualizado.status === "Cancelado") {
+        await notificarCancelamentoConsulta(atualizado, "nutricionista");
+      } else {
+        await notificarParticipante(atualizado, "paciente", {
+          subject: `Status da consulta: ${atualizado.status} - Datadiet`,
+          text: `Olá, ${atualizado.paciente}!\n${texto}`,
+          html: `<p>Olá, ${escaparHtml(atualizado.paciente)}!</p><p>O status da sua consulta com <strong>${escaparHtml(atualizado.nutricionista)}</strong> foi alterado de <strong>${escaparHtml(consultaAnterior.status)}</strong> para <strong>${escaparHtml(atualizado.status)}</strong>.</p><p>${escaparHtml(detalhesConsulta(atualizado)).replace("\n", "<br>")}</p>`,
+        });
+      }
     }
     res.json(atualizado);
   } catch (error) {

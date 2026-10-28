@@ -49,9 +49,14 @@ function CadPa() {
 
       // Pegando a mensagem acima e trabalhando dentro do if
       // Se conseguirmos receber a mensagem que o servidor está enviando,
-      // vamos para o /User
+      // Após o cadastro, a pessoa pode seguir para o login.
       if (data.mensagem) {
-        navigate("/User");
+        navigate("/LoginPa", {
+          state: {
+            cadastroSucesso:
+              "Conta criada com sucesso! Você já pode efetuar o login.",
+          },
+        });
       } else {
         // Senão mostramos a mensagem ao usuário
         alert(data.erro || "Erro desconhecido");

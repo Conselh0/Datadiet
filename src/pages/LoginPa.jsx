@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CircleArrowLeft } from "lucide-react";
 import { iniciarSessao } from "../utils/sessao";
 
@@ -17,11 +17,33 @@ async function postar(url, corpo) {
 
 function LoginUs() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [carregando, setCarregando] = useState(false);
+  const [mensagemCadastro, setMensagemCadastro] = useState(
+    () => location.state?.cadastroSucesso || "",
+  );
+  const [mensagemDesaparecendo, setMensagemDesaparecendo] = useState(false);
+
+  useEffect(() => {
+    if (!location.state?.cadastroSucesso) return;
+
+    const inicioDesaparecimento = setTimeout(() => {
+      setMensagemDesaparecendo(true);
+    }, 9000);
+    const removerMensagem = setTimeout(() => {
+      setMensagemCadastro("");
+      navigate("/LoginPa", { replace: true, state: null });
+    }, 10000);
+
+    return () => {
+      clearTimeout(inicioDesaparecimento);
+      clearTimeout(removerMensagem);
+    };
+  }, [location.state, navigate]);
 
   async function entrar(event) {
     event.preventDefault();
@@ -74,6 +96,17 @@ function LoginUs() {
             />
           </Link>
         </div>
+
+        {mensagemCadastro && (
+          <div
+            role="alert"
+            className={`mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900 shadow-sm transition-opacity duration-1000 ${
+              mensagemDesaparecendo ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            {mensagemCadastro}
+          </div>
+        )}
 
         <form method="post" onSubmit={entrar} className="flex flex-col gap-4">
           {/* Campo: E-mail */}
