@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Footer() {
   // Link de redirecionamento oficial para quando o usuário clicar no mapa
   const mapaUrl = "https://www.google.com/maps/place/R.+Ezequiel+Freire,+55+-+Santana,+S%C3%A3o+Paulo+-+SP,+02034-000/data=!4m2!3m1!1s0x94cef628277f7583:0xdfd4b6e7e3189487?sa=X&ved=1t:242&ictx=111";
@@ -51,14 +53,28 @@ function Footer() {
         </div>
       </div>
 
-      {/* Linha Inferior: Redes sociais perfeitamente centralizadas em Grid de 3 Colunas no Desktop */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 items-center pt-6 gap-4 text-xs text-emerald-300/70 text-center md:text-left">
+      {/* Linha Inferior: links e redes sociais organizados no Desktop */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 items-center pt-6 gap-4 text-xs text-emerald-300/70 text-center md:text-left">
         
         {/* Coluna 1: Copyright à esquerda */}
         <p className="md:order-1">&copy; {new Date().getFullYear()} Datadiet. Todos os direitos reservados.</p>
+
+        <Link
+          to="/politica-de-privacidade"
+          className="text-center transition-colors hover:text-white hover:underline md:order-2"
+        >
+          Política de Privacidade
+        </Link>
+
+        <Link
+          to="/termos-de-servico"
+          className="text-center transition-colors hover:text-white hover:underline md:order-3"
+        >
+          Termos de Serviço
+        </Link>
         
         {/* Coluna 2: Redes Sociais perfeitamente centralizadas no meio */}
-        <div className="flex items-center justify-center gap-5 md:order-2">
+        <div className="flex items-center justify-center gap-5 md:order-4">
           {/* Link do WhatsApp Corrigido e Valido */}
           <a 
             href="https://wa.me" 

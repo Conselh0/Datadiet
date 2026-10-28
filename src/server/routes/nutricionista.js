@@ -48,7 +48,18 @@ router.post("/nutricionista", async (req, res) => {
     const cpf = (b.cpf || "").replace(/\D/g, "");
     const telefone = (b.telefone || "").replace(/\D/g, "");
     const crn = (b.crn || "").trim();
-    const { senha, confirmarSenha, nascimento, genero, especialidade, foto, diasAtendimento, horaInicio, horaFim, duracao } = b;
+    const {
+      senha,
+      confirmarSenha,
+      nascimento,
+      genero,
+      especialidade,
+      foto,
+      diasAtendimento,
+      horaInicio,
+      horaFim,
+      duracao,
+    } = b;
 
     const erro = (msg) => res.status(400).json({ erro: msg });
 

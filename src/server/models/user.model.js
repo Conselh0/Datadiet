@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema({
   genero: {
     type: String,
     required: true,
+    default: "nao-informado",
     lowercase: true,
     enum: ["masculino", "feminino", "outro", "nao-informado"], 
   },

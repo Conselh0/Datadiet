@@ -4,7 +4,6 @@ import { LogIn } from "lucide-react";
 import { cadastrarNutricionista } from "../services/nutricionistaService";
 import { getSessao, iniciarSessao } from "../utils/sessao";
 import "../index.css";
-import { cpfValido } from "../utils/cpf.js";
 
 const DIAS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
@@ -113,6 +112,10 @@ function CadNu() {
             />
           </Link>
         </div>
+        <p className="mb-5 text-sm leading-relaxed text-gray-600">
+          Solicitamos apenas os dados necessários para validar o registro
+          profissional, proteger sua conta e configurar sua agenda na Datadiet.
+        </p>
 
         <form onSubmit={enviar}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
@@ -125,7 +128,6 @@ function CadNu() {
             <Campo id="cpf" label="CPF:" placeholder="000.000.000-00" inputMode="numeric" value={form.cpf} onChange={mudar("cpf", mascaraCPF)} required />
             <Campo id="crn" label="CRN:" placeholder="0000-000/SP" value={form.crn} onChange={mudar("crn")} required />
             <Campo id="telefone" label="Telefone:" placeholder="(00) 00000-0000" inputMode="tel" value={form.telefone} onChange={mudar("telefone", mascaraTelefone)} required />
-
             <div className="flex flex-col">
               <label htmlFor="genero" className={estiloLabel}>
                 Gênero:

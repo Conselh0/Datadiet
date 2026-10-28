@@ -24,15 +24,6 @@ function FichaAnam() {
             className="bg-white shadow-md rounded-lg w-full h-10 mb-5"
           />
           <label for="text" className="font-semibold">
-            Peso ideal:
-          </label>
-          <br />
-          <input
-            type="text"
-            Placeholder="   Digite seu peso ideal"
-            className="bg-white shadow-md rounded-lg w-full h-10 mb-5"
-          />
-          <label for="text" className="font-semibold">
             Você possui alguma das seguintes patologias?
           </label>
           <br />

@@ -25,6 +25,8 @@ import Agendamentos from "./pages/Agendamentos.jsx";
 import Pacientes from "./pages/Pacientes.jsx";
 import RedefinirSenha from "./pages/RedefinirSenha.jsx";
 import ConfirmarRedefinicaoSenha from "./pages/ConfirmarRedefinicaoSenha.jsx";
+import PoliticaPrivacidade from "./pages/PoliticaPrivacidade.jsx";
+import TermosServico from "./pages/TermosServico.jsx";
 
 const router = createBrowserRouter([
   {
@@ -106,6 +108,14 @@ const router = createBrowserRouter([
   {
     path: "/ConfirmarRedefinicaoSenha",
     element: <ConfirmarRedefinicaoSenha />,
+  },
+  {
+    path: "/politica-de-privacidade",
+    element: <PoliticaPrivacidade />,
+  },
+  {
+    path: "/termos-de-servico",
+    element: <TermosServico />,
   },
   {
     path: "/CadPa",

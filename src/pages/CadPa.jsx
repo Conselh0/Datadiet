@@ -81,6 +81,10 @@ function CadPa() {
             />
           </Link>
         </div>
+        <p className="mb-5 text-sm leading-relaxed text-gray-600">
+          Solicitamos apenas os dados necessários para identificar você,
+          proteger sua conta e permitir o uso dos serviços da Datadiet.
+        </p>
 
         <form
           method="post"
@@ -286,7 +290,6 @@ function CadPa() {
               />
             </div>
 
-            {/* Gênero - col-span-1 no celular e md:col-span-2 no desktop */}
             <div className="flex flex-col col-span-1 md:col-span-2 w-full max-w-xs">
               <label
                 htmlFor="genero"
@@ -294,7 +297,6 @@ function CadPa() {
               >
                 Gênero:
               </label>
-
               <select
                 id="genero"
                 value={genero}
@@ -305,13 +307,13 @@ function CadPa() {
                 <option value="" disabled>
                   Selecione uma opção
                 </option>
-
                 <option value="masculino">Masculino</option>
                 <option value="feminino">Feminino</option>
                 <option value="outro">Outro</option>
                 <option value="nao-informado">Prefiro não responder</option>
               </select>
             </div>
+
           </div>
 
           {/* Botões e Links inferiores */}
