@@ -16,7 +16,6 @@ app.use("/", nutricionistaRoutes);
 
 connectToDatabase().then(() => {
   iniciarLembretesAgendamento();
-  const port = 8080;
+  const port = process.env.PORT || 8080; // Adicionei process.env.PORT para configurar hospedagem.
   app.listen(port, () => console.log(`Rodando na porta ${port}`));
 });
-
