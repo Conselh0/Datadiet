@@ -172,7 +172,8 @@ function Navbar() {
     };
   }, [location.pathname]);
 
-  const itensMenu = usuario?.tipo === "nutricionista" ? MENU_NUTRICIONISTA : MENU_PACIENTE;
+  const itensMenu =
+    usuario?.tipo === "nutricionista" ? MENU_NUTRICIONISTA : MENU_PACIENTE;
 
   // Faz o logout
   function confirmarSaida() {
@@ -209,11 +210,7 @@ function Navbar() {
             aria-expanded={menuAberto}
             className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none md:hidden"
           >
-            {menuAberto ? (
-              <X size={28} />
-            ) : (
-              <Menu size={28} />
-            )}
+            {menuAberto ? <X size={28} /> : <Menu size={28} />}
           </button>
 
           <Link to="/" aria-label="Voltar para a página inicial">
@@ -228,7 +225,7 @@ function Navbar() {
         {!usuario && (
           <Link
             to="/LoginPa"
-            className="absolute right-5 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-green-200 hover:underline md:hidden"
+            className="absolute right-5 text-sm font-semibold text-white underline-offset-4 transition-colors hover:text-green-200 hover:underline xl:hidden"
           >
             Entrar / Criar Conta
           </Link>
@@ -270,7 +267,7 @@ function Navbar() {
         <div className="relative z-50 ml-auto flex items-center gap-4 pr-2">
           {/* Botões escondidos no mobile com 'hidden md:flex' */}
           {!usuario ? (
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden xl:flex items-center gap-3">
               <Link to="/CadPa">
                 <button className="cursor-pointer bg-[#2fa84a] hover:bg-[#278d3e] px-16 py-2 rounded-full text-base font-bold text-white transition-colors shadow-md min-w-[160px]">
                   Criar Conta
@@ -289,7 +286,9 @@ function Navbar() {
                 <USERH_Menu
                   icone={
                     <img
-                      src={usuario.fotoPerfil || usuario.foto || "/img/avatar.png"}
+                      src={
+                        usuario.fotoPerfil || usuario.foto || "/img/avatar.png"
+                      }
                       alt="Abrir menu do perfil"
                       className="h-10 w-10 rounded-full border-2 border-white object-cover transition-opacity hover:opacity-80"
                       onError={(evento) => {
@@ -304,7 +303,9 @@ function Navbar() {
                     className="mb-1 flex items-center gap-3 rounded-xl bg-white p-3 transition-colors hover:bg-emerald-50"
                   >
                     <img
-                      src={usuario.fotoPerfil || usuario.foto || "/img/avatar.png"}
+                      src={
+                        usuario.fotoPerfil || usuario.foto || "/img/avatar.png"
+                      }
                       alt=""
                       className="h-12 w-12 rounded-full border-2 border-emerald-100 object-cover"
                     />
@@ -316,7 +317,11 @@ function Navbar() {
                         {usuario.nome || "Meu perfil"}
                       </span>
                     </span>
-                    <ChevronRight size={18} className="text-emerald-700" aria-hidden="true" />
+                    <ChevronRight
+                      size={18}
+                      className="text-emerald-700"
+                      aria-hidden="true"
+                    />
                   </Link>
                   {itensMenu.slice(1).map(([texto, rota]) => (
                     <Link
@@ -325,12 +330,24 @@ function Navbar() {
                       className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold transition-colors hover:bg-white"
                     >
                       {rota === "/User/Agendamentos" ? (
-                        <CalendarDays size={18} className="text-emerald-800" aria-hidden="true" />
+                        <CalendarDays
+                          size={18}
+                          className="text-emerald-800"
+                          aria-hidden="true"
+                        />
                       ) : (
-                        <ChevronRight size={18} className="text-emerald-700" aria-hidden="true" />
+                        <ChevronRight
+                          size={18}
+                          className="text-emerald-700"
+                          aria-hidden="true"
+                        />
                       )}
                       <span className="flex-1">{texto}</span>
-                      <ChevronRight size={16} className="text-emerald-700/60" aria-hidden="true" />
+                      <ChevronRight
+                        size={16}
+                        className="text-emerald-700/60"
+                        aria-hidden="true"
+                      />
                     </Link>
                   ))}
                   <button
@@ -338,7 +355,11 @@ function Navbar() {
                     onClick={() => setMostrarLogout(true)}
                     className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold text-emerald-900 transition-colors hover:bg-white"
                   >
-                    <LogOut size={18} className="text-emerald-800" aria-hidden="true" />
+                    <LogOut
+                      size={18}
+                      className="text-emerald-800"
+                      aria-hidden="true"
+                    />
                     <span className="flex-1">Sair</span>
                   </button>
                 </USERH_Menu>
@@ -379,7 +400,10 @@ function Navbar() {
               <p className="mb-3 px-3 font-sans text-xs font-semibold uppercase tracking-[0.22em] text-emerald-800/70">
                 Navegação
               </p>
-              <nav className="flex flex-col gap-1" aria-label="Navegação principal">
+              <nav
+                className="flex flex-col gap-1"
+                aria-label="Navegação principal"
+              >
                 <Link
                   to="/"
                   onClick={() => setMenuAberto(false)}
@@ -417,7 +441,9 @@ function Navbar() {
               className="flex w-full items-center justify-between rounded-xl bg-emerald-900 px-3 py-3 text-left text-base font-semibold text-white shadow-sm transition-colors hover:bg-emerald-800"
             >
               <span>Agendar consulta</span>
-              <span aria-hidden="true" className="text-lg">→</span>
+              <span aria-hidden="true" className="text-lg">
+                →
+              </span>
             </button>
 
             {!usuario ? (
