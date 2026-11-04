@@ -6,8 +6,6 @@ import { getSessao, sair } from "../utils/sessao";
 import { buscarNutricionista } from "../services/nutricionistaService";
 import { API } from "../services/agendamentoService";
 
-const API = import.meta.env.VITE_API_URL;
-
 // Itens do menu do usuário: cada tipo de conta tem os seus
 const MENU_PACIENTE = [
   ["PERFIL", "/User"],

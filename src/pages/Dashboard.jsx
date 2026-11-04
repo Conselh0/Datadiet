@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import CalendarioConsultas from "../components/CalendarioConsultas";
 import StatusBadge from "../components/StatusBadge";
 import { getSessao } from "../utils/sessao";
-import { API } from "../services/api";
+import { API } from "../services/agendamentoService";
 
 const nomesDosMeses = [
   "janeiro",
