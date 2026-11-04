@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { CalendarDays, Clock3, UserRound } from "lucide-react";
 import ReagendarModal from "./ReagendarModal";
+import StatusBadge from "./StatusBadge";
 import {
   buscarProximaConsulta,
   getUsuarioId,
@@ -115,12 +116,6 @@ function ProximaConsulta({ refresh }) {
   const solicitacao = consulta?.solicitacao;
   const propostaNutricionista = solicitacao?.origem === "nutricionista";
   const pedidoPaciente = solicitacao?.origem === "paciente";
-  const classeStatus = {
-    Confirmado: "border-green-200 bg-green-50 text-green-800",
-    Pendente: "border-amber-200 bg-amber-50 text-amber-800",
-    Concluído: "border-blue-200 bg-blue-50 text-blue-800",
-    Cancelado: "border-red-200 bg-red-50 text-red-800",
-  }[consulta?.status] || "border-gray-200 bg-white text-gray-700";
   const botaoAcao =
     "cursor-pointer rounded-lg px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
 
@@ -142,7 +137,7 @@ function ProximaConsulta({ refresh }) {
         </div>
       </header>
 
-      <div className="space-y-4 bg-gray-200 p-5 sm:p-7">
+      <div className="space-y-4 bg-gray-50 p-5 sm:p-7">
         {carregando ? (
           <p className="rounded-2xl border border-gray-300 bg-gray-100 p-5 text-center font-medium text-gray-800">
             Carregando sua próxima consulta...
@@ -154,7 +149,7 @@ function ProximaConsulta({ refresh }) {
         ) : consulta ? (
           <>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex items-center gap-4 rounded-2xl border border-gray-300 bg-gray-100 p-5 shadow-sm">
+              <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-green-100 bg-white text-emerald-800 shadow-sm">
                   <CalendarDays size={20} strokeWidth={1.8} aria-hidden="true" />
                 </span>
@@ -167,7 +162,7 @@ function ProximaConsulta({ refresh }) {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 rounded-2xl border border-gray-300 bg-gray-100 p-5 shadow-sm">
+              <div className="flex items-center gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                 <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-green-100 bg-white text-emerald-800 shadow-sm">
                   <Clock3 size={20} strokeWidth={1.8} aria-hidden="true" />
                 </span>
@@ -181,7 +176,7 @@ function ProximaConsulta({ refresh }) {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-gray-300 bg-gray-100 p-4 shadow-sm">
+            <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex min-w-0 items-center gap-3">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600">
@@ -196,9 +191,15 @@ function ProximaConsulta({ refresh }) {
                     </p>
                   </div>
                 </div>
-                <span className={`self-start rounded-full border px-3 py-1 text-sm font-semibold sm:self-auto ${classeStatus}`}>
-                  {consulta.status}
-                </span>
+                <div className="flex min-w-32 flex-col items-start gap-2 sm:items-end">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Status
+                  </p>
+                  <StatusBadge
+                    status={consulta.status}
+                    solicitacao={solicitacao}
+                  />
+                </div>
               </div>
 
               {propostaNutricionista && (
@@ -210,23 +211,28 @@ function ProximaConsulta({ refresh }) {
                     </strong>
                     . {solicitacao.motivo && `Motivo: “${solicitacao.motivo}”.`}
                   </p>
-                  <div className="mt-3 flex flex-wrap justify-end gap-2">
-                    <button
-                      type="button"
-                      disabled={ocupado}
-                      onClick={() => responderProposta(true)}
-                      className={`${botaoAcao} bg-green-800 text-white shadow-sm hover:bg-green-900`}
-                    >
-                      Aceitar proposta
-                    </button>
-                    <button
-                      type="button"
-                      disabled={ocupado}
-                      onClick={() => responderProposta(false)}
-                      className={`${botaoAcao} border border-red-300 bg-white text-red-700 hover:bg-red-50`}
-                    >
-                      Recusar
-                    </button>
+                  <div className="mt-3 border-t border-yellow-200 pt-3">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-yellow-800">
+                      Ações
+                    </p>
+                    <div className="flex flex-wrap justify-end gap-2">
+                      <button
+                        type="button"
+                        disabled={ocupado}
+                        onClick={() => responderProposta(true)}
+                        className={`${botaoAcao} bg-green-800 text-white shadow-sm hover:bg-green-900`}
+                      >
+                        Aceitar proposta
+                      </button>
+                      <button
+                        type="button"
+                        disabled={ocupado}
+                        onClick={() => responderProposta(false)}
+                        className={`${botaoAcao} border border-red-300 bg-white text-red-700 hover:bg-red-50`}
+                      >
+                        Recusar
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
@@ -239,41 +245,51 @@ function ProximaConsulta({ refresh }) {
                       : `Você solicitou reagendar para ${formatarData(solicitacao.novaData)} às ${solicitacao.novoHorario}.`}{" "}
                     Aguardando a resposta do nutricionista.
                   </p>
-                  <button
-                    type="button"
-                    disabled={ocupado}
-                    onClick={retirarPedido}
-                    className={`${botaoAcao} shrink-0 border border-orange-300 bg-white text-orange-800 hover:bg-orange-100`}
-                  >
-                    Retirar solicitação
-                  </button>
+                  <div className="shrink-0">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-orange-800">
+                      Ações
+                    </p>
+                    <button
+                      type="button"
+                      disabled={ocupado}
+                      onClick={retirarPedido}
+                      className={`${botaoAcao} border border-orange-300 bg-white text-orange-800 hover:bg-orange-100`}
+                    >
+                      Retirar solicitação
+                    </button>
+                  </div>
                 </div>
               )}
 
               {!solicitacao && (
-                <div className="mt-4 flex flex-col justify-end gap-2 border-t border-gray-200 pt-4 sm:flex-row">
-                  <button
-                    type="button"
-                    disabled={ocupado}
-                    onClick={() => {
-                      setErroAcao("");
-                      setReagendando(true);
-                    }}
-                    className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-green-800 bg-green-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Solicitar Reagendamento
-                  </button>
-                  <button
-                    type="button"
-                    disabled={ocupado}
-                    onClick={() => {
-                      setErroAcao("");
-                      setCancelando(true);
-                    }}
-                    className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-red-300 bg-white px-5 py-2.5 text-sm font-semibold text-red-700 shadow-sm transition-colors hover:border-red-300 hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    Solicitar Cancelamento
-                  </button>
+                <div className="mt-4 border-t border-gray-200 pt-4">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Ações
+                  </p>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                    <button
+                      type="button"
+                      disabled={ocupado}
+                      onClick={() => {
+                        setErroAcao("");
+                        setReagendando(true);
+                      }}
+                      className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-green-800 bg-green-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-green-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Solicitar Reagendamento
+                    </button>
+                    <button
+                      type="button"
+                      disabled={ocupado}
+                      onClick={() => {
+                        setErroAcao("");
+                        setCancelando(true);
+                      }}
+                      className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-xl border border-red-300 bg-white px-5 py-2.5 text-sm font-semibold text-red-700 shadow-sm transition-colors hover:border-red-300 hover:bg-red-50 hover:text-red-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-400 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Solicitar Cancelamento
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

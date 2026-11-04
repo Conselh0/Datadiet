@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import CalendarioConsultas from "../components/CalendarioConsultas";
 import { getSessao } from "../utils/sessao";
 
-const API = "http://localhost:8080";
+const API = import.meta.env.VITE_API_URL
 
 function Calendario() {
   const location = useLocation();

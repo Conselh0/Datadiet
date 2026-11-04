@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CircleArrowLeft } from "lucide-react";
 import { iniciarSessao } from "../utils/sessao";
 
-const API = "http://localhost:8080";
+const API = import.meta.env.VITE_API_URL;
 
 async function postar(url, corpo) {
   const resposta = await fetch(url, {

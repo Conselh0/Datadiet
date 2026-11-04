@@ -3,7 +3,8 @@ import { Mail, Phone, Settings } from "lucide-react";
 import ProximaConsulta from "../components/ProximaConsulta";
 import { getSessao } from "../utils/sessao";
 
-const API = "http://localhost:8080";
+const API = import.meta.env.VITE_API_URL
+
 const INPUT =
   "h-11 w-full rounded-xl border border-gray-200 bg-gray-50 px-3 text-gray-800 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100";
 const LABEL = "mb-1.5 block text-sm font-semibold text-gray-700";

@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { getSessao } from "../utils/sessao";
 
+const API = import.meta.env.VITE_API_URL;
+
 const links = [
   { to: "/User", label: "Meu perfil", icon: UserRound, end: true },
   { to: "/User/MinhaConsulta", label: "Minha consulta", icon: CalendarCheck },
@@ -55,7 +57,7 @@ function SidebarUser() {
 
     const idUsuario = usuario?.id || usuario?._id;
     if (idUsuario && usuario?.tipo === "paciente") {
-      fetch(`http://localhost:8080/perfil/${idUsuario}`)
+      fetch(`${API}/perfil/${idUsuario}`)
         .then(async (resposta) => {
           const dados = await resposta.json().catch(() => ({}));
           if (!resposta.ok) {

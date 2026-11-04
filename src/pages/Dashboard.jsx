@@ -13,8 +13,7 @@ import { Link } from "react-router-dom";
 import CalendarioConsultas from "../components/CalendarioConsultas";
 import StatusBadge from "../components/StatusBadge";
 import { getSessao } from "../utils/sessao";
-
-const API = "http://localhost:8080";
+import { API } from "../services/api";
 
 const nomesDosMeses = [
   "janeiro",
@@ -658,7 +657,10 @@ function Dashboard() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <StatusBadge status={consulta.status} />
+                        <StatusBadge
+                          status={consulta.status}
+                          solicitacao={consulta.solicitacao}
+                        />
                       </td>
                     </tr>
                   )) : (

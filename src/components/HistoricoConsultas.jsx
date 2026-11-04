@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import StatusBadge, { PedidoBadge } from "./StatusBadge";
+import StatusBadge from "./StatusBadge";
 import ReagendarModal from "./ReagendarModal";
 import {
   listarAgendamentos,
@@ -13,7 +13,8 @@ import { formatarData } from "../utils/formatters";
 const FILTROS = ["Todas", "Pendente", "Confirmado", "Concluído", "Cancelado"];
 const ATIVOS = ["Pendente", "Confirmado"];
 
-const botao = "cursor-pointer rounded-md px-3 py-1 text-sm font-semibold disabled:opacity-50";
+const botao =
+  "cursor-pointer rounded-xl px-3 py-2 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
 
 function HistoricoConsultas() {
   const [lista, setLista] = useState([]);
@@ -122,9 +123,9 @@ function HistoricoConsultas() {
           const doNutri = sol?.origem === "nutricionista";
 
           return (
-            <li key={a._id} className="rounded-xl border border-green-200 bg-green-50 p-4 shadow-sm">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
+            <li key={a._id} className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-green-200 hover:shadow-md sm:p-5">
+              <div className="flex flex-col gap-4 border-b border-gray-100 pb-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
                   <p className="text-xs font-bold text-gray-500">Atendimento #{a.numero}</p>
                   <p className="text-lg font-bold text-slate-800">
                     {formatarData(a.data)} às {a.horario}
@@ -132,85 +133,102 @@ function HistoricoConsultas() {
                   <p className="text-sm text-gray-600">com {a.nutricionista}</p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2">
-                  <StatusBadge status={a.status} />
-                  <PedidoBadge solicitacao={sol} />
+                <div className="flex flex-col items-start gap-2 sm:items-end">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Status
+                  </p>
+                  <StatusBadge status={a.status} solicitacao={sol} />
                 </div>
               </div>
 
               {/* Sem pedido em andamento: o paciente pode pedir mudança */}
               {ativa && !sol && (
-                <div className="mt-3 flex flex-wrap justify-end gap-2">
-                  <button
-                    disabled={ocupado}
-                    onClick={() => setReagendando(a)}
-                    className={`${botao} border border-green-700 text-green-800 hover:bg-green-50`}
-                  >
-                    Solicitar Reagendamento
-                  </button>
-                  <button
-                    disabled={ocupado}
-                    onClick={() => setCancelando(a)}
-                    className={`${botao} border border-red-300 text-red-700 hover:bg-red-50`}
-                  >
-                    Solicitar cancelamento
-                  </button>
+                <div className="mt-4 border-t border-gray-100 pt-4">
+                  <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                    Ações
+                  </p>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                    <button
+                      disabled={ocupado}
+                      onClick={() => setReagendando(a)}
+                      className={`${botao} border border-green-700 text-green-800 hover:bg-green-50`}
+                    >
+                      Solicitar Reagendamento
+                    </button>
+                    <button
+                      disabled={ocupado}
+                      onClick={() => setCancelando(a)}
+                      className={`${botao} border border-red-300 text-red-700 hover:bg-red-50`}
+                    >
+                      Solicitar cancelamento
+                    </button>
+                  </div>
                 </div>
               )}
 
               {/* Pedido feito pelo paciente: aguardando o nutricionista */}
               {doPaciente && (
-                <div className="mt-3 flex flex-col gap-2 rounded-lg bg-orange-50 p-3 text-sm text-orange-900 sm:flex-row sm:items-center sm:justify-between">
-                  <p>
+                <div className="mt-4 flex flex-col gap-3 rounded-xl border border-orange-200 bg-orange-50 p-4 text-sm text-orange-900 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="leading-6">
                     {sol.tipo === "Cancelamento"
                       ? "Você pediu o cancelamento desta consulta."
                       : `Você pediu para reagendar para ${formatarData(sol.novaData)} às ${sol.novoHorario}.`}{" "}
                     Aguardando a resposta do nutricionista.
                   </p>
-                  <button
-                    disabled={ocupado}
-                    onClick={() =>
-                      executar(() => retirarSolicitacao(a._id, "paciente"), "Solicitação retirada.")
-                    }
-                    className={`${botao} shrink-0 border border-orange-300 hover:bg-orange-100`}
-                  >
-                    Retirar solicitação
-                  </button>
+                  <div className="shrink-0">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-orange-800">
+                      Ações
+                    </p>
+                    <button
+                      disabled={ocupado}
+                      onClick={() =>
+                        executar(() => retirarSolicitacao(a._id, "paciente"), "Solicitação retirada.")
+                      }
+                      className={`${botao} border border-orange-300 hover:bg-orange-100`}
+                    >
+                      Retirar solicitação
+                    </button>
+                  </div>
                 </div>
               )}
 
               {/* Proposta do nutricionista: o paciente decide */}
               {doNutri && (
-                <div className="mt-3 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-900">
-                  <p>
+                <div className="mt-4 rounded-xl border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-900">
+                  <p className="leading-6">
                     O nutricionista propôs reagendar para{" "}
                     <b>
                       {formatarData(sol.novaData)} às {sol.novoHorario}
                     </b>
                     .{sol.motivo && <> Motivo: “{sol.motivo}”.</>}
                   </p>
-                  <div className="mt-2 flex gap-2">
-                    <button
-                      disabled={ocupado}
-                      onClick={() =>
-                        executar(() => responderSolicitacao(a._id, "paciente", true), "Novo horário confirmado!")
-                      }
-                      className={`${botao} bg-green-700 text-white hover:bg-green-800`}
-                    >
-                      Aceitar
-                    </button>
-                    <button
-                      disabled={ocupado}
-                      onClick={() =>
-                        executar(
-                          () => responderSolicitacao(a._id, "paciente", false),
-                          "Proposta recusada. A consulta continua no horário original."
-                        )
-                      }
-                      className={`${botao} border border-red-300 text-red-700 hover:bg-red-50`}
-                    >
-                      Recusar
-                    </button>
+                  <div className="mt-3 border-t border-yellow-200 pt-3">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-yellow-800">
+                      Ações
+                    </p>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                      <button
+                        disabled={ocupado}
+                        onClick={() =>
+                          executar(() => responderSolicitacao(a._id, "paciente", true), "Novo horário confirmado!")
+                        }
+                        className={`${botao} bg-green-700 text-white hover:bg-green-800`}
+                      >
+                        Aceitar
+                      </button>
+                      <button
+                        disabled={ocupado}
+                        onClick={() =>
+                          executar(
+                            () => responderSolicitacao(a._id, "paciente", false),
+                            "Proposta recusada. A consulta continua no horário original."
+                          )
+                        }
+                        className={`${botao} border border-red-300 text-red-700 hover:bg-red-50`}
+                      >
+                        Recusar
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

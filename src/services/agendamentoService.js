@@ -1,5 +1,4 @@
-export const API = import.meta.env.VITE_API_URL || "http://localhost:8080";
-
+export const API = import.meta.env.VITE_API_URL;
 export async function request(path, options = {}) {
   const res = await fetch(`${API}${path}`, {
     headers: { "Content-Type": "application/json" },
@@ -30,7 +29,7 @@ export const getUsuarioId = () => {
 
 const qs = (obj) =>
   new URLSearchParams(
-    Object.entries(obj).filter(([, v]) => v !== undefined && v !== "")
+    Object.entries(obj).filter(([, v]) => v !== undefined && v !== ""),
   ).toString();
 
 export const criarAgendamento = (dados) => {
@@ -80,4 +79,6 @@ export const responderSolicitacao = (id, por, aceitar) =>
 
 // por: quem fez o pedido
 export const retirarSolicitacao = (id, por) =>
-  request(`/agendamento/${id}/solicitacao?${qs({ por })}`, { method: "DELETE" });
+  request(`/agendamento/${id}/solicitacao?${qs({ por })}`, {
+    method: "DELETE",
+  });

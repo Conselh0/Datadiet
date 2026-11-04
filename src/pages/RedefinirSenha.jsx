@@ -2,6 +2,8 @@ import { useState } from "react";
 import { CircleArrowLeft } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL
+
 function RedefinirSenha() {
   const navigate = useNavigate();
   const [formulario, setFormulario] = useState({
@@ -20,7 +22,7 @@ function RedefinirSenha() {
     setErro("");
 
     try {
-      const resposta = await fetch("http://localhost:8080/redefinir-senha", {
+      const resposta = await fetch(`${API}/redefinir-senha`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formulario.email }),

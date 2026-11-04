@@ -4,6 +4,9 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import USERH_Menu from "./USERH_Menu";
 import { getSessao, sair } from "../utils/sessao";
 import { buscarNutricionista } from "../services/nutricionistaService";
+import { API } from "../services/agendamentoService";
+
+const API = import.meta.env.VITE_API_URL;
 
 // Itens do menu do usuário: cada tipo de conta tem os seus
 const MENU_PACIENTE = [
@@ -39,7 +42,7 @@ function Navbar() {
       setUsuario(usuarioAtual);
 
       if (usuarioAtual?.tipo === "paciente" && usuarioAtual.id) {
-        fetch(`http://localhost:8080/perfil/${usuarioAtual.id}`)
+        fetch(`${API}/perfil/${usuarioAtual.id}`)
           .then((resposta) => {
             if (!resposta.ok) {
               throw new Error("Não foi possível carregar a foto do perfil.");

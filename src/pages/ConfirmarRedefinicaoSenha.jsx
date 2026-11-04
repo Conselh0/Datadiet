@@ -2,6 +2,8 @@ import { useState } from "react";
 import { CircleArrowLeft } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
+const API = import.meta.env.VITE_API_URL
+
 function ConfirmarRedefinicaoSenha() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -25,14 +27,11 @@ function ConfirmarRedefinicaoSenha() {
     setErro("");
 
     try {
-      const resposta = await fetch(
-        "http://localhost:8080/redefinir-senha/confirmar",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, ...formulario }),
-        },
-      );
+      const resposta = await fetch(`${API}/redefinir-senha/confirmar`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, ...formulario }),
+      });
       const dados = await resposta.json().catch(() => ({}));
 
       if (!resposta.ok) {

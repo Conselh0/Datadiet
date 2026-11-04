@@ -9,7 +9,13 @@ import { enviarEmailResend } from "../utils/email.js";
 const router = express.Router();
 
 const TEMPO_EXPIRACAO_TOKEN_MS = 60 * 60 * 1000;
-const TIPOS_MIME_IMAGEM = ["image/png", "image/jpeg", "image/jpg", "image/webp", "image/gif"];
+const TIPOS_MIME_IMAGEM = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "image/webp",
+  "image/gif",
+];
 const TAMANHO_MAXIMO_FOTO_BYTES = 2 * 1024 * 1024;
 
 function gerarToken() {
@@ -114,9 +120,7 @@ router.post("/redefinir-senha", async (req, res) => {
     });
 
     try {
-      const urlAplicacao = (
-        process.env.APP_URL || "http://localhost:5173"
-      ).replace(/\/$/, "");
+      const urlAplicacao = process.env.APP_URL.replace(/\/$/, "");
       const linkConfirmacao = `${urlAplicacao}/ConfirmarRedefinicaoSenha?token=${token}`;
 
       await enviarEmailResend({
@@ -163,7 +167,9 @@ router.post("/redefinir-senha/confirmar", async (req, res) => {
     }
 
     if (!novaSenha || !confirmarSenha) {
-      return res.status(400).json({ erro: "Preencha os dois campos de senha." });
+      return res
+        .status(400)
+        .json({ erro: "Preencha os dois campos de senha." });
     }
 
     if (novaSenha !== confirmarSenha) {
@@ -182,9 +188,9 @@ router.post("/redefinir-senha/confirmar", async (req, res) => {
     });
 
     if (!reset) {
-      return res
-        .status(400)
-        .json({ erro: "O link é inválido ou expirou. Solicite uma nova redefinição." });
+      return res.status(400).json({
+        erro: "O link é inválido ou expirou. Solicite uma nova redefinição.",
+      });
     }
 
     const usuario = await UserModel.findById(reset.usuario);
@@ -213,7 +219,9 @@ router.get("/perfil/:id", async (req, res) => {
     if (!mongoose.isValidObjectId(req.params.id)) {
       return res.status(404).json({ erro: "Usuário não encontrado." });
     }
-    const usuario = await UserModel.findById(req.params.id).select("-senha -cpf");
+    const usuario = await UserModel.findById(req.params.id).select(
+      "-senha -cpf",
+    );
 
     if (!usuario) {
       return res.status(404).json({ erro: "Usuário não encontrado." });
@@ -270,7 +278,8 @@ router.patch("/perfil/:id", async (req, res) => {
       typeof nascimento !== "string" ||
       !/^\d{4}-\d{2}-\d{2}$/.test(nascimento) ||
       Number.isNaN(new Date(`${nascimento}T12:00:00Z`).getTime()) ||
-      new Date(`${nascimento}T12:00:00Z`).toISOString().slice(0, 10) !== nascimento
+      new Date(`${nascimento}T12:00:00Z`).toISOString().slice(0, 10) !==
+        nascimento
     ) {
       return res.status(400).json({ erro: "Data de nascimento inválida." });
     }
@@ -283,7 +292,9 @@ router.patch("/perfil/:id", async (req, res) => {
         _id: { $ne: id },
       })
     ) {
-      return res.status(409).json({ erro: "Já existe uma conta com este e-mail." });
+      return res
+        .status(409)
+        .json({ erro: "Já existe uma conta com este e-mail." });
     }
 
     const usuario = await UserModel.findById(id);
@@ -291,7 +302,9 @@ router.patch("/perfil/:id", async (req, res) => {
       return res.status(404).json({ erro: "Usuário não encontrado." });
     }
 
-    const alterandoSenha = Boolean(senhaAtual || novaSenha || confirmarNovaSenha);
+    const alterandoSenha = Boolean(
+      senhaAtual || novaSenha || confirmarNovaSenha,
+    );
     if (alterandoSenha) {
       if (!senhaAtual || !novaSenha || !confirmarNovaSenha) {
         return res.status(400).json({
@@ -310,7 +323,9 @@ router.patch("/perfil/:id", async (req, res) => {
         });
       }
       if (novaSenha !== confirmarNovaSenha) {
-        return res.status(400).json({ erro: "A confirmação da nova senha não confere." });
+        return res
+          .status(400)
+          .json({ erro: "A confirmação da nova senha não confere." });
       }
       usuario.senha = await bcrypt.hash(novaSenha, 12);
     }
@@ -333,7 +348,9 @@ router.patch("/perfil/:id", async (req, res) => {
   } catch (error) {
     console.error("ERRO AO ATUALIZAR PERFIL DO PACIENTE:", error);
     if (error?.code === 11000 && error?.keyPattern?.email) {
-      return res.status(409).json({ erro: "Já existe uma conta com este e-mail." });
+      return res
+        .status(409)
+        .json({ erro: "Já existe uma conta com este e-mail." });
     }
     res.status(500).json({ erro: "Não foi possível atualizar o perfil." });
   }
@@ -342,20 +359,30 @@ router.patch("/perfil/:id", async (req, res) => {
 router.put("/perfil/:id/foto", async (req, res) => {
   try {
     const { tipo, valor } = req.body;
-    const tipoNormalizado = typeof tipo === "string" ? tipo.trim().toLowerCase() : "";
+    const tipoNormalizado =
+      typeof tipo === "string" ? tipo.trim().toLowerCase() : "";
     const valorNormalizado = typeof valor === "string" ? valor.trim() : "";
 
     if (!["url", "upload", "remover"].includes(tipoNormalizado)) {
-      return res.status(400).json({ erro: "Tipo de atualização de foto inválido." });
+      return res
+        .status(400)
+        .json({ erro: "Tipo de atualização de foto inválido." });
     }
 
     if (tipoNormalizado !== "remover" && !valorNormalizado) {
-      return res.status(400).json({ erro: "Informe a imagem para atualizar a foto de perfil." });
+      return res
+        .status(400)
+        .json({ erro: "Informe a imagem para atualizar a foto de perfil." });
     }
 
     if (tipoNormalizado === "url") {
-      if (valorNormalizado.length > 2048 || !urlImagemValida(valorNormalizado)) {
-        return res.status(400).json({ erro: "Informe uma URL de imagem válida (http/https)." });
+      if (
+        valorNormalizado.length > 2048 ||
+        !urlImagemValida(valorNormalizado)
+      ) {
+        return res
+          .status(400)
+          .json({ erro: "Informe uma URL de imagem válida (http/https)." });
       }
     }
 
@@ -363,11 +390,15 @@ router.put("/perfil/:id/foto", async (req, res) => {
       const dataUrlImagem = parseDataUrlImagem(valorNormalizado);
 
       if (!dataUrlImagem || !TIPOS_MIME_IMAGEM.includes(dataUrlImagem.mime)) {
-        return res.status(400).json({ erro: "Formato de imagem não suportado." });
+        return res
+          .status(400)
+          .json({ erro: "Formato de imagem não suportado." });
       }
 
       if (dataUrlImagem.tamanhoBytes > TAMANHO_MAXIMO_FOTO_BYTES) {
-        return res.status(400).json({ erro: "A imagem deve ter no máximo 2 MB." });
+        return res
+          .status(400)
+          .json({ erro: "A imagem deve ter no máximo 2 MB." });
       }
     }
 
@@ -387,10 +418,11 @@ router.put("/perfil/:id/foto", async (req, res) => {
     });
   } catch (error) {
     console.error("ERRO AO ATUALIZAR FOTO DE PERFIL:", error);
-    return res.status(500).json({ erro: "Não foi possível atualizar a foto de perfil." });
+    return res
+      .status(500)
+      .json({ erro: "Não foi possível atualizar a foto de perfil." });
   }
 });
-
 
 router.delete("/usuarios/:id", async (req, res) => {
   try {
